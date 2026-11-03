@@ -1,0 +1,12 @@
+{
+  "services": {
+    "app": {
+      "environment": {
+        "DEPLOY_SOCKET": "/run/zorza-deploy/control.sock"
+      },
+      "volumes": [
+        "/opt/zorza/deploy-run:/run/zorza-deploy:ro"
+      ]
+    }
+  }
+}

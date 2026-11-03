@@ -1,0 +1,47 @@
+# Szablon app + chat. HTTPS należy do istniejącej konfiguracji administratora.
+# W produkcji kontroler korzysta z /opt/zorza/config/compose.yml i nakładek.
+services:
+  app:
+    build:
+      context: /opt/zorza/source
+      dockerfile: Dockerfile
+    container_name: zorza-app
+    user: "1000:1000"
+    restart: unless-stopped
+    env_file: /opt/zorza/config/app.env
+    environment:
+      PORT: "3000"
+      DATA_DIR: /var/lib/zorza
+      CHAT_BRIDGE_URL: http://chat:3001
+    ports:
+      - "127.0.0.1:8086:3000"
+    volumes:
+      - /opt/zorza/data:/var/lib/zorza
+      - /opt/zorza/source/public:/app/public:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+  chat:
+    build:
+      context: /opt/zorza/source
+      dockerfile: Dockerfile.chat
+    container_name: zorza-chat
+    user: "1000:1000"
+    restart: unless-stopped
+    # Ten plik zawiera wyłącznie konfigurację mostu, bez sekretów app.
+    env_file: /opt/zorza/config/chat.env
+    environment:
+      CHAT_STATE_DIR: /state
+    expose:
+      - "3001"
+    volumes:
+      - /opt/zorza/source:/workspace
+      - /opt/zorza/chat-state:/state
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

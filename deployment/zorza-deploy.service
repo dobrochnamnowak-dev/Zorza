@@ -1,0 +1,24 @@
+[Unit]
+Description=Zorza - restricted backend deployment controller
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/zorza/config
+Environment=DOCKER_CONFIG=/opt/zorza/deploy-state/docker
+ExecStart=/usr/bin/python3 /opt/zorza/config/deployment-controller.py
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/zorza/deploy-state /opt/zorza/deploy-run /opt/zorza/config /opt/zorza/data
+RestrictAddressFamilies=AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

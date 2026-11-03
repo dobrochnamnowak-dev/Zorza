@@ -1,0 +1,39 @@
+# Sekrety i konfiguracja wykonawcza
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+auth.json
+conversation.json
+*-dostep.txt
+*access*.txt
+credentials*
+secrets*
+
+# Prywatne dane aplikacji i kopie
+/data/
+/chat-state/
+/config/
+/backups/
+/deploy-state/
+/deploy-run/
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.db
+*.db-*
+*.tar.gz
+*.zip
+*.log
+/reports/
+/screenshots/
+
+# Środowisko lokalne
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.env.local

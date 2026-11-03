@@ -1,0 +1,8 @@
+FROM node:24-bookworm-slim
+RUN npm install --global @openai/codex@0.165.0 && apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace
+COPY scripts/chat-bridge.mjs scripts/chat-images.mjs scripts/publication-ai.mjs /bridge/
+USER node
+ENV HOME=/home/node CHAT_STATE_DIR=/state
+EXPOSE 3001
+CMD ["node", "/bridge/chat-bridge.mjs"]

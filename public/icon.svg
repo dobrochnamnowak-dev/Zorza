@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="aurora" x1=".1" y1="0" x2=".9" y2="1">
+      <stop stop-color="#92ffd2"/><stop offset=".34" stop-color="#5de9ca"/>
+      <stop offset=".65" stop-color="#bba3ff"/><stop offset="1" stop-color="#f18bd6"/>
+    </linearGradient>
+    <radialGradient id="moon-light" cx=".35" cy=".28" r=".8">
+      <stop stop-color="#fffef0"/><stop offset=".6" stop-color="#e3e5e8"/>
+      <stop offset="1" stop-color="#a6aebc"/>
+    </radialGradient>
+    <radialGradient id="crater" cx=".65" cy=".7" r=".8">
+      <stop stop-color="#a1a8b2"/><stop offset=".7" stop-color="#777f8d"/>
+      <stop offset="1" stop-color="#c9cdd3"/>
+    </radialGradient>
+    <clipPath id="moon-disc"><circle cx="151" cy="183" r="63"/></clipPath>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#050506"/>
+  <path d="M52 62H202V96L112 164H202V202H52V168L142 100H52Z" fill="url(#aurora)"/>
+  <path d="M211 24L216 39L231 44L216 49L211 64L206 49L191 44L206 39Z" fill="#e8fff6"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "name": "sygnal-inwestycje",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --env-file=.env.local server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "collect": "node scripts/collect.mjs",
+    "worker": "node scripts/codex-worker.mjs",
+    "worker:watch": "node scripts/codex-worker.mjs --watch"
+  }
+}

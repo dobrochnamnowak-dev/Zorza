@@ -1,0 +1,1008 @@
+{
+  "items": [
+    {
+      "id": "AKCJA-001",
+      "type": "stock",
+      "name_on_screenshot": "NVIDIA",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "NVDA"
+    },
+    {
+      "id": "AKCJA-002",
+      "type": "stock",
+      "name_on_screenshot": "Microsoft",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "MSFT"
+    },
+    {
+      "id": "AKCJA-003",
+      "type": "stock",
+      "name_on_screenshot": "Broadcom",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "AVGO"
+    },
+    {
+      "id": "AKCJA-004",
+      "type": "stock",
+      "name_on_screenshot": "Micron Technology",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "MU"
+    },
+    {
+      "id": "AKCJA-005",
+      "type": "stock",
+      "name_on_screenshot": "Advanced Micro Devices",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "AMD"
+    },
+    {
+      "id": "AKCJA-006",
+      "type": "stock",
+      "name_on_screenshot": "Mastercard",
+      "working_group": "finanse i płatności",
+      "ticker_on_screenshot": "MA"
+    },
+    {
+      "id": "AKCJA-007",
+      "type": "stock",
+      "name_on_screenshot": "Oracle",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "ORCL"
+    },
+    {
+      "id": "AKCJA-008",
+      "type": "stock",
+      "name_on_screenshot": "Applied Materials",
+      "working_group": "technologia",
+      "ticker_on_screenshot": "AMAT"
+    },
+    {
+      "id": "AKCJA-009",
+      "type": "stock",
+      "name_on_screenshot": "Lam Research",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-010",
+      "type": "stock",
+      "name_on_screenshot": "GE Vernova Inc",
+      "working_group": "energia i przemysł"
+    },
+    {
+      "id": "AKCJA-011",
+      "type": "stock",
+      "name_on_screenshot": "Arista Networks",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-012",
+      "type": "stock",
+      "name_on_screenshot": "KLA-Tencor Corporation",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-013",
+      "type": "stock",
+      "name_on_screenshot": "Analog Devices",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-014",
+      "type": "stock",
+      "name_on_screenshot": "Amphenol",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-015",
+      "type": "stock",
+      "name_on_screenshot": "Qualcomm",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-016",
+      "type": "stock",
+      "name_on_screenshot": "Marvell Technology",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-017",
+      "type": "stock",
+      "name_on_screenshot": "Seagate Technology",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-018",
+      "type": "stock",
+      "name_on_screenshot": "Western Digital",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-019",
+      "type": "stock",
+      "name_on_screenshot": "Corning",
+      "working_group": "technologia i materiały"
+    },
+    {
+      "id": "AKCJA-020",
+      "type": "stock",
+      "name_on_screenshot": "Vertiv Holdings Co",
+      "working_group": "infrastruktura centrów danych"
+    },
+    {
+      "id": "AKCJA-021",
+      "type": "stock",
+      "name_on_screenshot": "Lumentum Holdings",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-022",
+      "type": "stock",
+      "name_on_screenshot": "Ciena Corporation",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-023",
+      "type": "stock",
+      "name_on_screenshot": "Nu Holdings",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-024",
+      "type": "stock",
+      "name_on_screenshot": "Pure Storage",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-025",
+      "type": "stock",
+      "name_on_screenshot": "Teradyne",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-026",
+      "type": "stock",
+      "name_on_screenshot": "Coherent Corporation",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-027",
+      "type": "stock",
+      "name_on_screenshot": "NetApp",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-028",
+      "type": "stock",
+      "name_on_screenshot": "EQT Corporation",
+      "working_group": "energia i surowce"
+    },
+    {
+      "id": "AKCJA-029",
+      "type": "stock",
+      "name_on_screenshot": "United Airlines",
+      "working_group": "transport i lotnictwo"
+    },
+    {
+      "id": "AKCJA-030",
+      "type": "stock",
+      "name_on_screenshot": "Flextronics International",
+      "working_group": "produkcja elektroniki"
+    },
+    {
+      "id": "AKCJA-031",
+      "type": "stock",
+      "name_on_screenshot": "GlobalFoundries",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-032",
+      "type": "stock",
+      "name_on_screenshot": "LPL Financial Holdings Inc",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-033",
+      "type": "stock",
+      "name_on_screenshot": "Affirm Holdings",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-034",
+      "type": "stock",
+      "name_on_screenshot": "FTAI Aviation Ltd",
+      "working_group": "transport i lotnictwo"
+    },
+    {
+      "id": "AKCJA-035",
+      "type": "stock",
+      "name_on_screenshot": "First Solar",
+      "working_group": "energia i przemysł"
+    },
+    {
+      "id": "AKCJA-036",
+      "type": "stock",
+      "name_on_screenshot": "Toast",
+      "working_group": "oprogramowanie i płatności"
+    },
+    {
+      "id": "AKCJA-037",
+      "type": "stock",
+      "name_on_screenshot": "CNH Industrial",
+      "working_group": "przemysł"
+    },
+    {
+      "id": "AKCJA-038",
+      "type": "stock",
+      "name_on_screenshot": "Lattice Semiconductor Corp",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-039",
+      "type": "stock",
+      "name_on_screenshot": "Guidewire Software",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-040",
+      "type": "stock",
+      "name_on_screenshot": "Semtech Corporation",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-041",
+      "type": "stock",
+      "name_on_screenshot": "QXO Inc",
+      "working_group": "do weryfikacji"
+    },
+    {
+      "id": "AKCJA-042",
+      "type": "stock",
+      "name_on_screenshot": "Chime Financial Inc.",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-043",
+      "type": "stock",
+      "name_on_screenshot": "American Airlines",
+      "working_group": "transport i lotnictwo"
+    },
+    {
+      "id": "AKCJA-044",
+      "type": "stock",
+      "name_on_screenshot": "Forgent Power Solutions Inc.",
+      "working_group": "do weryfikacji"
+    },
+    {
+      "id": "AKCJA-045",
+      "type": "stock",
+      "name_on_screenshot": "FormFactor, Inc.",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-046",
+      "type": "stock",
+      "name_on_screenshot": "Vicor Corp",
+      "working_group": "elektronika i zasilanie"
+    },
+    {
+      "id": "AKCJA-047",
+      "type": "stock",
+      "name_on_screenshot": "XP",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-048",
+      "type": "stock",
+      "name_on_screenshot": "MGIC Investment",
+      "working_group": "finanse i ubezpieczenia"
+    },
+    {
+      "id": "AKCJA-049",
+      "type": "stock",
+      "name_on_screenshot": "Mosaic Company, The",
+      "working_group": "materiały i rolnictwo"
+    },
+    {
+      "id": "AKCJA-050",
+      "type": "stock",
+      "name_on_screenshot": "Aura Minerals Inc",
+      "working_group": "energia i surowce"
+    },
+    {
+      "id": "AKCJA-051",
+      "type": "stock",
+      "name_on_screenshot": "Bank Ozk",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "AKCJA-052",
+      "type": "stock",
+      "name_on_screenshot": "Louisiana-Pacific Corporation",
+      "working_group": "materiały budowlane"
+    },
+    {
+      "id": "AKCJA-053",
+      "type": "stock",
+      "name_on_screenshot": "Howard Hughes",
+      "working_group": "do weryfikacji podmiotu"
+    },
+    {
+      "id": "AKCJA-054",
+      "type": "stock",
+      "name_on_screenshot": "Schneider National",
+      "working_group": "transport i logistyka"
+    },
+    {
+      "id": "AKCJA-055",
+      "type": "stock",
+      "name_on_screenshot": "Western Union",
+      "working_group": "finanse i płatności"
+    },
+    {
+      "id": "ETF-001",
+      "type": "etf",
+      "name_on_screenshot": "WisdomTree Europe Defence UCITS ETF EUR…",
+      "ticker_on_screenshot": "EUDF",
+      "working_group": "obronność"
+    },
+    {
+      "id": "ETF-002",
+      "type": "etf",
+      "name_on_screenshot": "Vanguard Global Aggregate Bond EUR-he…",
+      "ticker_on_screenshot": "VAGF",
+      "working_group": "obligacje globalne"
+    },
+    {
+      "id": "ETF-003",
+      "type": "etf",
+      "name_on_screenshot": "Amundi S&P Global Information Technology…",
+      "ticker_on_screenshot": "WELU",
+      "working_group": "technologia"
+    },
+    {
+      "id": "ETF-004",
+      "type": "etf",
+      "name_on_screenshot": "Amundi EUR Floating Rate Corporate Bond ESG UCI…",
+      "ticker_on_screenshot": "FRNE",
+      "working_group": "obligacje o zmiennym oprocentowaniu"
+    },
+    {
+      "id": "ETF-005",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II EUR Overnight Rate Swap U…",
+      "ticker_on_screenshot": "XEOD",
+      "working_group": "stopa overnight EUR"
+    },
+    {
+      "id": "ETF-006",
+      "type": "etf",
+      "name_on_screenshot": "iShares Euro Floating Rate Bond ESG Dist ETF",
+      "ticker_on_screenshot": "EFRN",
+      "working_group": "obligacje o zmiennym oprocentowaniu"
+    },
+    {
+      "id": "ETF-007",
+      "type": "etf",
+      "name_on_screenshot": "Amundi S&P Global Financials ESG Acc UCIT…",
+      "ticker_on_screenshot": "WELK",
+      "working_group": "finanse"
+    },
+    {
+      "id": "ETF-008",
+      "type": "etf",
+      "name_on_screenshot": "UBS SBI® Foreign AAA-BBB 1-5 ESG UCITS ETF (…",
+      "ticker_on_screenshot": "UEFY",
+      "working_group": "obligacje"
+    },
+    {
+      "id": "ETF-009",
+      "type": "etf",
+      "name_on_screenshot": "Amundi STOXX Europe Defense UCITS ETF (Acc)",
+      "ticker_on_screenshot": "EDFS",
+      "working_group": "obronność"
+    },
+    {
+      "id": "ETF-010",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers Euro Corporate Bond PAB Acc UCITS ETF",
+      "ticker_on_screenshot": "XB4D",
+      "working_group": "obligacje korporacyjne"
+    },
+    {
+      "id": "ETF-011",
+      "type": "etf",
+      "name_on_screenshot": "FlexShares Listed Private Equity ESG UCITS ETF",
+      "ticker_on_screenshot": "FLPE",
+      "working_group": "notowane spółki private equity"
+    },
+    {
+      "id": "ETF-012",
+      "type": "etf",
+      "name_on_screenshot": "UBS BBG Eu Area Liquid Corporates 1-5 Year UCIT…",
+      "ticker_on_screenshot": "UEF6",
+      "working_group": "obligacje korporacyjne"
+    },
+    {
+      "id": "ETF-013",
+      "type": "etf",
+      "name_on_screenshot": "UBS Fund Solutions - J.P. Morgan USD EM Diversifi…",
+      "ticker_on_screenshot": "SEAB",
+      "working_group": "dług rynków wschodzących"
+    },
+    {
+      "id": "ETF-014",
+      "type": "etf",
+      "name_on_screenshot": "Invesco STOXX Europe 600 Optimised Chemica…",
+      "ticker_on_screenshot": "SC00",
+      "working_group": "chemia"
+    },
+    {
+      "id": "ETF-015",
+      "type": "etf",
+      "name_on_screenshot": "iShares AI Innovation Active UCITS ETF USD (…",
+      "ticker_on_screenshot": "IART",
+      "working_group": "sztuczna inteligencja"
+    },
+    {
+      "id": "ETF-016",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers iBoxx EUR High Yield Bond 1-3 Swap UCI…",
+      "ticker_on_screenshot": "XHY1",
+      "working_group": "obligacje high yield"
+    },
+    {
+      "id": "ETF-017",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II Eurozone Government Bond ESG Ti…",
+      "ticker_on_screenshot": "XEZB",
+      "working_group": "obligacje skarbowe"
+    },
+    {
+      "id": "ETF-018",
+      "type": "etf",
+      "name_on_screenshot": "Franklin Sustainable Euro Green Bond UCITS ETF",
+      "ticker_on_screenshot": "FLRG1",
+      "working_group": "zielone obligacje"
+    },
+    {
+      "id": "ETF-019",
+      "type": "etf",
+      "name_on_screenshot": "iShares Core EUR Corporate Bond UCITS E…",
+      "ticker_on_screenshot": "LDCE",
+      "working_group": "obligacje korporacyjne"
+    },
+    {
+      "id": "ETF-020",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers iBoxx EUR Corporate Bond Yield Plus…",
+      "ticker_on_screenshot": "XYPL",
+      "working_group": "obligacje korporacyjne"
+    },
+    {
+      "id": "ETF-021",
+      "type": "etf",
+      "name_on_screenshot": "Amundi USD Floating Rate Corporate Bond ESG UCI…",
+      "ticker_on_screenshot": "FRNH",
+      "working_group": "obligacje o zmiennym oprocentowaniu"
+    },
+    {
+      "id": "ETF-022",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers MSCI Taiwan UCITS ETF (Dist)",
+      "ticker_on_screenshot": "XTMT",
+      "working_group": "akcje Tajwanu"
+    },
+    {
+      "id": "ETF-023",
+      "type": "etf",
+      "name_on_screenshot": "iShares $ Development Bank Bonds UCITS ETF E…",
+      "ticker_on_screenshot": "UEEG",
+      "working_group": "obligacje banków rozwoju"
+    },
+    {
+      "id": "ETF-024",
+      "type": "etf",
+      "name_on_screenshot": "JPMorgan Global High Yield Corporate Bond Mu…",
+      "ticker_on_screenshot": "JYEH",
+      "working_group": "obligacje high yield"
+    },
+    {
+      "id": "ETF-025",
+      "type": "etf",
+      "name_on_screenshot": "iShares STOXX Europe 600 Chemicals UCITS E…",
+      "ticker_on_screenshot": "EXV7",
+      "working_group": "chemia"
+    },
+    {
+      "id": "ETF-026",
+      "type": "etf",
+      "name_on_screenshot": "iShares Listed Private Equity UCITS ETF USD (A…",
+      "ticker_on_screenshot": "CBUW",
+      "working_group": "notowane spółki private equity"
+    },
+    {
+      "id": "ETF-027",
+      "type": "etf",
+      "name_on_screenshot": "L&G Emerging Markets Corporate Bond (USD) Sc…",
+      "ticker_on_screenshot": "EMAB",
+      "working_group": "obligacje korporacyjne rynków wschodzących"
+    },
+    {
+      "id": "ETF-028",
+      "type": "etf",
+      "name_on_screenshot": "Amundi S&P Global Information Technology…",
+      "ticker_on_screenshot": "WELL1",
+      "working_group": "technologia"
+    },
+    {
+      "id": "ETF-029",
+      "type": "etf",
+      "name_on_screenshot": "Invesco KBW NASDAQ Fintech UCITS ETF",
+      "ticker_on_screenshot": "KFTK",
+      "working_group": "fintech"
+    },
+    {
+      "id": "ETF-030",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II EUR Corporate Bond UCITS ETF (Dist)",
+      "ticker_on_screenshot": "XEC1",
+      "working_group": "obligacje korporacyjne"
+    },
+    {
+      "id": "ETF-031",
+      "type": "etf",
+      "name_on_screenshot": "L&G Emerging Cyber Security ESG Exclusions…",
+      "ticker_on_screenshot": "ES6Y",
+      "working_group": "cyberbezpieczeństwo"
+    },
+    {
+      "id": "ETF-032",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II Target Maturity Sept 2031 EUR Corporate…",
+      "ticker_on_screenshot": "XM31",
+      "working_group": "obligacje z docelowym terminem 2031"
+    },
+    {
+      "id": "ETF-033",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers ESG EUR High Yield Corporate Bond UC…",
+      "ticker_on_screenshot": "XZHE",
+      "working_group": "obligacje high yield"
+    },
+    {
+      "id": "ETF-034",
+      "type": "etf",
+      "name_on_screenshot": "Invesco Artificial Intelligence Enablers UCI…",
+      "ticker_on_screenshot": "IVAI",
+      "working_group": "sztuczna inteligencja"
+    },
+    {
+      "id": "ETF-035",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers MSCI Europe Information Technology…",
+      "ticker_on_screenshot": "XS8R",
+      "working_group": "technologia"
+    },
+    {
+      "id": "ETF-036",
+      "type": "etf",
+      "name_on_screenshot": "Amundi S&P Global Financials ESG Dist UCIT…",
+      "ticker_on_screenshot": "WELY",
+      "working_group": "finanse"
+    },
+    {
+      "id": "ETF-037",
+      "type": "etf",
+      "name_on_screenshot": "First Trust Bloomberg Global Semiconductor Su…",
+      "ticker_on_screenshot": "FCHP",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "ETF-038",
+      "type": "etf",
+      "name_on_screenshot": "iShares USD Development Bank Bonds UCITS ETF U…",
+      "ticker_on_screenshot": "36BD",
+      "working_group": "obligacje banków rozwoju"
+    },
+    {
+      "id": "ETF-039",
+      "type": "etf",
+      "name_on_screenshot": "L&G Metaverse ESG Exclusions UCITS ETF - …",
+      "ticker_on_screenshot": "MTVR1",
+      "working_group": "metaverse"
+    },
+    {
+      "id": "ETF-040",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II J.P. Morgan EM Local Government Bo…",
+      "ticker_on_screenshot": "XEML",
+      "working_group": "dług rynków wschodzących w walutach lokalnych"
+    },
+    {
+      "id": "ETF-041",
+      "type": "etf",
+      "name_on_screenshot": "Xtrackers II Germany Government Bond 1-3 U…",
+      "ticker_on_screenshot": "D5BC",
+      "working_group": "obligacje skarbowe"
+    },
+    {
+      "id": "ETF-042",
+      "type": "etf",
+      "name_on_screenshot": "Amundi S&P Global Energy Carbon Reduced UCITS E…",
+      "ticker_on_screenshot": "WELP",
+      "working_group": "energia"
+    },
+    {
+      "id": "ETF-043",
+      "type": "etf",
+      "name_on_screenshot": "UBS MSCI United Kingdom UCITS ETF hEUR (Dist)",
+      "ticker_on_screenshot": "CHSC",
+      "working_group": "akcje Wielkiej Brytanii"
+    },
+    {
+      "id": "ETF-044",
+      "type": "etf",
+      "name_on_screenshot": "Invesco S&P World Financials ESG UCITS ET…",
+      "ticker_on_screenshot": "WF1E",
+      "working_group": "finanse"
+    },
+    {
+      "id": "ETF-045",
+      "type": "etf",
+      "name_on_screenshot": "Ossiam Bloomberg Canada PAB UCITS ETF…",
+      "ticker_on_screenshot": "OP8E",
+      "working_group": "akcje Kanady"
+    },
+    {
+      "id": "ETF-046",
+      "type": "etf",
+      "name_on_screenshot": "L&G Optical Technology & Photonics ESG Exclusions…",
+      "ticker_on_screenshot": "LADR1",
+      "working_group": "fotonika"
+    },
+    {
+      "id": "AKCJA-056",
+      "type": "stock",
+      "name_on_screenshot": "Philip Morris",
+      "ticker_on_screenshot": "PM",
+      "working_group": "tytoń"
+    },
+    {
+      "id": "AKCJA-057",
+      "type": "stock",
+      "name_on_screenshot": "GE Aerospace",
+      "ticker_on_screenshot": "GE",
+      "working_group": "lotnictwo i przemysł"
+    },
+    {
+      "id": "AKCJA-058",
+      "type": "stock",
+      "name_on_screenshot": "Intel",
+      "ticker_on_screenshot": "INTC",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "AKCJA-059",
+      "type": "stock",
+      "name_on_screenshot": "Shell",
+      "ticker_on_screenshot": "SHEL",
+      "working_group": "ropa i gaz"
+    },
+    {
+      "id": "AKCJA-060",
+      "type": "stock",
+      "name_on_screenshot": "HSBC",
+      "ticker_on_screenshot": "HSBC",
+      "working_group": "bankowość"
+    },
+    {
+      "id": "AKCJA-061",
+      "type": "stock",
+      "name_on_screenshot": "Palo Alto Networks",
+      "ticker_on_screenshot": "PANW",
+      "working_group": "cyberbezpieczeństwo"
+    },
+    {
+      "id": "AKCJA-062",
+      "type": "stock",
+      "name_on_screenshot": "Morgan Stanley",
+      "ticker_on_screenshot": "MS",
+      "working_group": "bankowość"
+    },
+    {
+      "id": "AKCJA-063",
+      "type": "stock",
+      "name_on_screenshot": "Astra Zeneca PLC",
+      "ticker_on_screenshot": "AZN",
+      "working_group": "biofarmaceutyka"
+    },
+    {
+      "id": "AKCJA-064",
+      "type": "stock",
+      "name_on_screenshot": "SAP",
+      "ticker_on_screenshot": "SAP",
+      "working_group": "oprogramowanie"
+    },
+    {
+      "id": "AKCJA-065",
+      "type": "stock",
+      "name_on_screenshot": "SAP SE",
+      "ticker_on_screenshot": "SAP",
+      "working_group": "oprogramowanie dla firm"
+    },
+    {
+      "id": "AKCJA-066",
+      "type": "stock",
+      "name_on_screenshot": "Roche Holding AG",
+      "ticker_on_screenshot": "RHO",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-067",
+      "type": "stock",
+      "name_on_screenshot": "Roche Holding AG Partizipationsscheine",
+      "ticker_on_screenshot": "RHO5",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-068",
+      "type": "stock",
+      "name_on_screenshot": "Procter & Gamble",
+      "ticker_on_screenshot": "PG",
+      "working_group": "towary konsumpcyjne"
+    },
+    {
+      "id": "AKCJA-069",
+      "type": "stock",
+      "name_on_screenshot": "Merck",
+      "ticker_on_screenshot": "MRK",
+      "working_group": "leki na receptę"
+    },
+    {
+      "id": "AKCJA-070",
+      "type": "stock",
+      "name_on_screenshot": "UnitedHealth",
+      "ticker_on_screenshot": "UNH",
+      "working_group": "opieka medyczna"
+    },
+    {
+      "id": "AKCJA-071",
+      "type": "stock",
+      "name_on_screenshot": "Bank of America",
+      "ticker_on_screenshot": "BAC",
+      "working_group": "bankowość"
+    },
+    {
+      "id": "AKCJA-072",
+      "type": "stock",
+      "name_on_screenshot": "Home Depot",
+      "ticker_on_screenshot": "HD",
+      "working_group": "remonty domów"
+    },
+    {
+      "id": "AKCJA-073",
+      "type": "stock",
+      "name_on_screenshot": "Novartis AG",
+      "ticker_on_screenshot": "NVS",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-074",
+      "type": "stock",
+      "name_on_screenshot": "Novartis AG",
+      "ticker_on_screenshot": "NOT",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-075",
+      "type": "stock",
+      "name_on_screenshot": "ASML Holding N.V.",
+      "ticker_on_screenshot": "ASME",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "AKCJA-076",
+      "type": "stock",
+      "name_on_screenshot": "AbbVie",
+      "ticker_on_screenshot": "ABBV",
+      "working_group": "biofarmaceutyka"
+    },
+    {
+      "id": "AKCJA-077",
+      "type": "stock",
+      "name_on_screenshot": "Costco Wholesale",
+      "ticker_on_screenshot": "COST",
+      "working_group": "handel detaliczny"
+    },
+    {
+      "id": "AKCJA-078",
+      "type": "stock",
+      "name_on_screenshot": "Chevron",
+      "ticker_on_screenshot": "CVX",
+      "working_group": "ropa i gaz"
+    },
+    {
+      "id": "AKCJA-079",
+      "type": "stock",
+      "name_on_screenshot": "Palantir",
+      "ticker_on_screenshot": "PLTR",
+      "working_group": "analityka danych"
+    },
+    {
+      "id": "AKCJA-080",
+      "type": "stock",
+      "name_on_screenshot": "Coca-Cola",
+      "ticker_on_screenshot": "KO",
+      "working_group": "napoje"
+    },
+    {
+      "id": "AKCJA-081",
+      "type": "stock",
+      "name_on_screenshot": "Cisco",
+      "ticker_on_screenshot": "CSCO",
+      "working_group": "urządzenia telekomunikacyjne"
+    },
+    {
+      "id": "AKCJA-082",
+      "type": "stock",
+      "name_on_screenshot": "Apple",
+      "ticker_on_screenshot": "AAPL",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-083",
+      "type": "stock",
+      "name_on_screenshot": "Alphabet (Class A)",
+      "ticker_on_screenshot": "GOOGL",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-084",
+      "type": "stock",
+      "name_on_screenshot": "Alphabet (Class C)",
+      "ticker_on_screenshot": "GOOG",
+      "working_group": "technologia"
+    },
+    {
+      "id": "AKCJA-085",
+      "type": "stock",
+      "name_on_screenshot": "Amazon",
+      "ticker_on_screenshot": "AMZN",
+      "working_group": "handel elektroniczny"
+    },
+    {
+      "id": "AKCJA-086",
+      "type": "stock",
+      "name_on_screenshot": "Taiwan Semiconductor",
+      "ticker_on_screenshot": "TSM",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "AKCJA-087",
+      "type": "stock",
+      "name_on_screenshot": "Tesla",
+      "ticker_on_screenshot": "TSLA",
+      "working_group": "pojazdy elektryczne"
+    },
+    {
+      "id": "AKCJA-088",
+      "type": "stock",
+      "name_on_screenshot": "Meta Platforms",
+      "ticker_on_screenshot": "META",
+      "working_group": "media społecznościowe"
+    },
+    {
+      "id": "AKCJA-089",
+      "type": "stock",
+      "name_on_screenshot": "Eli Lilly",
+      "ticker_on_screenshot": "LLY",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-090",
+      "type": "stock",
+      "name_on_screenshot": "SpaceX",
+      "ticker_on_screenshot": "SPCX",
+      "working_group": "do weryfikacji instrumentu"
+    },
+    {
+      "id": "AKCJA-091",
+      "type": "stock",
+      "name_on_screenshot": "Walmart",
+      "ticker_on_screenshot": "WMT",
+      "working_group": "handel detaliczny"
+    },
+    {
+      "id": "AKCJA-092",
+      "type": "stock",
+      "name_on_screenshot": "JPMorgan",
+      "ticker_on_screenshot": "JPM",
+      "working_group": "bankowość"
+    },
+    {
+      "id": "AKCJA-093",
+      "type": "stock",
+      "name_on_screenshot": "Berkshire Hathaway",
+      "ticker_on_screenshot": "BRK.B",
+      "working_group": "holding inwestycyjny"
+    },
+    {
+      "id": "AKCJA-094",
+      "type": "stock",
+      "name_on_screenshot": "SK Hynix Inc",
+      "ticker_on_screenshot": "SKHY",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "AKCJA-095",
+      "type": "stock",
+      "name_on_screenshot": "Exxon Mobil",
+      "ticker_on_screenshot": "XOM",
+      "working_group": "ropa i gaz"
+    },
+    {
+      "id": "AKCJA-096",
+      "type": "stock",
+      "name_on_screenshot": "Visa",
+      "ticker_on_screenshot": "V",
+      "working_group": "płatności"
+    },
+    {
+      "id": "AKCJA-097",
+      "type": "stock",
+      "name_on_screenshot": "J&J",
+      "ticker_on_screenshot": "JNJ",
+      "working_group": "farmaceutyki"
+    },
+    {
+      "id": "AKCJA-098",
+      "type": "stock",
+      "name_on_screenshot": "ASML Holding",
+      "ticker_on_screenshot": "ASML",
+      "working_group": "półprzewodniki"
+    },
+    {
+      "id": "AKCJA-099",
+      "type": "stock",
+      "name_on_screenshot": "OC Oerlikon Corporation AG",
+      "working_group": "przemysł"
+    },
+    {
+      "id": "AKCJA-100",
+      "type": "stock",
+      "name_on_screenshot": "MPH Health Care AG",
+      "working_group": "ochrona zdrowia"
+    },
+    {
+      "id": "AKCJA-101",
+      "type": "stock",
+      "name_on_screenshot": "Prospect Capital",
+      "working_group": "finanse i inwestycje"
+    },
+    {
+      "id": "AKCJA-102",
+      "type": "stock",
+      "name_on_screenshot": "VYLR",
+      "working_group": "do weryfikacji podmiotu"
+    },
+    {
+      "id": "AKCJA-103",
+      "type": "stock",
+      "name_on_screenshot": "Take-Two Interactive",
+      "working_group": "gry komputerowe",
+      "ticker_on_screenshot": "TTWO"
+    },
+    {
+      "id": "AKCJA-104",
+      "type": "stock",
+      "name_on_screenshot": "Veeva Systems",
+      "working_group": "oprogramowanie dla sektora ochrony zdrowia"
+    },
+    {
+      "id": "AKCJA-105",
+      "type": "stock",
+      "name_on_screenshot": "Humana",
+      "working_group": "ubezpieczenia zdrowotne"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Photo: Jonny Gios, published October 21, 2024.
+https://unsplash.com/photos/a-green-and-purple-aurora-bore-in-the-night-sky-1wUZqDjFea8
+License: Unsplash License, checked 2026-11-02.
+https://unsplash.com/license
+Original downloaded locally; displayed using CSS positioning and edge mask.
