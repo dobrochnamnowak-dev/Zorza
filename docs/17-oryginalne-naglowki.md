@@ -1,5 +1,7 @@
 # Oryginalne nagłówki — 4 listopada 2026
 
+> Notatka historyczna. Aktualny stan po wdrożeniu z 5 listopada: nagłówki w oryginale, osobne streszczenia wyłączone; Sol low przygotowuje sytuację i brief. [Potwierdzenie](19-brief-zamiast-podsumowan.md). Starsze zapisy poniżej nie przywracają wycofanych funkcji.
+
 ## Diagnoza produkcji
 
 Odczyt prywatnego statusu wykazał 100/100 wykorzystanych tłumaczeń w dniu polskim oraz 122 oczekujące nagłówki. Samo źródło miało tytuły, ale interfejs zasłaniał je komunikatem „Nagłówek w tłumaczeniu”. Była to kolejka ograniczona budżetem, nie brak pobranych publikacji.

@@ -1,5 +1,7 @@
 # Kalendarz emitentów i wybór modelu — 4 listopada 2026
 
+> Notatka historyczna. Aktualny stan po wdrożeniu z 5 listopada: nagłówki w oryginale, osobne streszczenia wyłączone; Sol low przygotowuje sytuację i brief. [Potwierdzenie](19-brief-zamiast-podsumowan.md). Starsze zapisy poniżej nie przywracają wycofanych funkcji.
+
 ## Uzgodnienie
 
 Po porównaniu na AMD właścicielka wybrała GPT-6.1 Sol low do Sytuacji firmy i briefu prasowego. Oba powstają w dotychczasowym pojedynczym zadaniu `insight`, bez nowego przebiegu dla samego briefu. GPT-6 Luna low pozostaje do tłumaczeń nagłówków i podsumowań pojedynczych artykułów. Nadal tylko obserwowane lub portfel; brak ponawiania i masowego przeliczania dawnych opisów. Harmonogram i limity wejścia pozostają bez zmian.

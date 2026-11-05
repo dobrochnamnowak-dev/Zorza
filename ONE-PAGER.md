@@ -1,6 +1,6 @@
 # Zorza — karta produktu
 
-One-pager · 5 listopada 2026 · zakres po korekcie dotyczącej briefu
+One-pager · stan wdrożony 5 listopada 2026
 [Dokumentacja](README.md) · [Wymagania produktu](PRD.md) · [Specyfikacja techniczna](SPEC.md)
 
 ## Cel i odbiorczyni
@@ -40,8 +40,8 @@ Brief jest przyrostowy, bez uzupełniania historii; wpis pozostaje ważny sześ�
 
 Instalacja jako PWA z Safari przez „Dodaj do ekranu początkowego”. Czarne tło, zorza, czytelne logotypy i krótka nawigacja służą obsłudze telefonu.
 
-Publiczne dane, bez płatnych notowań i bez obchodzenia paywalli. Sytuację i brief przygotowuje Sol low. Osobne streszczenia artykułów zostały wycofane z zakresu, aby nie dublować opracowań i zużycia AI. Gotowe wyniki są zapisywane; pusta kolejka nie wywołuje modelu. Oszczędzanie transferu zachowuje historię, godziny aktualizacji i pełne dane profilu.
+Publiczne dane, bez płatnych notowań i bez obchodzenia paywalli. Sytuację i brief przygotowuje Sol low. Gotowe wyniki są zapisywane; pusta kolejka nie wywołuje modelu. Oszczędzanie transferu zachowuje historię, godziny aktualizacji i pełne dane profilu.
 
-Osobne streszczenia są wyłączone w interfejsie, API i procesach AI; zapisane wcześniej treści zachowano ([potwierdzenie](docs/19-brief-zamiast-podsumowan.md)).
+Wyłączenie osobnych streszczeń działa w aplikacji i AI; wcześniejsze treści zachowano ([potwierdzenie](docs/19-brief-zamiast-podsumowan.md)).
 
 Pokrycie cen i terminów zależy od źródeł; data sprawdzenia nie zastępuje daty danych. Zorza nie wykonuje transakcji ani nie gwarantuje przyszłych kursów. GitHub przechowuje kod i dokumentację; publikacja repozytorium nie wdraża automatycznie aplikacji.

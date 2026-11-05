@@ -1,5 +1,7 @@
 # Sytuacja podmiotu i brief prasowy
 
+> Notatka historyczna. Aktualny stan po wdrożeniu z 5 listopada: nagłówki w oryginale, osobne streszczenia wyłączone; Sol low przygotowuje sytuację i brief. [Potwierdzenie](19-brief-zamiast-podsumowan.md). Starsze zapisy poniżej nie przywracają wycofanych funkcji.
+
 **Aktualizacja 4.11.2026:** obowiązuje [nowy harmonogram](16-harmonogram-i-opracowania.md): poniedziałek i czwartek 14:30 oraz pierwszy opis po dodaniu podmiotu. Ten zapis zastępuje wymienione poniżej codzienne 15:00.
 
 Nowszy wybór modelu z 4 listopada: Sytuacja i brief używają GPT-6.1 Sol low, tłumaczenia i pojedyncze podsumowania pozostają na Lunie. Szczegóły i potwierdzenie wdrożenia: [Kalendarz i model](15-kalendarz-i-model.md). To zastępuje wcześniejszy wybór Luny dla zadania insight opisany poniżej.

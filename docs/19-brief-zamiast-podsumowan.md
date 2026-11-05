@@ -23,12 +23,12 @@ Harmonogramy i modele nie zmieniły się: ceny 15:40/21:45, osobiste także 18:3
 
 ## Zrealizowany zakres wyłączenia
 
-- Usunąć przyciski generowania/ponawiania i osobną sekcję streszczenia artykułu; pozostawić nagłówek, metadane, źródło i link.
-- Zablokować nowe zlecenia i ponowienia starszą ścieżką API oraz wykonywanie starych oczekujących zleceń streszczeń. Nie uruchamiać AI w ramach tej migracji.
-- Nie kasować historycznych treści ani danych portfela; pola i tabele mogą pozostać dla zgodności.
-- Zachować wspólny odczyt artykułów potrzebny publikacjom i kalendarzowi oraz niezależne `insight_jobs` i przyrostowy brief.
-- Zaktualizować Ustawienia i instrukcje, sprawdzić brak osobnych wywołań AI oraz działanie profilu, źródeł, briefu, kalendarza i harmonogramu.
-- Oddzielnie wdrożyć i zweryfikować aplikację; wykonanie potwierdzono powyżej.
+- Usunięto przyciski generowania i ponawiania oraz osobną sekcję streszczenia. Pozostawiono nagłówek, metadane, fragment źródła i link.
+- Zablokowano nowe zlecenia, ponowienia oraz wykonywanie starych oczekujących streszczeń. Migracja nie uruchamiała AI.
+- Zachowano historyczne treści i dane portfela; pola i tabele pozostają dla zgodności.
+- Zachowano wspólny odczyt artykułów potrzebny publikacjom i kalendarzowi, niezależne `insight_jobs` oraz przyrostowy brief.
+- Zaktualizowano Ustawienia i instrukcje. Zweryfikowano blokady, profil, źródła, brief, kalendarz i niezmieniony harmonogram.
+- Wdrożono i sprawdzono końcowy zestaw na VPS; dane wersji i wyniki są powyżej.
 
 Notatki opisujące wcześniejsze wdrożenia i testy zachowują wartość historyczną. Nie przywracają wycofanego wymagania FR-11.
 

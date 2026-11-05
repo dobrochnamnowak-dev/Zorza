@@ -18,8 +18,8 @@ Node.js 24 udostępnia SQLite bez zewnętrznej biblioteki. Testy korzystają z t
 
 - katalog, zakupy, mapowania, waluty, daty i obliczenia zmian;
 - źródła zagraniczne, komunikaty, deduplikacja, usunięcia i wersje;
-- oryginalne nagłówki, brak automatycznych tłumaczeń, odrzucenie dawnych zadań i niezależność podsumowań od starego limitu;
-- podsumowanie wyłącznie po żądaniu, ręczne ponowienia i odzyskanie przerwanych zleceń;
+- oryginalne nagłówki i brak automatycznych tłumaczeń;
+- blokada osobnych streszczeń w API, workerze i moście, brak wywołań AI oraz zachowanie wcześniej zapisanych treści;
 - kalendarz, dowody, niepewność i harmonogram w polskiej strefie;
 - sesje, Origin, ograniczenie API i brak cache danych prywatnych;
 - wykresy, braki, cache, blokady źródła i zgodność instrumentu;
@@ -28,11 +28,15 @@ Node.js 24 udostępnia SQLite bez zewnętrznej biblioteki. Testy korzystają z t
 - lekki dashboard: pełny profil, zachowanie pól pominiętych i nowszych kursów;
 - wspólny odczyt artykułu: HTTP 304/200/403, paywall, `no-store`, kontrola domen i nowy cykl.
 
-Ostatni pełny zestaw aplikacji sprawdzony 5 listopada 2026: **124 testy**. Po drobnej korekcie powtórzono siedem testów objętych zmianą; przeszły. Osiem testów kontrolera potwierdzono wcześniej; etap optymalizacji nie zmieniał kontrolera. Testy transportu są w `test/transport-optimization.test.mjs`, integracyjny test HTTP w `test/optimized-http.test.mjs`.
+Ostatni pełny zestaw aplikacji sprawdzony 5 listopada 2026 po wyłączeniu streszczeń: **121 testów**, bez rzeczywistych wywołań AI. Dodatkowo powtórzono test HTTP migracji starej kolejki przy starcie serwera. Osiem testów kontrolera potwierdzono przy wcześniejszej weryfikacji; ten etap nie zmieniał kontrolera. Testy transportu są w `test/transport-optimization.test.mjs`, test HTTP w `test/optimized-http.test.mjs`.
+
+Wcześniejszy etap optymalizacji miał 124 testy. Późniejsze wyłączenie streszczeń zastąpiło wycofane scenariusze generowania testami blokad; liczby dotyczą różnych wersji kodu.
 
 Po wdrożeniu sprawdzono Start, profil, publikacje, Kalendarz i Ustawienia przy 390 × 844, brak błędów konsoli oraz gotowość schedulerów i mostu. Testy nie uruchamiały rzeczywistych modeli ani pełnego pobierania danych poza harmonogramem. Pomiary i dokładny zakres potwierdzeń są w [notatce optymalizacji](18-optymalizacja-transportu.md).
 
-## Naprawa niewidocznych podsumowań — 3 listopada 2026
+## Historyczna naprawa podsumowań — 3 listopada 2026
+
+Funkcja opisana w tej sekcji została następnie wyłączona. Poniższy zapis dokumentuje wcześniejszą diagnozę, nie aktualną obsługę aplikacji.
 
 Serwer miał gotowe wyniki, ale otwarty artykuł nie odświeżał danych. Dodatkowo stary dashboard miał pierwszeństwo przed nowszą odpowiedzią profilu. Interfejs pokazywał ogólną informację o połączeniu, mimo że ChatGPT był zalogowany.
 
@@ -42,8 +46,9 @@ Poprawka synchronizuje oba widoki i pobiera stan widocznych oczekujących wynik�
 
 | Objaw | Co sprawdzić |
 | --- | --- |
-| Artykuł stale w kolejce | stan ChatGPT, zajętość mostu, kolejkę i limity; nie generować duplikatów |
-| Zadanie failed | zapisany błąd, dostęp do źródła, ważność wersji; ponowienie tylko ręczne |
+| Sytuacja lub brief stale w kolejce | stan ChatGPT, zajętość mostu, `insight_jobs`, dostępność materiałów i limity; nie generować duplikatów |
+| Zadanie sytuacji lub briefu failed | zapisany błąd, dostęp do źródła i ważność wersji; bez automatycznego ponowienia |
+| Stary przycisk streszczenia lub odpowiedź 410 | odświeżyć aplikację; funkcja jest celowo wyłączona, nie ponawiać generowania |
 | Nieaktualna cena | datę źródła i `quotesReport`, dostępność mapowania i blokady HTTP |
 | Brak wykresu | mapowanie, odpowiedź źródła, przerwę po 429 i długość historii |
 | Brak terminu | źródło, dowód i rozpoznawalną dokładną datę; brak wpisu nie dowodzi braku wydarzenia |
@@ -52,7 +57,7 @@ Poprawka synchronizuje oba widoki i pobiera stan widocznych oczekujących wynik�
 | Czat po restarcie otrzymuje pełną historię | to oczekiwany reset sesji synchronizacji; kolejne odczyty powinny przesyłać tylko zmiany |
 | W lekkim dashboardzie nie ma publikacji | sprawdzić `omitted`; profil pobiera je osobnym API, brak pola nie oznacza usunięcia |
 
-Nie traktuj samego `summaryWorkerConfigured` jako dowodu zalogowania. Bieżący stan konta pokazuje status mostu. Licznik dawnego procesu `workerSeen` może być pusty, mimo że współczesna ścieżka działa.
+`summaryWorkerConfigured` i `summaryWorkerActive` są stale `false`, ponieważ osobne streszczenia są wyłączone. `insightWorkerConfigured` oznacza konfigurację mostu dla sytuacji i briefu, nie dowodzi zalogowania. Bieżący stan konta pokazuje status mostu. Licznik dawnego procesu `workerSeen` może być pusty, mimo że współczesna ścieżka działa.
 
 ## Wyłączenie osobnych streszczeń — 5 listopada 2026
 

@@ -2,13 +2,13 @@
 
 Prywatna aplikacja PWA na telefon do obserwowania akcji i ETF-ów: notowania, wykresy, zagraniczne publikacje, komunikaty emitentów, terminy oraz czat z Codexem.
 
-Dokumentacja opisuje wdrożenie sprawdzone **5 listopada 2026** i późniejszą korektę zakresu: brief zastępuje osobne streszczenia artykułów. Wyłączenie osobnych streszczeń wdrożono i sprawdzono; [stan wdrożenia](docs/19-brief-zamiast-podsumowan.md). Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
+Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**: publikacje opracowujemy w briefie, bez osobnych streszczeń artykułów. [Potwierdzenie wdrożenia](docs/19-brief-zamiast-podsumowan.md). Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
 
 ## Zacznij tutaj
 
 | Potrzeba | Dokument |
 | --- | --- |
-| Wycofanie osobnych streszczeń na rzecz briefu — decyzja i stan kodu | [Tylko brief](docs/19-brief-zamiast-podsumowan.md) |
+| Brief zamiast osobnych streszczeń — stan wdrożenia | [Tylko brief](docs/19-brief-zamiast-podsumowan.md) |
 | Cel, odbiorczyni, funkcje i granice produktu na jednej stronie | [Zorza — one-pager](ONE-PAGER.md) |
 | Wymagania produktu, scenariusze i kryteria odbioru | [PRD](PRD.md) |
 | Kontrakty techniczne, dane, API i automatyzacja | [SPEC](SPEC.md) |
