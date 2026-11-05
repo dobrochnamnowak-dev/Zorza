@@ -1,7 +1,7 @@
 # Zorza — specyfikacja techniczna
 
-Wersja 1.0 · 5 listopada 2026  
-Odpowiada [PRD 1.0](PRD.md). Opisuje kod bazowy `422b3c4` i odróżnia go od ostatniej potwierdzonej wersji produkcji `d9b97559380549ea9321a8541409b48e` z 4 listopada 2026. Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań.
+Wersja 1.1 · 5 listopada 2026
+Odpowiada [PRD 1.1](PRD.md). Opisuje kod optymalizacji `74319c5` i potwierdzone wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` z 5 listopada 2026, 13:30:49 czasu polskiego. Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań.
 
 [Spis projektu](README.md) · [Szczegóły interfejsów](docs/08-api-dane.md) · [Wdrożenia](docs/07-wdrozenie.md)
 
@@ -44,6 +44,7 @@ Stan aplikacji jest w `/opt/zorza/data`, konta i czatu w `/opt/zorza/chat-state`
 | FR-15 | `calendar-fetch.mjs`, `issuer-calendar.mjs`, `event-extraction.mjs`, `event-windows.mjs` |
 | FR-16 | `settings.mjs`, funkcje `scheduled*` w `server.mjs`, trwałe sloty |
 | FR-17–18 | `chat-bridge.mjs`, `chat-images.mjs`, `deployment/controller.py`, testy błędów i wersji |
+| FR-19 | `chat-sync.mjs`, `data-sync.js`, `article-reader.mjs`, lekkie widoki dashboardu; szczegóły w sekcji 14 |
 
 ## 3. Reguły zakresu
 
@@ -71,6 +72,7 @@ Migracje SQLite wykonuje `createStore`. Używane są WAL, klucze obce i oczekiwa
 | `price_history` | Cache serii identyfikowanej zakresem i instrumentem; czas odczytu niezależny od czasu punktu |
 | `sources` | Podmiot, URL, domeny/reguły, aktywność, ETag, modyfikacja, ostatnie sprawdzenie/sukces/błąd |
 | `articles` | Podmiot i źródło, oryginalne `title`, URL, publikacja/odkrycie, `content_hash`, status treści, podsumowanie, odczyt, ważność i miękkie usunięcie; unikalne `(instrument_id, url)` |
+| `article_page_cache` | URL, walidatory HTTP, wyodrębniony tekst i `checked_at`; wspólny odczyt w cyklu, ponowna weryfikacja w następnym. Tabelę tworzy czytnik artykułów przy pierwszym użyciu |
 | `revisions` | Historia poprzednich wersji treści |
 | `jobs` | Podsumowanie żądane przez użytkowniczkę; unikalne `(article_id, content_hash)`, dzierżawa i stan |
 | `company_insights` | Opis, hash wejścia/zmiany/odczytu, status, `checked_at`, `generated_at`, `changed_at`, ostatni slot |
@@ -211,6 +213,7 @@ Wszystkie poniższe ścieżki poza sesją/logowaniem są prywatne. Mutacje wymag
 | --- | --- |
 | Logowanie | GET `/api/session`; POST `/api/login`, `/api/logout` |
 | Dashboard | GET `/api/dashboard`: podmioty, ceny, zakupy, publikacje, terminy, insights, status i ustawienia |
+| Lekkie widoki | GET `/api/dashboard?view=overview\|calendar\|settings`; `omitted` oznacza dane nieprzesłane, nie usunięte; szczegóły w sekcji 14 |
 | Mała synchronizacja cen | GET `/api/quotes`; nie zwraca portfela ani artykułów |
 | Historia | GET `/api/price-history?id=…&period=1d\|1w\|1y\|5y` |
 | Obserwowanie | POST `/api/watch`: `{id, watched: boolean}` |
@@ -224,6 +227,7 @@ Wszystkie poniższe ścieżki poza sesją/logowaniem są prywatne. Mutacje wymag
 | Ustawienia | POST `/api/settings`; walidowane pola z `lib/settings.mjs` |
 | Terminy | POST `/api/event-review`: `{id, status}`; obecny endpoint zmienia tylko wpis `pending` |
 | Czat | `/api/chat/status`, `/api/chat/login`, `/api/chat/message`, `/api/chat/stop` |
+| Przyrostowy stan czatu | GET `/api/chat/status?sync=1&cursor=…`; GET `/api/chat/status?meta=1` bez historii; bez parametrów pełny dotychczasowy kontrakt |
 | Backend | GET `/api/deployment/status`; POST `/api/deployment/prepare`, `/api/deployment/deploy` |
 
 Rozróżniamy brak danych, kolejkę, pracę, ukończenie, błąd i nieświeży wynik. Samo `summaryWorkerConfigured` potwierdza konfigurację adresu mostu, nie zalogowanie. Rzeczywisty status pochodzi z mostu. Wyszukiwanie lub odświeżanie UI nie zleca samodzielnie AI.
@@ -268,6 +272,7 @@ Repozytorium zawiera komplet modułów mostu, w tym `insight-ai.mjs`. Szablony C
 | Mobilność | 390 × 844, przyciski w jednym rzędzie, źródła i daty, gest i animacja z ograniczeniem ruchu |
 | Wdrożenie | Niezmienna wersja, testy izolowane, zdrowie app, kopia i ścieżka cofnięcia |
 | Praca bez komputera | Aktywny scheduler, trwałe dane, polityka restartu usług, ważne logowanie mostu i raport rzeczywistego wykonania |
+| Oszczędny transport | Pełna historia po restarcie mostu, poprawne delty i usuwanie zdjęć, zachowanie danych pominiętych w dashboardzie, ponowna weryfikacja artykułu w nowym cyklu |
 
 Polecenia referencyjne:
 
@@ -278,17 +283,21 @@ node --check public/app.js
 (cd deployment && python3 -m unittest test_controller.py)
 ```
 
-Na bazie z 5 listopada: 117 testów aplikacji i 8 testów kontrolera zakończonych powodzeniem, bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
+5 listopada po optymalizacji przeszły 124 testy aplikacji. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie. Bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
 
 Otwarte decyzje z PRD: push, synchronizacja Apple, przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
 
 
 ## 14. Optymalizacja transportu — zmiana 5 listopada 2026
 
-Pierwszy etap jest opisany w [notatce technicznej](docs/18-optymalizacja-transportu.md), która podaje osobno stan lokalny i wdrożenie. Nie zmienia wymagań funkcjonalnych, godzin z sekcji 9, modeli ani zbierania danych przy wyłączonym komputerze.
+Pierwszy etap wdrożono i sprawdzono 5 listopada 2026. [Notatka techniczna](docs/18-optymalizacja-transportu.md) dokumentuje wersję, testy, pomiary produkcyjne i ich granice. Optymalizacja realizuje FR-19: zachowuje dotychczasowe funkcje, godziny z sekcji 9, modele oraz zbieranie danych przy wyłączonym komputerze.
 
 - Czat: opcjonalne `GET /api/chat/status?sync=1&cursor=…` zwraca tylko zmienione wiadomości w `sync`, z pełną kolejnością ID i procesowym epoch. `?meta=1` pomija historię. Bez parametrów zachowany jest stary format. Po restarcie lub niepoprawnym cursor następuje reset do kompletu; odpytywanie widocznego czatu pozostaje co 3 s.
 - Treści: `article_page_cache` zawiera `url`, `etag`, `modified`, `content_text`, `checked_at`. Wspólny czytnik łączy odczyt dla publikacji i kalendarza jednego slotu. Nowy slot ponownie weryfikuje źródło, korzystając z walidatorów HTTP, bez traktowania niezweryfikowanego starego tekstu jako aktualnego.
 - Dashboard: dotychczasowy pełny kontrakt zostaje. `view=overview` pomija artykuły, zlecenia, źródła, wydarzenia i pełną treść insight; `view=calendar` dodaje wydarzenia, `view=settings` źródła. Pola `omitted` i `insight_summaries` pozwalają zachować wcześniej pobrane dane w pamięci klienta. Odczyt `/api/insight` w profilu korzysta z przygotowanego na serwerze opisu.
 
 Nowe zasoby: `public/data-sync.js`, `scripts/chat-sync.mjs`, `lib/article-content.mjs`, `lib/article-reader.mjs`. Obraz mostu musi zawierać `chat-sync.mjs`. Nowy frontend należy publikować po backendzie obsługującym nowy zasób i parametry widoków. Nie dodano cache prywatnych odpowiedzi API w service workerze.
+
+Odczyt strony zachowuje do 14 000 znaków wyodrębnionego tekstu, bez pełnego HTML; pula przechowuje najwyżej cztery konteksty slotów. Nowy cykl wykonuje warunkowy GET przy dostępnych walidatorach albo pełny GET bez nich. HTTP 304 potwierdza cache, HTTP 200 zastępuje treść; błąd lub odmowa nie pozwala wykorzystać poprzedniego tekstu jako aktualnego. `no-store` usuwa zapis trwały. Kontrola domen pozostaje odrębna dla każdego podmiotu.
+
+W produkcji sprawdzono Start, pełny profil, publikacje, Kalendarz i Ustawienia przy 390 × 844. Potwierdzono aktywny scheduler, gotowość zalogowanego mostu i kontenery z `restart=unless-stopped`. Kontrolne skróty obserwowanych, zakupów i komentarzy pozostały zgodne. Weryfikacja nie uruchamiała opracowań AI ani pełnego zbierania danych poza harmonogramem; nie dowodzi wykonania przyszłych cykli.

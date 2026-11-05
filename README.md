@@ -2,12 +2,13 @@
 
 Prywatna aplikacja PWA na telefon do obserwowania akcji i ETF-ów: notowania, wykresy, zagraniczne publikacje, komunikaty emitentów, terminy oraz czat z Codexem.
 
-Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane poniżej sprawdzono 4 listopada 2026. Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
+Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**. Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
 
 ## Zacznij tutaj
 
 | Potrzeba | Dokument |
 | --- | --- |
+| Cel, odbiorczyni, funkcje i granice produktu na jednej stronie | [Zorza — one-pager](ONE-PAGER.md) |
 | Wymagania produktu, scenariusze i kryteria odbioru | [PRD](PRD.md) |
 | Kontrakty techniczne, dane, API i automatyzacja | [SPEC](SPEC.md) |
 | Optymalizacja czatu, odczytów artykułów i Startu | [Etap 1 — transport](docs/18-optymalizacja-transportu.md) |
@@ -15,7 +16,7 @@ Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane p
 | Co działa, a co pozostaje do zrobienia | [Funkcje i zakres](docs/02-produkt.md), [Plan rozwoju](docs/10-plan-rozwoju.md) |
 | Jak zbudowany jest system | [Architektura](docs/03-architektura.md) |
 | Skąd pochodzą ceny i wykresy | [Notowania i historia](docs/04-notowania.md) |
-| Publikacje, źródła i podsumowania | [Prasówka i AI](docs/05-publikacje-ai.md) |
+| Publikacje, źródła i podsumowania | [Publikacje i AI](docs/05-publikacje-ai.md) |
 | Nowy układ, sytuacja podmiotu i brief | [Sytuacja i brief — zmiana 4 listopada](docs/13-sytuacja-i-brief.md) |
 | Warunki jakości opisu i diagnoza pustego briefu / kursów | [Standard i diagnoza](docs/14-standard-opisu-i-diagnoza.md) |
 | Model, kalendarze emitentów i terminy częściowe | [Kalendarz i model](docs/15-kalendarz-i-model.md), [Harmonogram i opisy](docs/16-harmonogram-i-opracowania.md) |
@@ -32,7 +33,7 @@ Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane p
 
 - Akcje i ETF-y, osobno kupione i obserwowane; zakupy zapisują ilość, cenę, walutę i datę.
 - Notowania oraz wykresy **1D / 1T / 1R / 5L** z odczytem ceny i daty.
-- Prasówka: zagraniczne źródła branżowe i osobna kategoria komunikatów emitentów.
+- Publikacje w profilach: zagraniczne źródła branżowe i osobna kategoria komunikatów emitentów.
 - Oryginalne nagłówki bez tłumaczenia i oczekiwania; podsumowania po polsku wyłącznie na żądanie.
 - Słowna Sytuacja firmy i przyrostowy brief pod wykresem, tylko dla obserwowanych lub portfela.
 - Terminy zapisane w kalendarzu aplikacji z dowodem źródłowym i oznaczeniem niepewności.
@@ -40,7 +41,9 @@ Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane p
 
 **Harmonogram, Europe/Warsaw:** kursy całej dostępnej listy o 15:40 i 21:45; dodatkowo obserwowane i portfel o 18:30. Publikacje i terminy tylko wybranych podmiotów codziennie o 15:40. Opisy i briefy: poniedziałek i czwartek 14:30; pierwszy opis po dodaniu obserwowania lub zakupu. Zadania wykonuje VPS, więc komputer nie musi być włączony.
 
-Ostatnie potwierdzone wdrożenie: `d9b97559380549ea9321a8541409b48e` — oryginalne nagłówki. Szczegóły testów i potwierdzeń są w [notatkach wdrożenia](docs/17-oryginalne-naglowki.md). Dalsze zmiany kodu w repozytorium wymagają osobnego wdrożenia.
+Ostatnie potwierdzone wdrożenie: `1d1fcc3ecea44e72ac567b54083760f3` — optymalizacja czatu, odczytów artykułów i Startu, 5 listopada 2026, 13:30:49 czasu polskiego. Przeszły 124 testy aplikacji; sprawdzono także produkcyjny widok mobilny, harmonogram i gotowość mostu. Szczegóły i granice pomiarów są w [notatce wdrożenia](docs/18-optymalizacja-transportu.md). Dalsze zmiany kodu w repozytorium wymagają osobnego wdrożenia.
+
+Start pobiera dane potrzebne do widoku, a profil doczytuje pełny opis i publikacje. Czat przesyła przyrostowo zmienione wiadomości. Publikacje i kalendarz współdzielą odczyt artykułu w jednym cyklu, a kolejny cykl ponownie sprawdza źródło. Oszczędności nie zmieniają godzin, modeli ani zakresu danych.
 
 ## Uruchomienie lokalne
 

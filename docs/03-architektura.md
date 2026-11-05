@@ -34,9 +34,17 @@ flowchart TD
 | `lib/quotes.mjs`, `lib/price-history.mjs` | notowania i historia |
 | `lib/publication-policy.mjs`, `lib/issuer-sources.mjs` | dobór i weryfikacja źródeł |
 | `lib/collector.mjs`, `lib/calendar-fetch.mjs` | pobieranie RSS i dat |
-| `lib/publication-work.mjs` | zlecenia podsumowań i partie nagłówków |
+| `lib/publication-work.mjs` | zlecenia podsumowań na żądanie; tłumaczenia nagłówków wyłączone |
+| `lib/article-reader.mjs`, `lib/article-content.mjs` | wspólny odczyt artykułu w cyklu, cache tekstu i ponowna weryfikacja HTTP |
 | `scripts/publication-ai.mjs` | ograniczony prompt i wynik zgodny z JSON Schema |
 | `public/app.js`, `public/portfolio.js` | widoki, synchronizacja wyników i obliczenia |
 | `public/price-chart.js` | wykres i odczyt punktów |
+| `scripts/chat-sync.mjs`, `public/data-sync.js` | przyrostowy stan czatu i scalanie lekkich odpowiedzi bez utraty danych |
 
 Przy aktualizacji repozytorium nie kopiuj danych wykonawczych. Historyczne skrypty `codex-worker.mjs` pozostają w kodzie, ale obecna produkcyjna ścieżka podsumowań korzysta z mostu i `publication-work.mjs`.
+
+## Oszczędny transport i odczyt źródeł
+
+Wdrożone 5 listopada 2026: Start pobiera `view=overview`, Kalendarz `view=calendar`, Ustawienia `view=settings`. Profil doczytuje zapisany pełny opis i artykuły osobnymi odczytami API, bez uruchamiania AI. Most przesyła zmienione wiadomości czatu; nowa sesja synchronizacji lub restart wymusza pełną historię.
+
+Czytnik współdzieli odczyty artykułu w jednym slocie publikacji i kalendarza. Tekst i walidatory HTTP przechowuje SQLite, a nowy cykl ponownie sprawdza źródło. Scheduler nadal działa na VPS, niezależnie od klienta. Kontrakty i zachowanie przy błędach: [SPEC, sekcja 14](../SPEC.md#14-optymalizacja-transportu--zmiana-5-listopada-2026).

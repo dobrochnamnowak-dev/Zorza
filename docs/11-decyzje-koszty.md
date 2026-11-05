@@ -15,6 +15,7 @@
 | Oryginalne nagłówki | tłumaczenia wyłączone, brak wywołań AI dla tytułów |
 | Podsumowania na żądanie | trwała kolejka, brak automatycznych opracowań całej prasówki |
 | Codex może zmieniać backend | kod w workspace; publikacja przez osobny kontroler po kliknięciu właścicielki |
+| Optymalizacja bez zmiany wymagań | przyrostowy czat, lekki Start i wspólny odczyt artykułu w cyklu; harmonogramy i modele zachowane |
 
 ## Co zużywa model
 
@@ -27,3 +28,9 @@ Most zlicza wspólny limit 300 operacji dziennie UTC dla czatu i opracowań. Daw
 Nie ma wiarygodnego stałego przelicznika na tokeny: zużycie zależy od długości treści, modelu i rozmowy. Liczniki operacji nie są licznikiem tokenów ani prognozą opłat. Logowanie ChatGPT jest odrębne od aktywowania płatnego klucza API; aplikacja nie uruchamia płatnego API automatycznie.
 
 GitHub przechowuje kod i wiedzę o projekcie. Bazy, logowanie i sekrety pozostają poza nim. Automatyczne budowanie w chmurze nie zostało dołączone do tego repozytorium.
+
+## Pomiary etapu 1 — 5 listopada 2026
+
+W jednym stanie produkcyjnych danych początkowa synchronizacja czatu miała 6 356 261 B, a kolejne odpytanie bez zmian 5 182 B. Start miał 67 345 B wobec 4 021 846 B pełnego dashboardu. Początkowe pobranie historii nadal jest pełne, a profil doczytuje potrzebne treści.
+
+To ograniczenie transferu i powtórnych odczytów; nie obniża automatycznie liczby tokenów, ceny abonamentu ani rachunku za VPS. Nie wyliczamy oszczędności pobierania artykułów bez pomiaru rzeczywistego cyklu. Pełne warunki: [notatka techniczna](18-optymalizacja-transportu.md).

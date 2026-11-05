@@ -1,10 +1,10 @@
-# Prasówka, źródła i AI
+# Publikacje, źródła i AI
 
 [Spis dokumentacji](../README.md)
 
 ## Dobór publikacji
 
-Każdy artykuł jest przypisany do instrumentu. Do prasówki trafiają zweryfikowane zagraniczne źródła ogólnofinansowe i branżowe oraz oficjalne domeny spółek i emitentów ETF-ów. Reguły są w `publication-policy.mjs` i `issuer-sources.mjs`. Polski interfejs nie oznacza korzystania z polskich portali.
+Każdy artykuł jest przypisany do instrumentu. W publikacjach profilu są zweryfikowane zagraniczne źródła ogólnofinansowe i branżowe oraz oficjalne domeny spółek i emitentów ETF-ów. Reguły są w `publication-policy.mjs` i `issuer-sources.mjs`. Polski interfejs nie oznacza korzystania z polskich portali. Nie ma osobnej zakładki Prasówka.
 
 Pobieranie publikacji i komunikatów obejmuje tylko obserwowane LUB zakupione podmioty. Dodanie do którejś grupy włącza pobranie; usunięcie z obu zatrzymuje nowe pobrania i zachowuje historię.
 
@@ -37,3 +37,9 @@ Tekst ma zwykle 3–4 krótkie polskie zdania. Gdy danych jest mało, może być
 Interfejs pobiera stan tylko widocznych oczekujących podsumowań. Gotowy wynik zastępuje stary status również w otwartym oknie, a opóźniona odpowiedź nie usuwa już zapisanego wyniku tej samej wersji.
 
 Przycisk Więcej źródeł uruchamia osobne wyszukiwanie doniesień. Daty tych wyników oznaczają daty publikacji, nie daty wydarzeń.
+
+## Wspólny odczyt treści
+
+Od wdrożenia z 5 listopada publikacje i kalendarz tego samego cyklu współdzielą odczyt artykułu przez `article-reader.mjs`. Trwały cache zawiera tekst i walidatory HTTP, bez pełnego HTML. Następny cykl ponownie weryfikuje źródło; błąd lub blokada nie udostępnia starego tekstu jako aktualnego, a `no-store` wyłącza zapis trwały. Kontrola domen pozostaje osobna dla każdego podmiotu.
+
+Nie zmienia to harmonogramu, zakresu ani zlecania podsumowań. Szczegóły: [optymalizacja transportu](18-optymalizacja-transportu.md).

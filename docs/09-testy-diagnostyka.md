@@ -23,9 +23,14 @@ Node.js 24 udostępnia SQLite bez zewnętrznej biblioteki. Testy korzystają z t
 - kalendarz, dowody, niepewność i harmonogram w polskiej strefie;
 - sesje, Origin, ograniczenie API i brak cache danych prywatnych;
 - wykresy, braki, cache, blokady źródła i zgodność instrumentu;
-- kontroler: zapis wersji, ograniczone testy, blokada duplikatu i rollback.
+- kontroler: zapis wersji, ograniczone testy, blokada duplikatu i rollback;
+- przyrostowy czat: streaming, kolejność, usunięcie zdjęć, reset po restarcie i zgodność starszego formatu;
+- lekki dashboard: pełny profil, zachowanie pól pominiętych i nowszych kursów;
+- wspólny odczyt artykułu: HTTP 304/200/403, paywall, `no-store`, kontrola domen i nowy cykl.
 
-Ostatni pełny zestaw aplikacji sprawdzony 4 listopada 2026: **117 testów**. Notatki [harmonogramu](16-harmonogram-i-opracowania.md) i [oryginalnych nagłówków](17-oryginalne-naglowki.md) zawierają późniejsze potwierdzenia wdrożeń.
+Ostatni pełny zestaw aplikacji sprawdzony 5 listopada 2026: **124 testy**. Po drobnej korekcie powtórzono siedem testów objętych zmianą; przeszły. Osiem testów kontrolera potwierdzono wcześniej; etap optymalizacji nie zmieniał kontrolera. Testy transportu są w `test/transport-optimization.test.mjs`, integracyjny test HTTP w `test/optimized-http.test.mjs`.
+
+Po wdrożeniu sprawdzono Start, profil, publikacje, Kalendarz i Ustawienia przy 390 × 844, brak błędów konsoli oraz gotowość schedulerów i mostu. Testy nie uruchamiały rzeczywistych modeli ani pełnego pobierania danych poza harmonogramem. Pomiary i dokładny zakres potwierdzeń są w [notatce optymalizacji](18-optymalizacja-transportu.md).
 
 ## Naprawa niewidocznych podsumowań — 3 listopada 2026
 
@@ -44,5 +49,7 @@ Poprawka synchronizuje oba widoki i pobiera stan widocznych oczekujących wynik�
 | Brak terminu | źródło, dowód i rozpoznawalną dokładną datę; brak wpisu nie dowodzi braku wydarzenia |
 | Wdrożenie nieaktywne | socket i usługę kontrolera; nie dodawać uprawnień agenta |
 | Proces przerwany w połowie wdrożenia | administracyjna kontrola stanu; nie ponawiać w ciemno |
+| Czat po restarcie otrzymuje pełną historię | to oczekiwany reset sesji synchronizacji; kolejne odczyty powinny przesyłać tylko zmiany |
+| W lekkim dashboardzie nie ma publikacji | sprawdzić `omitted`; profil pobiera je osobnym API, brak pola nie oznacza usunięcia |
 
 Nie traktuj samego `summaryWorkerConfigured` jako dowodu zalogowania. Bieżący stan konta pokazuje status mostu. Licznik dawnego procesu `workerSeen` może być pusty, mimo że współczesna ścieżka działa.

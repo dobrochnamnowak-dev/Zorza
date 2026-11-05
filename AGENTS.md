@@ -2,6 +2,8 @@
 
 Prywatna PWA po polsku. Aktualne wymagania i granice funkcji opisano w README.md i docs/. Przy sprzeczności ze starszą notatką sprawdź kod i stan wdrożenia; nie odtwarzaj nieaktualnych godzin ani funkcji pilotażu.
 
+Aktualny punkt odniesienia: [PRD 1.1](PRD.md), [SPEC 1.1](SPEC.md), [karta produktu](ONE-PAGER.md) oraz [wdrożenie optymalizacji z 5 listopada](docs/18-optymalizacja-transportu.md). Niższe notatki dokumentują także historyczne decyzje, zastąpione przez nowsze ustalenia. Przyrostowy czat i lekkie widoki zachowują pełną historię oraz dane profilu; nowy cykl pobierania ponownie weryfikuje źródła. Nie zmieniaj w ramach oszczędzania harmonogramów, modeli, osobistego zakresu ani retencji.
+
 ## Zakres
 
 - Korzystaj wyłącznie z katalogu instrumentów zatwierdzonego przez właścicielkę. Nie dodawaj samodzielnie innych podmiotów, mapowań ani domniemanych ISIN-ów.

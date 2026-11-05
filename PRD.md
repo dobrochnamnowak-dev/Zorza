@@ -1,10 +1,10 @@
 # Zorza — PRD
 
-Wymagania produktu · wersja 1.0 · 5 listopada 2026  
-Właścicielka produktu: właścicielka prywatnej aplikacji Zorza  
-Baza: [kod 422b3c4](https://github.com/dobrochnamnowak-dev/Zorza/commit/422b3c448998c6c39cddc67b32f43e7cf4fe4481), ustalenia właścicielki i potwierdzenia wdrożeń z 4 listopada 2026. Dokument nie potwierdza wykonania późniejszych cykli serwera.
+Wymagania produktu · wersja 1.1 · 5 listopada 2026
+Właścicielka produktu: właścicielka prywatnej aplikacji Zorza
+Baza: [kod optymalizacji 74319c5](https://github.com/dobrochnamnowak-dev/Zorza/commit/74319c55be700f3a532225386e0e61d1daeda4c3), ustalenia właścicielki i wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` sprawdzone 5 listopada 2026. Dokument nie potwierdza wykonania późniejszych cykli serwera.
 
-[Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
+[One-pager produktu](ONE-PAGER.md) · [Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
 
 ## 1. Problem i cel
 
@@ -57,6 +57,7 @@ Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspóln
 | FR-16 | Harmonogram wykonuje serwer, bez otwierania aplikacji. Częstotliwości cen i publikacji można zmieniać osobno; harmonogram opisów jest odrębny | Działa |
 | FR-17 | Czat z Codexem działa z telefonu, przyjmuje tekst i do trzech zgodnych zdjęć. Backend publikuje dopiero osobny kontroler po zatwierdzeniu konkretnej wersji | Działa; wymaga ważnego logowania |
 | FR-18 | Błąd nie udaje sukcesu: pozostaje ostatni poprawny kurs z datą, a opis i podsumowanie pokazują właściwy stan. Nie ma automatycznych ponowień błędów przez model | Działa; wymaga dalszego monitorowania |
+| FR-19 | Oszczędzanie transferu zachowuje pełną historię czatu, komplet danych profilu, nowsze kursy i kalendarz. Każdy nowy cykl nadal weryfikuje źródła; godziny, modele i zakres pracy na VPS pozostają bez zmian | Wdrożone i sprawdzone 5 listopada 2026 |
 
 „Działa” oznacza kod i wcześniejszą weryfikację opisaną w notatkach wdrożeń. Nie oznacza kompletności źródeł ani gwarancji nieprzerwanej pracy zewnętrznych usług.
 
@@ -115,8 +116,11 @@ Nie ustalono liczbowego SLA, docelowej dostępności ani miesięcznego budżetu 
 | Jakość terminów | Każdy widoczny termin ma podmiot, źródło i właściwą precyzję |
 | Stabilność wyświetlania | Lista i profil korzystają z tego samego najnowszego kursu |
 | Odbiór mobilny | Czytelny profil, publikacje i kalendarz przy 390 × 844, bez wymuszonego poziomego przewijania |
+| Oszczędne pobieranie | Bez zmian nie przesyłamy ponownie pełnej historii czatu; Start nie pobiera archiwum publikacji, a profil nadal udostępnia pełne dane |
 
-Przy wydaniu należy przejść scenariusze FR-01–FR-18, testy odpowiednie do zmiany i kontrolę na VPS. Ostatni zestaw referencyjny: 117 testów aplikacji i 8 testów kontrolera; bez rzeczywistych wywołań AI. Sama liczba testów nie dowodzi wykonania późniejszego zaplanowanego cyklu.
+Przy wydaniu należy przejść scenariusze FR-01–FR-19 odpowiednie do zmiany i kontrolę na VPS. Ostatni pełny zestaw aplikacji: 124 testy, 5 listopada 2026. Osiem testów kontrolera sprawdzono przy wcześniejszej weryfikacji; etap optymalizacji nie zmieniał kontrolera. Testy nie wywołują rzeczywistego modelu. Sama ich liczba nie dowodzi wykonania późniejszego zaplanowanego cyklu.
+
+W pomiarze produkcyjnym Start zwrócił 67 345 B zamiast 4 021 846 B pełnego dashboardu; kolejne odpytanie niezmienionego czatu 5 182 B wobec 6 356 261 B początkowej synchronizacji. To obserwacje rozmiaru odpowiedzi dla jednego stanu danych, nie SLA ani obietnica obniżenia kosztów hostingu lub tokenów. Szczegóły: [wdrożenie optymalizacji](docs/18-optymalizacja-transportu.md).
 
 ## 8. Poza obecną wersją i dalsze decyzje
 
