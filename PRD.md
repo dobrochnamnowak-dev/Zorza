@@ -97,7 +97,7 @@ Uzgodnione dopisywanie briefu oraz obecny cykl opisów kończą się **4 maja 20
 
 ## 6. Wygląd i obsługa telefonu
 
-Inspiracją dla czytelności list i profili jest aplikacja Revolut. Czarne tło i nawigacja; zielono-fuksjowo-niebieska zorza w prawym górnym rogu, gwiazdy, czytelne logo Zorzy. Estetyka ma ułatwiać szybkie przeglądanie i zachować dotychczasowy charakter aplikacji. Tło profilu jest spójne z ekranami głównymi.
+Czarne tło i nawigacja; zielono-fuksjowo-niebieska zorza w prawym górnym rogu, gwiazdy, czytelne logo Zorzy. Estetyka ma ułatwiać szybkie przeglądanie i zachować dotychczasowy charakter aplikacji. Tło profilu jest spójne z ekranami głównymi.
 
 Nazwy podmiotów, ceny i ważne nagłówki mają wyraźną hierarchię. Filtry mają bardziej kwadratowy kształt i efekt fizycznych przycisków 3D; przyciski Zakup / Komentarz / Sytuacja pozostają bez ramek. Logotypy są używane tam, gdzie są dostępne; w pozostałych przypadkach czytelny znak zastępczy. Minimalny tekst dotyczy nawigacji i kart, nie pozbawia opisu źródeł ani ryzyk.
 
