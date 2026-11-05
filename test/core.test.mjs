@@ -54,7 +54,7 @@ test('blokada źródła zatrzymuje pobieranie zagranicznych publikacji bez model
   assert.ok(result.sources.length<=3);assert.ok(result.blocked);assert.ok(result.sources.every(x=>x.status==='error'));assert.equal(s.db.prepare('SELECT COUNT(*) n FROM jobs').get().n,0);
 });
 
-test('tłumaczenie nagłówka jest wymagane; cytat pozostaje w oryginale',()=>{assert.throws(()=>validateSummary({...summary,title_pl:''},item));assert.equal(validateSummary(summary,item).events[0].evidence,'Results on November 20, 2026');});
+test('tytuł jest wymagany w historycznym schemacie; cytat pozostaje w oryginale',()=>{assert.throws(()=>validateSummary({...summary,title_pl:''},item));assert.equal(validateSummary(summary,item).events[0].evidence,'Results on November 20, 2026');});
 
 test('okno publikacji to miesiąc kalendarzowy, z poprawnym końcem lutego',()=>{
  assert.equal(publicationSince(new Date('2026-11-02T12:00:00Z')),'2026-10-02T00:00:00.000Z');

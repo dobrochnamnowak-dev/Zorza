@@ -42,7 +42,7 @@ export function mountPriceChart(container,instrumentId,{request=async(id,period)
   canvas.addEventListener('pointerdown',event=>{point(event);canvas.setPointerCapture?.(event.pointerId);});canvas.addEventListener('pointermove',event=>{if(canvas.hasPointerCapture?.(event.pointerId)||event.pointerType==='mouse')point(event);});
   const note=el('p',{class:'chart-note'});note.textContent=(data.stale?'Zapisane dane · ':'')+'Yahoo Finance · możliwe opóźnienie · kurs bez dywidend';
   if(data.warning)note.textContent+=' · '+data.warning;
-  display.replaceChildren(summary,canvas,axis,slider,scale,note);select(valid.length-1);
+  const pointLabel=el('small',{class:'chart-point-label'});pointLabel.textContent='Cena punktu na wykresie';display.replaceChildren(pointLabel,summary,canvas,axis,slider,scale,note);select(valid.length-1);
  }
  load(period);
  return ()=>{sequence++;};

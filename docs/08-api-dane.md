@@ -7,7 +7,10 @@
 | Operacja | Metoda i ścieżka |
 | --- | --- |
 | Stan sesji / logowanie / wylogowanie | GET session, POST login/logout pod `/api/` |
-| Dane ekranów | GET `/api/dashboard` |
+| Dane ekranów / wspólne kursy listy i profilu | GET `/api/dashboard`, GET `/api/quotes` |
+| Opis i brief / odczyt / ręczna korekta | GET `/api/insight?id=…`; POST `/api/insight-read`, `/api/insight-retry` |
+| Wielowpisowe komentarze | GET `/api/instrument-comments?id=…`; POST `/api/instrument-comments` (dodanie lub `delete_id`) |
+| Dawne ponowienie tłumaczenia tytułu | POST `/api/title-retry` — 410, funkcja wyłączona |
 | Publikacje jednego podmiotu | GET `/api/instrument-articles?id=…` |
 | Historia kursu | GET `/api/price-history?id=…&period=1d|1w|1y|5y` |
 | Ustawienia | POST `/api/settings` |
@@ -22,7 +25,9 @@ Poza sesją i logowaniem API wymaga zalogowania. Mutacje wymagają zgodnego Orig
 
 ## SQLite
 
-`instruments` przechowuje katalog i obserwowane; `purchases` zapisy zakupów; `sources` kanały; `articles` tytuł, fragment, tłumaczenie, podsumowanie i powiązanie podmiotu; `revisions` historię treści; `jobs` i `runs` zlecenia oraz wykonania; `events` terminy i dowody; `headline_cache` gotowe tytuły; `price_history` serie wykresów; `quotes` ostatnie ceny; `meta` ustawienia, sloty i raporty; `sessions` sesje; `locks` blokady procesów.
+`instruments` przechowuje katalog i obserwowane; `purchases` zapisy zakupów; `sources` kanały; `articles` tytuł, fragment, tłumaczenie, podsumowanie i powiązanie podmiotu; `revisions` historię treści; `jobs` i `runs` zlecenia oraz wykonania; `events` terminy i dowody; `headline_cache` historyczne tłumaczenia (wyłączone); `price_history` serie wykresów; `quotes` ostatnie ceny; `meta` ustawienia, sloty i raporty; `sessions` sesje; `locks` blokady procesów.
+
+`company_insights` przechowuje opis i datę rzeczywistego wygenerowania, `insight_jobs` wersjonowane zadania, `brief_monitors` osobisty zakres, `brief_seen` przetworzone materiały, `brief_entries` przyrostowe punkty ważne sześć miesięcy. `instrument_comments` zawiera wielowpisowe komentarze. Terminy mają `date_precision` i opcjonalne `event_end_date`; podany miesiąc/półrocze nie jest konkretnym dniem.
 
 Migracje są wykonywane przez kod. Produkcyjnej bazy nie dodaje się do Git. Dane przykładowe w testach są syntetyczne i nie uzupełniają braków w produkcji.
 

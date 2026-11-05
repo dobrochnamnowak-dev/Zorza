@@ -12,3 +12,11 @@ export function chatImages(value){
   return url;
  });
 }
+// Usuwanie dotyczy kopii załączników w historii Zorzy, dopiero po odpowiedzi.
+export function finishScreenshotMessage(messages,{messageId,assistantId,status}){
+ const message=messages.find(m=>m.id===messageId&&m.deleteImagesAfterReply===true);
+ if(!message)return false;
+ const reply=messages.find(m=>m.id===assistantId&&m.role==='assistant'&&typeof m.text==='string'&&m.text.trim());
+ if(status==='completed'&&reply){delete message.images;message.screenshot_status='done';message.images_removed_at=new Date().toISOString();return true;}
+ message.screenshot_status='failed';return false;
+}

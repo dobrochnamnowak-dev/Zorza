@@ -18,12 +18,14 @@ Node.js 24 udostępnia SQLite bez zewnętrznej biblioteki. Testy korzystają z t
 
 - katalog, zakupy, mapowania, waluty, daty i obliczenia zmian;
 - źródła zagraniczne, komunikaty, deduplikacja, usunięcia i wersje;
-- nagłówki tylko dla właściwego zakresu, cache i limity;
+- oryginalne nagłówki, brak automatycznych tłumaczeń, odrzucenie dawnych zadań i niezależność podsumowań od starego limitu;
 - podsumowanie wyłącznie po żądaniu, ręczne ponowienia i odzyskanie przerwanych zleceń;
 - kalendarz, dowody, niepewność i harmonogram w polskiej strefie;
 - sesje, Origin, ograniczenie API i brak cache danych prywatnych;
 - wykresy, braki, cache, blokady źródła i zgodność instrumentu;
 - kontroler: zapis wersji, ograniczone testy, blokada duplikatu i rollback.
+
+Ostatni pełny zestaw aplikacji sprawdzony 4 listopada 2026: **117 testów**. Notatki [harmonogramu](16-harmonogram-i-opracowania.md) i [oryginalnych nagłówków](17-oryginalne-naglowki.md) zawierają późniejsze potwierdzenia wdrożeń.
 
 ## Naprawa niewidocznych podsumowań — 3 listopada 2026
 

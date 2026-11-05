@@ -1,15 +1,15 @@
 import {runPublicationAI} from './publication-ai.mjs';
-import {chatImages,CHAT_BODY_LIMIT} from './chat-images.mjs';
+import {chatImages,CHAT_BODY_LIMIT,finishScreenshotMessage} from './chat-images.mjs';
 import {spawn} from 'node:child_process';
 import {createInterface} from 'node:readline';
 import {createServer} from 'node:http';
 import {readFileSync,writeFileSync,existsSync,mkdirSync} from 'node:fs';
-import {timingSafeEqual} from 'node:crypto';
+import {timingSafeEqual,randomUUID} from 'node:crypto';
 const stateDir=process.env.CHAT_STATE_DIR||'/state';mkdirSync(stateDir,{recursive:true});
 const stateFile=stateDir+'/conversation.json';
 let state=existsSync(stateFile)?JSON.parse(readFileSync(stateFile,'utf8')):{messages:[],threadId:null,day:'',used:0};
 mkdirSync(stateDir+'/codex',{recursive:true});
-let publicationBusy=false;
+let publicationBusy=false,imageTurnMessageId=null;
 let running=false,turnId=null,login=null,ready=false,sequence=0,outputId=null;
 const pending=new Map();
 const save=()=>writeFileSync(stateFile,JSON.stringify(state),{mode:0o600});
@@ -25,7 +25,7 @@ reader.on('line',line=>{let m;try{m=JSON.parse(line);}catch{return;}
  if(m.id!==undefined&&m.method){send({id:m.id,error:{code:-32000,message:'Uprawnienia poza projektem są niedostępne w czacie Zorzy.'}});return;}
  if(m.method==='item/agentMessage/delta'&&running){let item=state.messages.find(x=>x.id===outputId);if(!item){outputId='reply-'+Date.now();item={id:outputId,role:'assistant',text:'',date:new Date().toISOString()};state.messages.push(item);}if(item.text.length<40000)item.text+=m.params.delta||'';}
  if(m.method==='turn/started'){turnId=m.params.turn?.id||turnId;}
- if(m.method==='turn/completed'){running=false;turnId=null;outputId=null;if(m.params.turn?.status==='failed')note('Codex nie zakończył zadania. Sprawdź połączenie i uprawnienia.');save();}
+ if(m.method==='turn/completed'){finishScreenshotMessage(state.messages,{messageId:imageTurnMessageId,assistantId:outputId,status:m.params.turn?.status});imageTurnMessageId=null;running=false;turnId=null;outputId=null;if(m.params.turn?.status==='failed')note('Codex nie zakończył zadania. Sprawdź połączenie i uprawnienia.');save();}
  if(m.method==='account/login/completed'){login=null;if(!m.params.success)note('Logowanie nie zostało zakończone. Spróbuj ponownie.');}
 });
 child.on('exit',()=>{ready=false;running=false;note('Proces Codexa został zatrzymany.');setTimeout(()=>process.exit(1),1000);});
@@ -36,7 +36,7 @@ async function thread(){if(state.threadId){try{await rpc('thread/resume',{thread
 function authenticated(req){const a=Buffer.from(req.headers.authorization||''),b=Buffer.from('Bearer '+(process.env.CHAT_BRIDGE_TOKEN||''));return process.env.CHAT_BRIDGE_TOKEN?.length>=32&&a.length===b.length&&timingSafeEqual(a,b);}
 const server=createServer(async(req,res)=>{res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');const reply=(code,b)=>{res.writeHead(code);res.end(JSON.stringify(b));};
  try{if(!authenticated(req))return reply(401,{error:'Brak dostępu'});let body='',size=0;for await(const c of req){size+=c.length;if(size>CHAT_BODY_LIMIT)return reply(413,{error:'Wiadomość jest za długa'});body+=c;}const b=JSON.parse(body||'{}');
- if(req.url==='/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,attachments:true,publicationBusy,authenticated:auth.account?.type==='chatgpt',running,login,messages:state.messages,used:state.day===new Date().toISOString().slice(0,10)?state.used:0,limit:300});}
+ if(req.url==='/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,attachments:true,screenshotCleanup:true,publicationBusy,authenticated:auth.account?.type==='chatgpt',running,login,messages:state.messages,used:state.day===new Date().toISOString().slice(0,10)?state.used:0,limit:300});}
  if(req.url==='/login'){if(login)return reply(200,login);const r=await rpc('account/login/start',{type:'chatgptDeviceCode'});login={verificationUrl:r.verificationUrl,userCode:r.userCode};return reply(200,login);}
  if(req.url==='/stop'){if(running&&turnId)await rpc('turn/interrupt',{threadId:state.threadId,turnId});return reply(200,{ok:true});}
  if(req.url==='/publication/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,authenticated:auth.account?.type==='chatgpt',busy:running||publicationBusy});}
@@ -44,7 +44,7 @@ const server=createServer(async(req,res)=>{res.setHeader('Content-Type','applica
   if(running||publicationBusy)return reply(409,{error:'Codex zajęty'});
   const auth=await rpc('account/read',{refreshToken:false});if(auth.account?.type!=='chatgpt')return reply(401,{error:'Połącz konto ChatGPT'});
   const day=new Date().toISOString().slice(0,10);if(state.day!==day){state.day=day;state.used=0;}if(state.used>=300)return reply(429,{error:'Wykorzystano dzisiejszy limit Codexa'});
-  if(!['titles','summary'].includes(b.kind))return reply(400,{error:'Nieznane opracowanie'});
+  if(!['titles','summary','insight'].includes(b.kind))return reply(400,{error:'Nieznane opracowanie'});
   publicationBusy=true;state.used++;save();try{return reply(200,await runPublicationAI(b,{env:childEnv}));}finally{publicationBusy=false;}
  }
  if(req.url==='/message'){
@@ -53,7 +53,7 @@ const server=createServer(async(req,res)=>{res.setHeader('Content-Type','applica
  if(typeof b.text!=='string'||(!b.text.trim()&&!images.length)||b.text.length>6000)return reply(400,{error:'Wpisz wiadomość (maks. 6000 znaków)'});
  const auth=await rpc('account/read',{refreshToken:false});if(auth.account?.type!=='chatgpt')return reply(401,{error:'Najpierw połącz konto ChatGPT'});
  const day=new Date().toISOString().slice(0,10);if(state.day!==day){state.day=day;state.used=0;}if(state.used>=300)return reply(429,{error:'Wykorzystano dzisiejszy limit 300 wiadomości do Codexa'});
- running=true;outputId=null;try{const id=await thread();state.used++;state.messages.push({role:'user',text:b.text.trim(),images,date:new Date().toISOString()});save();const r=await rpc('turn/start',{threadId:id,input:[...(b.text.trim()?[{type:'text',text:b.text.trim()}]:[]),...images.map(url=>({type:'image',url}))],cwd:'/workspace',approvalPolicy:'never',sandboxPolicy:{type:'externalSandbox',networkAccess:'enabled'}});turnId=r.turn.id;return reply(202,{ok:true});}catch(e){running=false;note('Nie udało się uruchomić zadania.');throw e;}}
+ running=true;outputId=null;try{const id=await thread();state.used++;const messageId=randomUUID();imageTurnMessageId=b.deleteImagesAfterReply===true&&images.length?messageId:null;state.messages.push({id:messageId,role:'user',text:b.text.trim(),images,date:new Date().toISOString(),...(imageTurnMessageId?{deleteImagesAfterReply:true,screenshot_status:'running'}:{})});save();const r=await rpc('turn/start',{threadId:id,input:[...(b.text.trim()?[{type:'text',text:b.text.trim()}]:[]),...images.map(url=>({type:'image',url}))],cwd:'/workspace',approvalPolicy:'never',sandboxPolicy:{type:'externalSandbox',networkAccess:'enabled'}});turnId=r.turn.id;return reply(202,{ok:true});}catch(e){finishScreenshotMessage(state.messages,{messageId:imageTurnMessageId,status:'failed'});imageTurnMessageId=null;running=false;note('Nie udało się uruchomić zadania.');throw e;}}
  reply(404,{error:'Nieznana operacja'});
  }catch(e){reply(400,{error:String(e.message).slice(0,300)});}
 });server.listen(3001,'0.0.0.0',()=>console.log('Zorza: prywatny most Codexa gotowy'));

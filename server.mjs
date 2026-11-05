@@ -1,10 +1,14 @@
+import {syncBriefMonitors,BRIEF_ENDS_AT} from './lib/brief-monitor.mjs';
+import {collectIssuerCalendar} from './lib/issuer-calendar.mjs';
 import {researchArticle} from './lib/article-research.mjs';
+import {insightFor,markInsightRead,retryInsight,queueInsights,processInsightWork,insightSlot} from './lib/company-insights.mjs';
 import {collectCalendarDates} from './lib/calendar-fetch.mjs';
 import {deploymentRequest} from './lib/deployment.mjs';
 import {createPriceHistoryService} from './lib/price-history.mjs';
 import {processPublicationWork,headlineStatus} from './lib/publication-work.mjs';
 import {spawn} from 'node:child_process';
 import {collectQuotes} from './lib/quotes.mjs';
+import {collectScheduledPersonalPrices} from './lib/personal-prices.mjs';
 import { getSettings, saveSettings, publicationSlot, priceSlot } from './lib/settings.mjs';
 import { createServer } from 'node:http';
 import { readFileSync, existsSync } from 'node:fs';
@@ -28,7 +32,7 @@ const store=openStore();
 const priceHistory=createPriceHistoryService(store);
 const aiLimit=300;
 const attempts=new Map();
-let collectionRunning=false,pricesRunning=false,datesRunning=false;
+let collectionRunning=false,pricesRunning=false,datesRunning=false,insightsCollecting=false;
 function equal(a,b){const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y);}
 function json(res,status,value){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));}
 function fail(message,status=400){throw Object.assign(new Error(message),{status});}
@@ -42,22 +46,24 @@ function cookie(res,token,age){res.setHeader('Set-Cookie',`sygnal=${token}; Http
 function snapshot(){
   const since=publicationSince(),now=isoNow();
   const showAll=getSettings(store.db).scope==='all';
-  const instruments=store.db.prepare('SELECT i.*,SUM(CASE WHEN s.enabled=1 THEN 1 ELSE 0 END) source_count,(SELECT COUNT(*) FROM articles a WHERE a.instrument_id=i.id AND a.eligible=1 AND a.deleted_at IS NULL AND a.read_at IS NULL AND a.published_at>=? AND a.published_at<=?) unread_count FROM instruments i LEFT JOIN sources s ON s.instrument_id=i.id GROUP BY i.id ORDER BY i.type DESC,i.name').all(since,now);
+  const instruments=store.db.prepare(`SELECT i.*,SUM(CASE WHEN s.enabled=1 THEN 1 ELSE 0 END) source_count,(SELECT COUNT(*) FROM articles a WHERE a.instrument_id=i.id AND a.eligible=1 AND a.deleted_at IS NULL AND a.publication_kind!='research' AND a.read_at IS NULL AND a.published_at>=? AND a.published_at<=?) unread_count FROM instruments i LEFT JOIN sources s ON s.instrument_id=i.id GROUP BY i.id ORDER BY i.type DESC,i.name`).all(since,now);
   const sources=store.db.prepare('SELECT s.id,s.instrument_id,s.name,s.home,s.last_checked,s.last_success,s.error,i.watched,(SELECT MAX(published_at) FROM articles WHERE source_id=s.id) newest_publication FROM sources s JOIN instruments i ON i.id=s.instrument_id WHERE s.enabled=1').all();
   const articles=store.db.prepare(`SELECT a.*,i.name instrument_name,COALESCE(NULLIF(a.publisher_name,''),s.name) source_name,(i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)) is_personal,
     (SELECT j.status FROM jobs j WHERE j.article_id=a.id AND j.content_hash=a.content_hash) job_status
     FROM articles a JOIN instruments i ON i.id=a.instrument_id JOIN sources s ON s.id=a.source_id
-    WHERE a.eligible=1 AND a.deleted_at IS NULL AND (a.published_at IS NULL OR a.published_at<=?) ORDER BY a.starred DESC,a.published_at DESC`).all(now).map(a=>({...a,title_pl:a.is_personal?a.title_pl:null}));
+    WHERE a.eligible=1 AND a.deleted_at IS NULL AND a.publication_kind!='research' AND (a.published_at IS NULL OR a.published_at<=?) ORDER BY a.starred DESC,a.published_at DESC`).all(now).map(({content_text,...a})=>({...a,title_pl:null}));
   const events=store.db.prepare(`SELECT e.*,COALESCE(e.source_url,a.url) url,a.title source_title,i.name instrument_name FROM events e
     JOIN articles a ON a.id=e.article_id JOIN instruments i ON i.id=a.instrument_id
     WHERE (${showAll?'1=1':'i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)'}) AND a.eligible=1 AND a.deleted_at IS NULL AND e.review_status IN ('pending','approved') ORDER BY e.event_date`).all();
   const jobs=store.db.prepare('SELECT id,article_id,status,created_at,error FROM jobs ORDER BY created_at DESC LIMIT 100').all();
   const used=store.db.prepare('SELECT COUNT(*) n FROM runs WHERE started_at>=?').get(utcDay()).n;
   const worker=store.db.prepare("SELECT value FROM meta WHERE key='worker_seen'").get()?.value || null;
-  return {settings:getSettings(store.db),instruments,sources,articles,events,jobs,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,summaryWorkerActive:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
-    publicationSince:since,schedulerEnabled:process.env.SCHEDULER_ENABLED==='1',lastScheduled:store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value||null,pricesConnected:store.db.prepare('SELECT COUNT(*) n FROM quotes').get().n>0,pricesRunning,pricesTimezone:'Europe/Warsaw',usOpenRefresh:false,usOpenTime:null,priceSchedule:['15:40','21:45'],publicationSchedule:['15:40'],calendarSchedule:['15:40'],lastUSOpenSlot:store.db.prepare("SELECT value FROM meta WHERE key='us_open_slot'").get()?.value||null,calendarReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='calendar_report'").get()?.value||'null'),pricesDailyHour:15,pricesDailyMinute:40,lastPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value||null,quotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_report'").get()?.value||'null'),pushConnected:false,collectionInterval:Math.max(15,Number(process.env.COLLECT_INTERVAL_MINUTES)||360),serverTime:isoNow()}};
+  const insights=Object.fromEntries(instruments.map(i=>[i.id,insightFor(store.db,i.id)]));
+  for(const i of instruments)i.insight_unread=insights[i.id].unread;
+  return {settings:getSettings(store.db),instruments,sources,articles,events,jobs,insights,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,insightSchedule:{personal:'Poniedziałek i czwartek 14:30',other:null,timezone:'Europe/Warsaw'},aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,summaryWorkerActive:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
+    publicationSince:since,schedulerEnabled:process.env.SCHEDULER_ENABLED==='1',lastScheduled:store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value||null,pricesConnected:store.db.prepare('SELECT COUNT(*) n FROM quotes').get().n>0,pricesRunning,pricesTimezone:'Europe/Warsaw',usOpenRefresh:false,usOpenTime:null,priceSchedule:['15:40','21:45'],personalPriceSchedule:['18:30'],lastPersonalPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='personal_prices_slot'").get()?.value||null,personalQuotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_focus_report'").get()?.value||'null'),publicationSchedule:['15:40'],calendarSchedule:['15:40'],lastUSOpenSlot:store.db.prepare("SELECT value FROM meta WHERE key='us_open_slot'").get()?.value||null,calendarReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='calendar_report'").get()?.value||'null'),pricesDailyHour:15,pricesDailyMinute:40,lastPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value||null,quotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_report'").get()?.value||'null'),pushConnected:false,collectionInterval:Math.max(15,Number(process.env.COLLECT_INTERVAL_MINUTES)||360),serverTime:isoNow()}};
 }
-const assets={'/price-chart.js':'price-chart.js','/portfolio.js':'portfolio.js','/aurora-photo.jpg':'aurora-photo.jpg','/':'index.html','/app.js':'app.js','/style.css':'style.css','/sw.js':'sw.js','/manifest.webmanifest':'manifest.webmanifest','/icon.svg':'icon.svg','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/apple-touch-icon.png':'apple-touch-icon.png'};
+const assets={'/card-dismiss.js':'card-dismiss.js','/company-insights.js':'company-insights.js','/price-chart.js':'price-chart.js','/portfolio.js':'portfolio.js','/aurora-photo.jpg':'aurora-photo.jpg','/':'index.html','/app.js':'app.js','/style.css':'style.css','/sw.js':'sw.js','/manifest.webmanifest':'manifest.webmanifest','/icon.svg':'icon.svg','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/apple-touch-icon.png':'apple-touch-icon.png'};
 const types={html:'text/html',js:'text/javascript',css:'text/css',webmanifest:'application/manifest+json',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg'};
 const server=createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
@@ -103,6 +109,7 @@ const server=createServer(async(req,res)=>{
         cookie(res,token,7*86400);return json(res,200,{ok:true});
       }
       if(!authenticated(req))fail('Zaloguj się',401);
+      if(path==='/api/quotes'&&method==='GET')return json(res,200,{quotes:store.db.prepare('SELECT * FROM quotes').all(),serverTime:isoNow(),status:{pricesRunning,personalPriceSchedule:['18:30'],lastPersonalPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='personal_prices_slot'").get()?.value||null,personalQuotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_focus_report'").get()?.value||'null'),lastPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value||null,quotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_report'").get()?.value||'null')}});
       if(path==='/api/price-history'&&method==='GET'){
         const params=new URL(req.url,'http://internal').searchParams;
         return json(res,200,await priceHistory.load(params.get('id'),params.get('period')||'1d'));
@@ -112,7 +119,7 @@ const server=createServer(async(req,res)=>{
         if(!['status','prepare','deploy'].includes(action)||(action==='status'?method!=='GET':method!=='POST'))fail('Nieznana operacja',404);
         const input=method==='POST'?await body(req):{};
         if(action!=='status'){
-          if(collectionRunning||pricesRunning||datesRunning)fail('Trwa aktualizacja danych. Spróbuj za chwilę.',409);
+          if(collectionRunning||pricesRunning||datesRunning||insightsCollecting||workRunning)fail('Trwa aktualizacja danych. Spróbuj za chwilę.',409);
           if(process.env.CHAT_BRIDGE_URL){const chat=await bridgeRequest('/publication/status',{});if(chat.busy)fail('Poczekaj, aż Codex zakończy pracę.',409);}
         }
         return json(res,200,await deploymentRequest(action,input));
@@ -136,8 +143,21 @@ const server=createServer(async(req,res)=>{
         if(last&&Date.now()-Date.parse(JSON.parse(last.value).checked_at)<15*60000)return json(res,200,{recent:true});
         pricesRunning=true;collectQuotes(store).catch(()=>{}).finally(()=>{pricesRunning=false;});return json(res,202,{running:true});
       }
-      if(path==='/api/instrument-articles'&&method==='GET'){const id=new URL(req.url,'http://internal').searchParams.get('id');if(!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(id))fail('Nieznany podmiot',404);const i=store.db.prepare('SELECT watched,(SELECT COUNT(*) FROM purchases WHERE instrument_id=?) bought FROM instruments WHERE id=?').get(id,id);return json(res,200,{articles:store.articlesForInstrument(id).map(a=>({...a,is_personal:!!(i.watched||i.bought),title_pl:i.watched||i.bought?a.title_pl:null,source_name:a.publisher_name||a.source_name}))});}
+      if(path==='/api/instrument-comments'&&method==='GET'){const id=new URL(req.url,'http://internal').searchParams.get('id');return json(res,200,{comments:store.commentsForInstrument(id)});}
+      if(path==='/api/instrument-comments'&&method==='POST'){const b=await body(req);try{if(b.delete_id)store.deleteComment(b.instrument_id,b.delete_id);else store.addComment(b.instrument_id,b.text);}catch(e){fail(e.message,400);}return json(res,200,{comments:store.commentsForInstrument(b.instrument_id)});}
+      if(path==='/api/instrument-articles'&&method==='GET'){const id=new URL(req.url,'http://internal').searchParams.get('id');if(!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(id))fail('Nieznany podmiot',404);const i=store.db.prepare('SELECT watched,(SELECT COUNT(*) FROM purchases WHERE instrument_id=?) bought FROM instruments WHERE id=?').get(id,id);return json(res,200,{articles:store.articlesForInstrument(id).map(({content_text,...a})=>({...a,is_personal:!!(i.watched||i.bought),title_pl:null,source_name:a.publisher_name||a.source_name}))});}
       if(path==='/api/dashboard'&&method==='GET')return json(res,200,snapshot());
+      if(path==='/api/insight'&&method==='GET'){
+        const id=new URL(req.url,'http://internal').searchParams.get('id');
+        if(!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(id))fail('Nieznany podmiot',404);
+        return json(res,200,{insight:insightFor(store.db,id)});
+      }
+      if(path==='/api/insight-read'&&method==='POST'){
+        const b=await body(req);return json(res,200,{ok:!!markInsightRead(store.db,b.id,b.hash)});
+      }
+      if(path==='/api/insight-retry'&&method==='POST'){
+        const b=await body(req);retryInsight(store.db,b.id);publicationWork().catch(()=>{});return json(res,200,{ok:true});
+      }
       if(path==='/api/settings'&&method==='POST'){return json(res,200,{settings:saveSettings(store.db,await body(req))});}
       if(path==='/api/purchase'&&method==='POST'){
         const b=await body(req);
@@ -145,15 +165,16 @@ const server=createServer(async(req,res)=>{
         store.db.exec('BEGIN IMMEDIATE');try{
           store.db.prepare('INSERT INTO purchases VALUES(?,?,?,?,?,?,?)').run(randomUUID(),b.instrument_id,b.quantity,b.price,b.currency,b.purchased_on,isoNow());
           store.db.exec('COMMIT');
-        }catch(e){store.db.exec('ROLLBACK');throw e;}return json(res,200,{ok:true});
+        }catch(e){store.db.exec('ROLLBACK');throw e;}syncBriefMonitors(store.db);scheduledInsights().catch(()=>{});return json(res,200,{ok:true});
       }
       if(path==='/api/purchase-delete'&&method==='POST'){
-        const b=await body(req);store.db.prepare('DELETE FROM purchases WHERE id=?').run(b.id);return json(res,200,{ok:true});
+        const b=await body(req);store.db.prepare('DELETE FROM purchases WHERE id=?').run(b.id);syncBriefMonitors(store.db);return json(res,200,{ok:true});
       }
       if(path==='/api/watch'&&method==='POST'){
         const b=await body(req);
         if(typeof b.watched!=='boolean'||!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(b.id))fail('Nieznany instrument');
         store.db.prepare('UPDATE instruments SET watched=? WHERE id=?').run(b.watched?1:0,b.id);
+        syncBriefMonitors(store.db);scheduledInsights().catch(()=>{});
         return json(res,200,{ok:true});
       }
       if(path==='/api/collect'&&method==='POST'){
@@ -171,9 +192,7 @@ const server=createServer(async(req,res)=>{
       if(path==='/api/read'&&method==='POST'){
         const b=await body(req);store.db.prepare('UPDATE articles SET read_at=? WHERE id=?').run(isoNow(),b.id);return json(res,200,{ok:true});
       }
-      if(path==='/api/title-retry'&&method==='POST'){
-        const b=await body(req);store.db.prepare("UPDATE articles SET translation_state='queued',translation_error=NULL WHERE id=? AND eligible=1 AND deleted_at IS NULL AND translation_state='failed' AND instrument_id IN(SELECT i.id FROM instruments i WHERE i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id))").run(b.id);publicationWork().catch(()=>{});return json(res,200,{ok:true});
-      }
+      if(path==='/api/title-retry'&&method==='POST'){return json(res,410,{error:'Tłumaczenie nagłówków jest wyłączone. Dostępny jest oryginalny tytuł.'});}
       if(path==='/api/summarize'&&method==='POST'){
         const b=await body(req);if(!store.db.prepare('SELECT id FROM articles WHERE id=? AND eligible=1 AND deleted_at IS NULL').get(b.id))fail('Źródło publikacji wymaga weryfikacji',404);const result=store.enqueue(b.id);publicationWork().catch(()=>{});return json(res,200,result);
       }
@@ -197,7 +216,7 @@ const server=createServer(async(req,res)=>{
 server.requestTimeout=30000;
 server.listen(port,dev?'127.0.0.1':'0.0.0.0',()=>console.log(`Sygnał: ${origin}${dev?' (podgląd lokalny)':''}`));
 async function scheduledTick(){
- if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning)return;
+ if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||insightsCollecting)return;
  const slot=publicationSlot(getSettings(store.db).publicationsFrequency);
  if(!slot||store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value===slot)return;
  if(!store.lock('daily-schedule',10*60e3))return;
@@ -208,17 +227,46 @@ async function scheduledTick(){
 async function scheduledPrices(){
  if(process.env.SCHEDULER_ENABLED!=='1'||pricesRunning)return;
  const slot=priceSlot(getSettings(store.db).pricesFrequency);
- if(!slot||store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value===slot)return;
  pricesRunning=true;
- try{const result=await collectQuotes(store);if(!result.busy)store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('prices_slot',?)").run(slot);}finally{pricesRunning=false;}
+ try{
+  if(slot&&store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value!==slot){
+   const result=await collectQuotes(store);if(result.busy)return;
+   store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('prices_slot',?)").run(slot);
+  }
+  await collectScheduledPersonalPrices(store);
+ }finally{pricesRunning=false;}
 }
 async function scheduledCalendar(){
- if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||datesRunning)return;
+ if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||datesRunning||insightsCollecting)return;
  const slot=publicationSlot('daily');if(!slot||store.db.prepare("SELECT value FROM meta WHERE key='calendar_slot'").get()?.value===slot)return;
  datesRunning=true;try{const r=await collectCalendarDates(store);if(!r.busy)store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('calendar_slot',?)").run(slot);}finally{datesRunning=false;}
 }
-const scheduleTimer=setInterval(()=>{scheduledTick().catch(()=>{});scheduledPrices().catch(()=>{});scheduledCalendar().catch(()=>{});},60000);scheduleTimer.unref();
-scheduledTick().catch(()=>{});scheduledPrices().catch(()=>{});scheduledCalendar().catch(()=>{});
+async function scheduledInsights(){
+ if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||datesRunning||insightsCollecting)return;
+ const scope=getSettings(store.db).insightsScope;if(new Date().toISOString()>BRIEF_ENDS_AT)return;
+ syncBriefMonitors(store.db);
+ const now=new Date(),personal=store.db.prepare('SELECT i.id FROM instruments i WHERE i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)').all().map(i=>i.id);
+ if(!personal.length)return;
+ const pending=store.db.prepare('SELECT instrument_id FROM brief_monitors WHERE active=1 AND needs_check=1').all().map(i=>i.instrument_id);
+ const slot=insightSlot(true,now),key='insight-fetch/twice-weekly';
+ const dailyDue=!!slot&&store.db.prepare('SELECT value FROM meta WHERE key=?').get(key)?.value!==slot;
+ if(!dailyDue&&!pending.length){queueInsights(store,{now,scope});return;}
+ insightsCollecting=true;
+ try{
+  if(dailyDue)store.db.prepare('INSERT OR REPLACE INTO meta(key,value) VALUES(?,?)').run(key,slot);
+  const ids=dailyDue?personal:pending;
+  for(const id of ids)store.db.prepare('UPDATE brief_monitors SET needs_check=0 WHERE instrument_id=?').run(id);
+  const report=await collect(store,{force:true,instrumentIds:ids});
+  if(report.busy)return;
+  // A blocked publisher must not cause a new fetch every minute or an invented brief.
+  store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('insight_fetch_report',?)").run(JSON.stringify({checked_at:now.toISOString(),errors:report.sources.filter(s=>s.status==='error').length,unchecked:report.unchecked||0}));
+  await collectCalendarDates(store,{instrumentIds:ids});
+  await collectIssuerCalendar(store,{instrumentIds:ids});
+  queueInsights(store,{now:new Date(),scope});
+ }finally{insightsCollecting=false;}
+}
+const scheduleTimer=setInterval(()=>{scheduledInsights().catch(()=>{});scheduledTick().catch(()=>{});scheduledPrices().catch(()=>{});scheduledCalendar().catch(()=>{});},60000);scheduleTimer.unref();
+scheduledInsights().catch(()=>{});scheduledTick().catch(()=>{});scheduledPrices().catch(()=>{});scheduledCalendar().catch(()=>{});
 // Stały proces podsumowań uruchamiany razem z serwerem po jawnym włączeniu.
 let workRunning=false,workStopping=false;
 async function bridgeRequest(path,task){
@@ -227,7 +275,12 @@ async function bridgeRequest(path,task){
 }
 async function publicationWork(){
  if(workRunning||workStopping||!process.env.CHAT_BRIDGE_URL||!process.env.CHAT_BRIDGE_TOKEN)return;
- workRunning=true;try{return await processPublicationWork(store,{available:async()=>{try{const s=await bridgeRequest('/publication/status');return !!s.ready&&!!s.authenticated&&!s.busy;}catch{return false;}},runModel:task=>bridgeRequest('/publication',task)});}finally{workRunning=false;}
+ workRunning=true;try{
+  const options={available:async()=>{try{const s=await bridgeRequest('/publication/status');return !!s.ready&&!!s.authenticated&&!s.busy;}catch{return false;}},runModel:task=>bridgeRequest('/publication',task)};
+  const result=await processPublicationWork(store,options);
+  if(!['empty','daily_limit'].includes(result.status))return result;
+  return await processInsightWork(store,{...options,scope:getSettings(store.db).insightsScope});
+ }finally{workRunning=false;}
 }
 const workerTimer=setInterval(()=>publicationWork().catch(()=>{}),20000);workerTimer.unref();
 server.once('listening',()=>publicationWork().catch(()=>{}));

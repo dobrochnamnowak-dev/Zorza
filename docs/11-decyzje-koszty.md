@@ -9,9 +9,10 @@
 | Tylko zatwierdzony katalog | brak automatycznego dopisywania podobnych tickerów i produktów |
 | Bez płatnych notowań | publiczne źródła, cache, walidacja, jawne braki |
 | Wszystko działa bez komputera | procesy i własne logowanie Codexa na VPS |
-| Pobrania o 15:40 i 21:45 | polska strefa, stałe godziny, brak zależności od otwarcia USA |
+| Ceny 15:40 i 21:45; osobiste także 18:30 | polska strefa, stałe godziny, bez zależności od zegara komputera |
+| Opisy i briefy poniedziałek/czwartek 14:30 | tylko nowe materiały obserwowanych i portfela, pierwszy opis po dodaniu |
 | Tylko zagraniczne publikacje | rejestr dozwolonych źródeł i oficjalnych domen |
-| Tłumaczenie tylko wybranych podmiotów | zakres obserwowane + portfel, cache i limit nagłówków |
+| Oryginalne nagłówki | tłumaczenia wyłączone, brak wywołań AI dla tytułów |
 | Podsumowania na żądanie | trwała kolejka, brak automatycznych opracowań całej prasówki |
 | Codex może zmieniać backend | kod w workspace; publikacja przez osobny kontroler po kliknięciu właścicielki |
 
@@ -19,9 +20,9 @@
 
 Pobieranie kursów, historii, RSS, dat, sprawdzanie harmonogramu i odświeżanie wyniku w interfejsie to zwykły kod. Samo wykonanie tych czynności nie zużywa tokenów AI.
 
-Model jest uruchamiany dla rzeczywistej wiadomości w czacie, partii nowych nagłówków lub ręcznie zleconego podsumowania. Gotowe teksty i tłumaczenia są ponownie odczytywane z bazy. Pusta kolejka nigdy nie uruchamia modelu.
+Model jest uruchamiany dla rzeczywistej wiadomości w czacie, ręcznie zleconego podsumowania albo uzgodnionego opracowania sytuacji i briefu na podstawie nowych materiałów. Sytuacja i brief używają Sol low, podsumowanie artykułu Luna low. Nagłówki nie wywołują modelu. Gotowe teksty są odczytywane z bazy. Pusta kolejka nigdy nie uruchamia modelu.
 
-Most zlicza wspólny limit 300 operacji dziennie UTC dla czatu i opracowań. Nagłówki mają dodatkowy limit 100 unikalnych nowych tytułów na dzień Europe/Warsaw i partie do 20. Pozostałe ograniczenia źródeł i kolejki mogą zatrzymać pracę wcześniej.
+Most zlicza wspólny limit 300 operacji dziennie UTC dla czatu i opracowań. Dawny limit 100 tłumaczeń nagłówków i partie po 20 nie są już aktywne. Pozostałe ograniczenia źródeł i kolejki mogą zatrzymać pracę wcześniej.
 
 Nie ma wiarygodnego stałego przelicznika na tokeny: zużycie zależy od długości treści, modelu i rozmowy. Liczniki operacji nie są licznikiem tokenów ani prognozą opłat. Logowanie ChatGPT jest odrębne od aktywowania płatnego klucza API; aplikacja nie uruchamia płatnego API automatycznie.
 

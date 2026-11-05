@@ -2,7 +2,7 @@
 
 Prywatna aplikacja PWA na telefon do obserwowania akcji i ETF-ów: notowania, wykresy, zagraniczne publikacje, komunikaty emitentów, terminy oraz czat z Codexem.
 
-Dokumentacja przedstawia stan sprawdzony **3 listopada 2026**. Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
+Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane poniżej sprawdzono 4 listopada 2026. Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
 
 ## Zacznij tutaj
 
@@ -13,6 +13,10 @@ Dokumentacja przedstawia stan sprawdzony **3 listopada 2026**. Kod pochodzi z dz
 | Jak zbudowany jest system | [Architektura](docs/03-architektura.md) |
 | Skąd pochodzą ceny i wykresy | [Notowania i historia](docs/04-notowania.md) |
 | Publikacje, źródła i podsumowania | [Prasówka i AI](docs/05-publikacje-ai.md) |
+| Nowy układ, sytuacja podmiotu i brief | [Sytuacja i brief — zmiana 4 listopada](docs/13-sytuacja-i-brief.md) |
+| Warunki jakości opisu i diagnoza pustego briefu / kursów | [Standard i diagnoza](docs/14-standard-opisu-i-diagnoza.md) |
+| Model, kalendarze emitentów i terminy częściowe | [Kalendarz i model](docs/15-kalendarz-i-model.md), [Harmonogram i opisy](docs/16-harmonogram-i-opracowania.md) |
+| Oryginalne nagłówki i wyłączenie tłumaczeń | [Nagłówki publikacji](docs/17-oryginalne-naglowki.md) |
 | Aktualizacje i ważne terminy | [Harmonogram i kalendarz](docs/06-harmonogram-kalendarz.md) |
 | Hostinger, wdrażanie i cofanie wersji | [Wdrożenie](docs/07-wdrozenie.md) |
 | API, SQLite i konfiguracja | [Interfejsy i dane](docs/08-api-dane.md) |
@@ -26,11 +30,14 @@ Dokumentacja przedstawia stan sprawdzony **3 listopada 2026**. Kod pochodzi z dz
 - Akcje i ETF-y, osobno kupione i obserwowane; zakupy zapisują ilość, cenę, walutę i datę.
 - Notowania oraz wykresy **1D / 1T / 1R / 5L** z odczytem ceny i daty.
 - Prasówka: zagraniczne źródła branżowe i osobna kategoria komunikatów emitentów.
-- Polskie nagłówki dla obserwowanych i portfela; podsumowania po polsku wyłącznie na żądanie.
+- Oryginalne nagłówki bez tłumaczenia i oczekiwania; podsumowania po polsku wyłącznie na żądanie.
+- Słowna Sytuacja firmy i przyrostowy brief pod wykresem, tylko dla obserwowanych lub portfela.
 - Terminy zapisane w kalendarzu aplikacji z dowodem źródłowym i oznaczeniem niepewności.
 - Czat z Codexem, dołączanie zdjęć i zatwierdzane przez właścicielkę wdrażanie backendu.
 
-**Codziennie, czas polski:** 15:40 — kursy, publikacje i terminy; 21:45 — ponownie kursy. Zadania wykonuje VPS, więc komputer nie musi być włączony.
+**Harmonogram, Europe/Warsaw:** kursy całej dostępnej listy o 15:40 i 21:45; dodatkowo obserwowane i portfel o 18:30. Publikacje i terminy tylko wybranych podmiotów codziennie o 15:40. Opisy i briefy: poniedziałek i czwartek 14:30; pierwszy opis po dodaniu obserwowania lub zakupu. Zadania wykonuje VPS, więc komputer nie musi być włączony.
+
+Ostatnie potwierdzone wdrożenie: `d9b97559380549ea9321a8541409b48e` — oryginalne nagłówki. Szczegóły testów i potwierdzeń są w [notatkach wdrożenia](docs/17-oryginalne-naglowki.md). Dalsze zmiany kodu w repozytorium wymagają osobnego wdrożenia.
 
 ## Uruchomienie lokalne
 

@@ -1003,6 +1003,27 @@
       "type": "stock",
       "name_on_screenshot": "Humana",
       "working_group": "ubezpieczenia zdrowotne"
+    },
+    {
+      "id": "AKCJA-106",
+      "type": "stock",
+      "name_on_screenshot": "AeroVironment",
+      "ticker_on_screenshot": "AVAV",
+      "working_group": "obronność i lotnictwo"
+    },
+    {
+      "id": "AKCJA-107",
+      "type": "stock",
+      "name_on_screenshot": "Kratos Defense & Security Solutions",
+      "ticker_on_screenshot": "KTOS",
+      "working_group": "obronność i lotnictwo"
+    },
+    {
+      "id": "AKCJA-108",
+      "type": "stock",
+      "name_on_screenshot": "Greenland Energy Company",
+      "ticker_on_screenshot": "GLND",
+      "working_group": "energia"
     }
   ]
 }

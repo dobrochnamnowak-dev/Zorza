@@ -9,17 +9,17 @@ Otwórz adres aplikacji HTTPS w Safari, zaloguj się, wybierz Udostępnij → Do
 ## Codzienne użycie
 
 - **Start:** portfel, obserwowane i największe wzrosty/spadki całej dostępnej listy. Ranking nie ogranicza się do zakupów.
-- **Akcje / ETF-y:** kupione, obserwowane i pozostałe. Gwiazdka i zakup są niezależne.
+- **Spółki na giełdzie:** katalog akcji i ETF-ów z wyborem rodzaju. Gwiazdka i zakup są niezależne; wybrane podmioty są widoczne na Starcie.
 - **Profil:** cena i data notowania, wykres, zakupy, terminy i publikacje. Zakup zapisuje ilość, cenę jednostkową, walutę i datę; niczego nie kupuje u brokera. Import JSON pomija dokładnie zgodne zapisane transakcje.
 - **Wykres:** 1D, 1T, 1R, 5L; dotyk lub suwak pokazuje cenę i datę. Dzień przed otwarciem rynku może oznaczać ostatnią zakończoną sesję.
-- **Prasówka:** obserwowane i portfel albo pozostałe podmioty; Dzisiaj / Wczoraj / Przedwczoraj / Archiwum oraz kategorie. Komunikaty prasowe są osobno.
+- **Sytuacja i brief:** opis otwierasz w profilu. Przyrostowy brief jest pod wykresem; Wszystkie publikacje otwiera nagłówki i artykuły. Osobne zakładki Obserwowane i Prasówka zostały usunięte. Komunikaty emitentów mają osobną kategorię; nagłówki pozostają w oryginale.
 - **Kalendarz:** daty z dowodem źródłowym; termin szacowany pozostaje oznaczony. ICS dodaje pojedyncze wydarzenie do kalendarza telefonu.
 
 ## Podsumowanie artykułu
 
 Wybierz Generuj podsumowanie. Zlecenie jest zapisywane na serwerze, a po zakończeniu wynik pojawia się automatycznie w otwartym artykule. Nie trzeba ponownie generować tekstu ani trzymać komputera włączonego. Gotowy tekst otwiera przycisk Czytaj podsumowanie. Błąd można ponowić ręcznie.
 
-Podsumowanie informuje, czy powstało z pełnego tekstu, fragmentu RSS czy nagłówka. Link do oryginału pozostaje dostępny.
+Nowe podsumowanie wymaga dostępnej treści artykułu; jeśli dostępny jest tylko nagłówek lub fragment, model nie jest uruchamiany. Link do oryginału pozostaje dostępny. Kartę można też płynnie zamknąć gestem w górę od uchwytu lub nagłówka.
 
 ## Codex i wdrażanie
 

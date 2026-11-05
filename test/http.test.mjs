@@ -17,6 +17,7 @@ test('prywatne API, logowanie, CSRF, wylogowanie i dane spoza katalogu publiczne
   await Promise.race([once(child.stdout,'data'),once(child,'exit').then(()=>{throw new Error('Serwer nie wystartował');})]);
   const request=(path,options={})=>fetch(base+path,options);
   assert.equal((await request('/api/dashboard')).status,401);
+  assert.equal((await request('/api/quotes')).status,401);
   assert.equal((await request('/api/price-history?id=AKCJA-001&period=1d')).status,401);
   assert.equal((await request('/api/deployment/status')).status,401);
   assert.equal((await request('/api/deployment/deploy',{method:'POST',headers:{Origin:origin},body:JSON.stringify({id:'fake'})})).status,401);
@@ -27,6 +28,9 @@ test('prywatne API, logowanie, CSRF, wylogowanie i dane spoza katalogu publiczne
   const login=await request('/api/login',{method:'POST',headers:{Origin:origin},body:JSON.stringify({password})});
   assert.equal(login.status,200);assert.match(login.headers.get('set-cookie'),/HttpOnly; SameSite=Strict.*Secure/);
   const cookie=login.headers.get('set-cookie').split(';')[0];
+  const oldTranslation=await request('/api/title-retry',{method:'POST',headers:{Cookie:cookie,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({id:'legacy'})});assert.equal(oldTranslation.status,410);
+  const quotes=await (await request('/api/quotes',{headers:{Cookie:cookie}})).json();
+  assert.deepEqual(quotes.quotes,[]);assert.equal(typeof quotes.serverTime,'string');assert.equal(quotes.purchases,undefined);assert.equal(quotes.articles,undefined);
   assert.equal((await request('/api/price-history?id=AKCJA-001&period=evil',{headers:{Cookie:cookie}})).status,400);
   assert.equal((await request('/api/price-history?id=unknown&period=1d',{headers:{Cookie:cookie}})).status,404);
   assert.equal((await request('/price-chart.js')).status,200);
@@ -50,6 +54,11 @@ test('prywatne API, logowanie, CSRF, wylogowanie i dane spoza katalogu publiczne
   assert.equal(portfolio.purchases.reduce((n,p)=>n+p.quantity,0),1.75);
   assert.equal(portfolio.instruments.find(i=>i.id==='AKCJA-001').watched,0);
   assert.equal(portfolio.quotes.length,0);
+  assert.equal((await request('/company-insights.js')).status,200);
+  const insight=await request('/api/insight?id=AKCJA-001',{headers:{Cookie:cookie}});assert.equal(insight.status,200);assert.equal((await insight.json()).insight.status,'pending');
+  assert.equal((await request('/api/insight?id=unknown',{headers:{Cookie:cookie}})).status,404);
+  assert.equal(portfolio.settings.insightsScope,'personal');
+  assert.equal((await postSettings({insightsScope:'all'})).status,400);
   await post('/api/purchase-delete',{id:portfolio.purchases[0].id});
   portfolio=await (await request('/api/dashboard',{headers:{Cookie:cookie}})).json();
   assert.equal(portfolio.purchases.length,1);
