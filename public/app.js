@@ -1,3 +1,4 @@
+import {mergeChatSnapshot,mergeDashboard} from './data-sync.js?v=1';
 import {installCardDismiss} from './card-dismiss.js?v=1';
 import {insightBody,briefBody,eventDateLabel} from './company-insights.js?v=4';
 import {portfolioOverview,portfolioPerformance,mergeQuotes,marketLeaders,selectPublications,sortAssets,purchaseImport,samePurchase,mergeInstrumentArticles,summaryNeedsRefresh,summaryVersion,screenshotPrompt} from './portfolio.js?v=original-headlines1';
@@ -72,7 +73,7 @@ async function sendScreenshotSummary(key){
  const draft=screenshotDrafts.get(key);if(!draft||draft.preparing||draft.sending||!draft.images.length)return;
  draft.sending=true;draft.stage='Sprawdzam połączenie…';draft.error='';updateScreenshotPanels(key);
  try{
-  const status=await api('chat/status',undefined,{signal:AbortSignal.timeout(15000)});
+  const status=await api('chat/status?meta=1',undefined,{signal:AbortSignal.timeout(15000)});
   if(!status.connected||!status.authenticated)throw Error('Połącz konto ChatGPT w zakładce Codex.');
   if(status.running||status.publicationBusy)throw Error('Codex jest zajęty. Spróbuj po zakończeniu bieżącej pracy.');
   if(!status.attachments||!status.screenshotCleanup)throw Error('Screeny nie zostały wysłane: most Codexa wymaga aktualizacji obsługi analizy i usuwania zdjęć. Samo wdrożenie backendu w panelu tego nie obejmuje.');
@@ -194,7 +195,8 @@ async function detail(id){const known=findArticle(id);if(known){try{const r=awai
  if(!a.read_at){await api('read',{id});a.read_at=new Date().toISOString();if(i)i.unread_count=Math.max(0,i.unread_count-1);render();}
 }
 function exportIcs(id){const e=data.events.find(x=>x.id===id);if(!e)return;const escapeIcs=s=>s.replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;').replace(/\r/g,'');const start=e.event_date.replaceAll('-','');const end=new Date(Date.parse((e.event_end_date||e.event_date)+'T00:00:00Z')+864e5).toISOString().slice(0,10).replaceAll('-','');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Zorza//PL','CALSCALE:GREGORIAN','BEGIN:VEVENT',`UID:${e.id}@sygnal`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'')}`,`DTSTART;VALUE=DATE:${start}`,`DTEND;VALUE=DATE:${end}`,`SUMMARY:${escapeIcs(e.instrument_name+': '+e.title)}`,`DESCRIPTION:${escapeIcs((e.certainty==='estimated'?'TERMIN SZACOWANY: '+eventDateLabel(e)+'. ':'')+'Źródło: '+e.url+'\n'+e.evidence)}`,'END:VEVENT','END:VCALENDAR'];const blob=new Blob([lines.join('\r\n')+'\r\n'],{type:'text/calendar;charset=utf-8'});const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='sygnal-wydarzenie.ics';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
-async function load(){const next=await api('dashboard');next.quotes=mergeQuotes(data?.quotes,next.quotes);data=next;render();}
+let dashboardSequence=0;
+async function load(){const sequence=++dashboardSequence,view=tab==='calendar'?'calendar':tab==='settings'?'settings':tab==='news'?'full':'overview';const next=await api('dashboard?view='+view);if(sequence!==dashboardSequence)return;data=mergeDashboard(data,next);render();}
 document.addEventListener('click',async event=>{const el=event.target.closest('button,[data-instrument],[data-profile-row]');if(!el)return;try{
   if(el.hasAttribute('data-collapse-section')){const section=el.closest('details');if(section){section.open=false;const summary=section.querySelector('summary'),region=section.closest('.article-scroll-window');if(section.dataset.newsId)expandedNews.delete(section.dataset.newsId);if(region&&summary)region.scrollTop+=summary.getBoundingClientRect().top-region.getBoundingClientRect().top-8;summary?.focus({preventScroll:true});}}
   else if(el.dataset.screenSend){await sendScreenshotSummary(el.dataset.screenSend);}
@@ -219,7 +221,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('b
   else if(el.dataset.comment){await commentForm(el.dataset.comment);}
   else if(el.dataset.buy){purchaseForm(el.dataset.buy);}
   else if(el.dataset.deletePurchase){if(confirm('Usunąć ten zapis zakupu?')){await api('purchase-delete',{id:el.dataset.deletePurchase});await load();instrumentDetail(el.dataset.owner);}}
-  else if(el.dataset.tab){activeInstrument=null;tab=el.dataset.tab;filter='wszystkie';query='';render();window.scrollTo({top:0});}
+  else if(el.dataset.tab){activeInstrument=null;tab=el.dataset.tab;filter='wszystkie';query='';await load();window.scrollTo({top:0});}
   else if(el.dataset.filter){filter=el.dataset.filter;render();}
   else if(el.dataset.watch){const i=data.instruments.find(i=>i.id===el.dataset.watch);await api('watch',{id:i.id,watched:!i.watched});await load();if(el.classList.contains('profile-watch-star'))await instrumentDetail(i.id);}
   else if(el.dataset.article)await detail(el.dataset.article);
@@ -309,7 +311,7 @@ async function acknowledgeInsight(id){
  document.querySelectorAll('[data-insight],[data-toggle-insight]').forEach(el=>{if((el.dataset.insight||el.dataset.toggleInsight)!==id)return;const badge=el.querySelector('.insight-new');if(badge)badge.hidden=true;});
  document.querySelectorAll(`[data-signal-owner="${CSS.escape(id)}"] .publication-signal`).forEach(el=>el.outerHTML=publicationSignal(i));
 }
-document.addEventListener('toggle',event=>{const el=event.target;if(!el.matches('details[data-insight]'))return;const id=el.dataset.insight;if(el.open){openInsights.add(id);acknowledgeInsight(id).catch(e=>toast(e.message));}else openInsights.delete(id);},true);
+document.addEventListener('toggle',event=>{const el=event.target;if(!el.matches('details[data-insight]'))return;const id=el.dataset.insight;if(el.open){openInsights.add(id);api('insight?id='+encodeURIComponent(id)).then(({insight:n})=>{data.insights??={};data.insights[id]=n;const i=data.instruments.find(i=>i.id===id);if(el.isConnected&&el.open){el.querySelector('[data-insight-body]').outerHTML=insightBody({...i,personal:!!(i.watched||holdings(id).length)},n);return acknowledgeInsight(id);}}).catch(e=>toast(e.message));}else openInsights.delete(id);},true);
 let insightRefreshBusy=false,insightRefreshCursor=0;
 async function refreshOpenInsight(){
  if(insightRefreshBusy||document.hidden||!data||$('#shell').hidden)return;
@@ -373,7 +375,9 @@ async function prepareChatImage(file,{maxEdge=1600,quality=.8}={}){
  const bitmap=await createImageBitmap(file);
  try{const scale=Math.min(1,maxEdge/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);const url=canvas.toDataURL('image/jpeg',quality);if(url.length>1400000)throw Error('Zdjęcie jest za duże — wybierz mniejsze');return url;}finally{bitmap.close();}
 }
+let chatSnapshot={cursor:null,messages:[]},chatRefreshing=false,chatRenderedCursor=null;
 async function renderChat(){
+ chatRenderedCursor=null;
  $('#view').innerHTML='<div class="chat-shell"><p class="home-note" id="chat-status">Łączenie…</p><div id="chat-login"></div><form id="chat-form" class="chat-form"><label class="home-note" for="chat-text">Wiadomość do Codexa</label><textarea id="chat-text" rows="3" maxlength="6000" placeholder="Co zmienić w Zorzy?"></textarea><div id="chat-attachments" class="chat-attachments"></div><div class="chat-compose-actions"><label class="secondary chat-image-picker">Dodaj zdjęcia<input id="chat-images" type="file" accept="image/*" multiple></label><small id="chat-image-status">Do 3 zdjęć · 20 MB/szt.</small><button class="secondary" id="chat-stop" type="button">Zatrzymaj</button><button class="primary" id="chat-send" type="submit">Wyślij</button></div></form><div id="chat-messages" class="chat-messages" aria-live="polite"></div></div>';
  renderChatImages();
  $('#chat-images').addEventListener('change',async e=>{if(chatPreparingImages)return;const files=[...e.target.files];if(files.length+chatAttachments.length>3){toast('Dodaj maksymalnie 3 zdjęcia');e.target.value='';return;}chatPreparingImages=true;try{const images=await Promise.all(files.map(prepareChatImage));chatAttachments.push(...images);renderChatImages();}catch(err){toast(err.message||'Nie można odczytać zdjęcia. Wybierz JPG, PNG lub WebP.');}finally{chatPreparingImages=false;e.target.value='';}});
@@ -403,15 +407,19 @@ async function refreshDeployment(){
  finally{deploymentRefreshing=false;}
 }
 async function refreshChat(){
- if(tab!=='chat'||!$('#chat-messages'))return;
- try{const r=await api('chat/status');if(tab!=='chat'||!$('#chat-messages'))return;
+ if(chatRefreshing||tab!=='chat'||!$('#chat-messages'))return;
+ chatRefreshing=true;
+ try{const r=await api('chat/status?sync=1'+(chatSnapshot.cursor?'&cursor='+encodeURIComponent(chatSnapshot.cursor):''));if(tab!=='chat'||!$('#chat-messages'))return;
  $('#chat-status').textContent=!r.connected?'Codex nie jest jeszcze połączony':!r.authenticated?'Połącz swoje konto ChatGPT':r.publicationBusy?'Opracowanie prasówki…':r.running?'Codex pracuje…':`Gotowy · ${r.used||0}/${r.limit||300} wiadomości dzisiaj`;
- deploymentChatBusy=!!(r.running||r.publicationBusy);deploymentChatKey=JSON.stringify((r.messages||[]).map(m=>[m.role,m.id,m.text]));
+ chatSnapshot=mergeChatSnapshot(chatSnapshot,r);
+ deploymentChatBusy=!!(r.running||r.publicationBusy);deploymentChatKey=chatSnapshot.cursor||JSON.stringify(chatSnapshot.messages.map(m=>[m.role,m.id,m.text]));
  if(deploymentChatBusy&&$('#deployment-confirm'))$('#deployment-confirm').hidden=true;
  chatSupportsImages=r.attachments===true;$('#chat-image-status').textContent=chatSupportsImages?'Do 3 zdjęć · 20 MB/szt.':'Podgląd zdjęć dostępny · wysyłanie wymaga publikacji backendu';
  $('#chat-send').disabled=!r.connected||!r.authenticated||r.running||r.publicationBusy;$('#chat-stop').hidden=!r.running;
- $('#chat-messages').innerHTML=(r.messages||[]).filter(m=>!(m.role==='system'&&/zatrzyman/i.test(m.text||''))).reverse().map(m=>`<div class="chat-bubble ${m.role==='user'?'from-user':m.role==='assistant'?'from-codex':'chat-note'}"><strong>${m.role==='user'?'Ty':m.role==='assistant'?'Codex':'Status'}</strong><p>${esc(m.text)}</p>${(m.images||[]).filter(url=>typeof url==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(url)).map(url=>`<img class="chat-history-image" src="${url}" alt="Zdjęcie w wiadomości" loading="lazy">`).join('')}</div>`).join('');
+ if(chatRenderedCursor!==deploymentChatKey)$('#chat-messages').innerHTML=chatSnapshot.messages.filter(m=>!(m.role==='system'&&/zatrzyman/i.test(m.text||''))).reverse().map(m=>`<div class="chat-bubble ${m.role==='user'?'from-user':m.role==='assistant'?'from-codex':'chat-note'}"><strong>${m.role==='user'?'Ty':m.role==='assistant'?'Codex':'Status'}</strong><p>${esc(m.text)}</p>${(m.images||[]).filter(url=>typeof url==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(url)).map(url=>`<img class="chat-history-image" src="${url}" alt="Zdjęcie w wiadomości" loading="lazy">`).join('')}</div>`).join('');
+ chatRenderedCursor=deploymentChatKey;
  if(r.connected&&!r.authenticated){$('#chat-login').innerHTML=r.login?`<p>Kod: <strong>${esc(r.login.userCode)}</strong></p><a class="primary original-link" href="https://auth.openai.com/codex/device" target="_blank" rel="noopener noreferrer">Zaloguj do ChatGPT ↗</a>`:'<button class="primary" id="chat-connect">Połącz konto ChatGPT</button>';$('#chat-connect')?.addEventListener('click',async()=>{try{await api('chat/login',{});await refreshChat();}catch(e){toast(e.message);}});}else $('#chat-login').innerHTML='';
- }catch(e){if($('#chat-status'))$('#chat-status').textContent='Codex chwilowo niedostępny';}
+ }catch(e){chatSnapshot.cursor=null;if($('#chat-status'))$('#chat-status').textContent='Codex chwilowo niedostępny';}
+ finally{chatRefreshing=false;}
 }
 setInterval(()=>{if(tab==='chat'&&!document.hidden){refreshChat();refreshDeployment();}},3000);

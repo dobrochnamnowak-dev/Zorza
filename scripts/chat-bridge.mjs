@@ -1,3 +1,4 @@
+import {createChatSync} from './chat-sync.mjs';
 import {runPublicationAI} from './publication-ai.mjs';
 import {chatImages,CHAT_BODY_LIMIT,finishScreenshotMessage} from './chat-images.mjs';
 import {spawn} from 'node:child_process';
@@ -12,7 +13,8 @@ mkdirSync(stateDir+'/codex',{recursive:true});
 let publicationBusy=false,imageTurnMessageId=null;
 let running=false,turnId=null,login=null,ready=false,sequence=0,outputId=null;
 const pending=new Map();
-const save=()=>writeFileSync(stateFile,JSON.stringify(state),{mode:0o600});
+const chatSync=createChatSync();
+const save=()=>{chatSync.touch();writeFileSync(stateFile,JSON.stringify(state),{mode:0o600});};
 const childEnv={PATH:process.env.PATH,HOME:process.env.HOME,CODEX_HOME:stateDir+'/codex',LANG:'C.UTF-8'};
 const child=spawn('codex',['app-server','--listen','stdio://','--disable','apps','-c','web_search="disabled"'],{env:childEnv,stdio:['pipe','pipe','inherit']});
 const send=v=>child.stdin.write(JSON.stringify(v)+'\n');
@@ -23,7 +25,7 @@ reader.on('line',line=>{let m;try{m=JSON.parse(line);}catch{return;}
  if(m.id!==undefined&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(new Error('Codex: '+String(m.error.message).slice(0,250))):p.resolve(m.result);return;}
  // Do not grant escalated permissions requested by the agent.
  if(m.id!==undefined&&m.method){send({id:m.id,error:{code:-32000,message:'Uprawnienia poza projektem są niedostępne w czacie Zorzy.'}});return;}
- if(m.method==='item/agentMessage/delta'&&running){let item=state.messages.find(x=>x.id===outputId);if(!item){outputId='reply-'+Date.now();item={id:outputId,role:'assistant',text:'',date:new Date().toISOString()};state.messages.push(item);}if(item.text.length<40000)item.text+=m.params.delta||'';}
+ if(m.method==='item/agentMessage/delta'&&running){let item=state.messages.find(x=>x.id===outputId);if(!item){outputId='reply-'+Date.now();item={id:outputId,role:'assistant',text:'',date:new Date().toISOString()};state.messages.push(item);}if(item.text.length<40000){item.text+=m.params.delta||'';chatSync.touch();}}
  if(m.method==='turn/started'){turnId=m.params.turn?.id||turnId;}
  if(m.method==='turn/completed'){finishScreenshotMessage(state.messages,{messageId:imageTurnMessageId,assistantId:outputId,status:m.params.turn?.status});imageTurnMessageId=null;running=false;turnId=null;outputId=null;if(m.params.turn?.status==='failed')note('Codex nie zakończył zadania. Sprawdź połączenie i uprawnienia.');save();}
  if(m.method==='account/login/completed'){login=null;if(!m.params.success)note('Logowanie nie zostało zakończone. Spróbuj ponownie.');}
@@ -36,7 +38,7 @@ async function thread(){if(state.threadId){try{await rpc('thread/resume',{thread
 function authenticated(req){const a=Buffer.from(req.headers.authorization||''),b=Buffer.from('Bearer '+(process.env.CHAT_BRIDGE_TOKEN||''));return process.env.CHAT_BRIDGE_TOKEN?.length>=32&&a.length===b.length&&timingSafeEqual(a,b);}
 const server=createServer(async(req,res)=>{res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');const reply=(code,b)=>{res.writeHead(code);res.end(JSON.stringify(b));};
  try{if(!authenticated(req))return reply(401,{error:'Brak dostępu'});let body='',size=0;for await(const c of req){size+=c.length;if(size>CHAT_BODY_LIMIT)return reply(413,{error:'Wiadomość jest za długa'});body+=c;}const b=JSON.parse(body||'{}');
- if(req.url==='/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,attachments:true,screenshotCleanup:true,publicationBusy,authenticated:auth.account?.type==='chatgpt',running,login,messages:state.messages,used:state.day===new Date().toISOString().slice(0,10)?state.used:0,limit:300});}
+ if(req.url==='/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,attachments:true,screenshotCleanup:true,publicationBusy,authenticated:auth.account?.type==='chatgpt',running,login,...(b.sync===1?{sync:chatSync.snapshot(state.messages,b.cursor)}:b.metadataOnly===true?{}:{messages:state.messages}),used:state.day===new Date().toISOString().slice(0,10)?state.used:0,limit:300});}
  if(req.url==='/login'){if(login)return reply(200,login);const r=await rpc('account/login/start',{type:'chatgptDeviceCode'});login={verificationUrl:r.verificationUrl,userCode:r.userCode};return reply(200,login);}
  if(req.url==='/stop'){if(running&&turnId)await rpc('turn/interrupt',{threadId:state.threadId,turnId});return reply(200,{ok:true});}
  if(req.url==='/publication/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,authenticated:auth.account?.type==='chatgpt',busy:running||publicationBusy});}

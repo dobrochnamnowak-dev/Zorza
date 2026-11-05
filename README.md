@@ -10,6 +10,7 @@ Dokumentację uporządkowano **5 listopada 2026**; ostatnie wdrożenie opisane p
 | --- | --- |
 | Wymagania produktu, scenariusze i kryteria odbioru | [PRD](PRD.md) |
 | Kontrakty techniczne, dane, API i automatyzacja | [SPEC](SPEC.md) |
+| Optymalizacja czatu, odczytów artykułów i Startu | [Etap 1 — transport](docs/18-optymalizacja-transportu.md) |
 | Jak korzystać z aplikacji na iPhonie | [Obsługa](docs/01-obsluga.md) |
 | Co działa, a co pozostaje do zrobienia | [Funkcje i zakres](docs/02-produkt.md), [Plan rozwoju](docs/10-plan-rozwoju.md) |
 | Jak zbudowany jest system | [Architektura](docs/03-architektura.md) |

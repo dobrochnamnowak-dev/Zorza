@@ -1,3 +1,4 @@
+import {createArticleReader,createArticleReaderPool} from './lib/article-reader.mjs';
 import {syncBriefMonitors,BRIEF_ENDS_AT} from './lib/brief-monitor.mjs';
 import {collectIssuerCalendar} from './lib/issuer-calendar.mjs';
 import {researchArticle} from './lib/article-research.mjs';
@@ -29,6 +30,7 @@ if(!dev && (!origin?.startsWith('https://') || !process.env.APP_PASSWORD_HASH ||
 }
 if(!dev && resolve(process.env.DATA_DIR).startsWith(root+'/')) throw new Error('DATA_DIR musi być poza katalogiem wdrożenia.');
 const store=openStore();
+const articleReaders=createArticleReaderPool(store);
 const priceHistory=createPriceHistoryService(store);
 const aiLimit=300;
 const attempts=new Map();
@@ -43,27 +45,29 @@ function authenticated(req){
   return token && store.db.prepare('SELECT 1 FROM sessions WHERE token_hash=? AND expires>?').get(digest(token),Date.now());
 }
 function cookie(res,token,age){res.setHeader('Set-Cookie',`sygnal=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${age}${dev?'':'; Secure'}`);}
-function snapshot(){
+function snapshot(view='full'){
+  const overview=view!=='full',omitted=overview?['articles','jobs',...(view!=='calendar'?['events']:[]),...(view!=='settings'?['sources']:[])]:[];
   const since=publicationSince(),now=isoNow();
   const showAll=getSettings(store.db).scope==='all';
   const instruments=store.db.prepare(`SELECT i.*,SUM(CASE WHEN s.enabled=1 THEN 1 ELSE 0 END) source_count,(SELECT COUNT(*) FROM articles a WHERE a.instrument_id=i.id AND a.eligible=1 AND a.deleted_at IS NULL AND a.publication_kind!='research' AND a.read_at IS NULL AND a.published_at>=? AND a.published_at<=?) unread_count FROM instruments i LEFT JOIN sources s ON s.instrument_id=i.id GROUP BY i.id ORDER BY i.type DESC,i.name`).all(since,now);
-  const sources=store.db.prepare('SELECT s.id,s.instrument_id,s.name,s.home,s.last_checked,s.last_success,s.error,i.watched,(SELECT MAX(published_at) FROM articles WHERE source_id=s.id) newest_publication FROM sources s JOIN instruments i ON i.id=s.instrument_id WHERE s.enabled=1').all();
-  const articles=store.db.prepare(`SELECT a.*,i.name instrument_name,COALESCE(NULLIF(a.publisher_name,''),s.name) source_name,(i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)) is_personal,
+  const sources=omitted.includes('sources')?[]:store.db.prepare('SELECT s.id,s.instrument_id,s.name,s.home,s.last_checked,s.last_success,s.error,i.watched,(SELECT MAX(published_at) FROM articles WHERE source_id=s.id) newest_publication FROM sources s JOIN instruments i ON i.id=s.instrument_id WHERE s.enabled=1').all();
+  const articles=overview?[]:store.db.prepare(`SELECT a.*,i.name instrument_name,COALESCE(NULLIF(a.publisher_name,''),s.name) source_name,(i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)) is_personal,
     (SELECT j.status FROM jobs j WHERE j.article_id=a.id AND j.content_hash=a.content_hash) job_status
     FROM articles a JOIN instruments i ON i.id=a.instrument_id JOIN sources s ON s.id=a.source_id
     WHERE a.eligible=1 AND a.deleted_at IS NULL AND a.publication_kind!='research' AND (a.published_at IS NULL OR a.published_at<=?) ORDER BY a.starred DESC,a.published_at DESC`).all(now).map(({content_text,...a})=>({...a,title_pl:null}));
-  const events=store.db.prepare(`SELECT e.*,COALESCE(e.source_url,a.url) url,a.title source_title,i.name instrument_name FROM events e
+  const events=omitted.includes('events')?[]:store.db.prepare(`SELECT e.*,COALESCE(e.source_url,a.url) url,a.title source_title,i.name instrument_name FROM events e
     JOIN articles a ON a.id=e.article_id JOIN instruments i ON i.id=a.instrument_id
     WHERE (${showAll?'1=1':'i.watched=1 OR EXISTS(SELECT 1 FROM purchases p WHERE p.instrument_id=i.id)'}) AND a.eligible=1 AND a.deleted_at IS NULL AND e.review_status IN ('pending','approved') ORDER BY e.event_date`).all();
-  const jobs=store.db.prepare('SELECT id,article_id,status,created_at,error FROM jobs ORDER BY created_at DESC LIMIT 100').all();
+  const jobs=overview?[]:store.db.prepare('SELECT id,article_id,status,created_at,error FROM jobs ORDER BY created_at DESC LIMIT 100').all();
   const used=store.db.prepare('SELECT COUNT(*) n FROM runs WHERE started_at>=?').get(utcDay()).n;
   const worker=store.db.prepare("SELECT value FROM meta WHERE key='worker_seen'").get()?.value || null;
-  const insights=Object.fromEntries(instruments.map(i=>[i.id,insightFor(store.db,i.id)]));
-  for(const i of instruments)i.insight_unread=insights[i.id].unread;
-  return {settings:getSettings(store.db),instruments,sources,articles,events,jobs,insights,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,insightSchedule:{personal:'Poniedziałek i czwartek 14:30',other:null,timezone:'Europe/Warsaw'},aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,summaryWorkerActive:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
+  const insightIds=overview?store.db.prepare('SELECT instrument_id id FROM company_insights').all():instruments;
+  const insights=Object.fromEntries(insightIds.map(i=>{const n=insightFor(store.db,i.id);if(!overview)return [i.id,n];const {content,sources,total_articles,selected_articles,retention_months,...summary}=n;return [i.id,summary];}));
+  for(const i of instruments)i.insight_unread=insights[i.id]?.unread||false;
+  return {...(overview?{omitted,insight_summaries:true}:{}),settings:getSettings(store.db),instruments,sources,articles,events,jobs,insights,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,insightSchedule:{personal:'Poniedziałek i czwartek 14:30',other:null,timezone:'Europe/Warsaw'},aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,summaryWorkerActive:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
     publicationSince:since,schedulerEnabled:process.env.SCHEDULER_ENABLED==='1',lastScheduled:store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value||null,pricesConnected:store.db.prepare('SELECT COUNT(*) n FROM quotes').get().n>0,pricesRunning,pricesTimezone:'Europe/Warsaw',usOpenRefresh:false,usOpenTime:null,priceSchedule:['15:40','21:45'],personalPriceSchedule:['18:30'],lastPersonalPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='personal_prices_slot'").get()?.value||null,personalQuotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_focus_report'").get()?.value||'null'),publicationSchedule:['15:40'],calendarSchedule:['15:40'],lastUSOpenSlot:store.db.prepare("SELECT value FROM meta WHERE key='us_open_slot'").get()?.value||null,calendarReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='calendar_report'").get()?.value||'null'),pricesDailyHour:15,pricesDailyMinute:40,lastPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value||null,quotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_report'").get()?.value||'null'),pushConnected:false,collectionInterval:Math.max(15,Number(process.env.COLLECT_INTERVAL_MINUTES)||360),serverTime:isoNow()}};
 }
-const assets={'/card-dismiss.js':'card-dismiss.js','/company-insights.js':'company-insights.js','/price-chart.js':'price-chart.js','/portfolio.js':'portfolio.js','/aurora-photo.jpg':'aurora-photo.jpg','/':'index.html','/app.js':'app.js','/style.css':'style.css','/sw.js':'sw.js','/manifest.webmanifest':'manifest.webmanifest','/icon.svg':'icon.svg','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/apple-touch-icon.png':'apple-touch-icon.png'};
+const assets={'/data-sync.js':'data-sync.js','/card-dismiss.js':'card-dismiss.js','/company-insights.js':'company-insights.js','/price-chart.js':'price-chart.js','/portfolio.js':'portfolio.js','/aurora-photo.jpg':'aurora-photo.jpg','/':'index.html','/app.js':'app.js','/style.css':'style.css','/sw.js':'sw.js','/manifest.webmanifest':'manifest.webmanifest','/icon.svg':'icon.svg','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/apple-touch-icon.png':'apple-touch-icon.png'};
 const types={html:'text/html',js:'text/javascript',css:'text/css',webmanifest:'application/manifest+json',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg'};
 const server=createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
@@ -133,7 +137,8 @@ const server=createServer(async(req,res)=>{
         const action=path.slice('/api/chat/'.length);
         if(!['status','login','message','stop'].includes(action)||(action==='status'?method!=='GET':method!=='POST'))fail('Nieznana operacja',404);
         if(!process.env.CHAT_BRIDGE_URL||!process.env.CHAT_BRIDGE_TOKEN)return json(res,200,{connected:false,messages:[],error:'Połączenie z Codexem w przygotowaniu'});
-        const input=method==='POST'?await body(req,action==='message'?4500000:64000):{};
+        const query=new URL(req.url,'http://internal').searchParams;
+        const input=method==='POST'?await body(req,action==='message'?4500000:64000):action==='status'&&query.get('sync')==='1'?{sync:1,cursor:(query.get('cursor')||'').slice(0,100)}:action==='status'&&query.get('meta')==='1'?{metadataOnly:true}:{};
         const upstream=await fetch(new URL('/'+action,process.env.CHAT_BRIDGE_URL),{method:'POST',redirect:'error',signal:AbortSignal.timeout(35000),headers:{Authorization:'Bearer '+process.env.CHAT_BRIDGE_TOKEN,'Content-Type':'application/json'},body:JSON.stringify(input)});
         return json(res,upstream.status,{...await upstream.json(),connected:true});
       }
@@ -146,7 +151,7 @@ const server=createServer(async(req,res)=>{
       if(path==='/api/instrument-comments'&&method==='GET'){const id=new URL(req.url,'http://internal').searchParams.get('id');return json(res,200,{comments:store.commentsForInstrument(id)});}
       if(path==='/api/instrument-comments'&&method==='POST'){const b=await body(req);try{if(b.delete_id)store.deleteComment(b.instrument_id,b.delete_id);else store.addComment(b.instrument_id,b.text);}catch(e){fail(e.message,400);}return json(res,200,{comments:store.commentsForInstrument(b.instrument_id)});}
       if(path==='/api/instrument-articles'&&method==='GET'){const id=new URL(req.url,'http://internal').searchParams.get('id');if(!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(id))fail('Nieznany podmiot',404);const i=store.db.prepare('SELECT watched,(SELECT COUNT(*) FROM purchases WHERE instrument_id=?) bought FROM instruments WHERE id=?').get(id,id);return json(res,200,{articles:store.articlesForInstrument(id).map(({content_text,...a})=>({...a,is_personal:!!(i.watched||i.bought),title_pl:null,source_name:a.publisher_name||a.source_name}))});}
-      if(path==='/api/dashboard'&&method==='GET')return json(res,200,snapshot());
+      if(path==='/api/dashboard'&&method==='GET'){const view=new URL(req.url,'http://internal').searchParams.get('view')||'full';if(!['full','overview','calendar','settings'].includes(view))fail('Nieznany widok',400);return json(res,200,snapshot(view));}
       if(path==='/api/insight'&&method==='GET'){
         const id=new URL(req.url,'http://internal').searchParams.get('id');
         if(!store.db.prepare('SELECT id FROM instruments WHERE id=?').get(id))fail('Nieznany podmiot',404);
@@ -221,7 +226,7 @@ async function scheduledTick(){
  if(!slot||store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value===slot)return;
  if(!store.lock('daily-schedule',10*60e3))return;
  collectionRunning=true;
- try{await collect(store,{force:true});store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('publication_slot',?)").run(slot);}
+ try{await collect(store,{force:true,reader:articleReaders.forSlot(slot)});store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('publication_slot',?)").run(slot);}
  finally{collectionRunning=false;store.unlock('daily-schedule');}
 }
 async function scheduledPrices(){
@@ -239,7 +244,7 @@ async function scheduledPrices(){
 async function scheduledCalendar(){
  if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||datesRunning||insightsCollecting)return;
  const slot=publicationSlot('daily');if(!slot||store.db.prepare("SELECT value FROM meta WHERE key='calendar_slot'").get()?.value===slot)return;
- datesRunning=true;try{const r=await collectCalendarDates(store);if(!r.busy)store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('calendar_slot',?)").run(slot);}finally{datesRunning=false;}
+ datesRunning=true;try{const r=await collectCalendarDates(store,{reader:articleReaders.forSlot(slot)});if(!r.busy)store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('calendar_slot',?)").run(slot);}finally{datesRunning=false;}
 }
 async function scheduledInsights(){
  if(process.env.SCHEDULER_ENABLED!=='1'||collectionRunning||datesRunning||insightsCollecting)return;
@@ -256,11 +261,12 @@ async function scheduledInsights(){
   if(dailyDue)store.db.prepare('INSERT OR REPLACE INTO meta(key,value) VALUES(?,?)').run(key,slot);
   const ids=dailyDue?personal:pending;
   for(const id of ids)store.db.prepare('UPDATE brief_monitors SET needs_check=0 WHERE instrument_id=?').run(id);
-  const report=await collect(store,{force:true,instrumentIds:ids});
+  const reader=createArticleReader(store);
+  const report=await collect(store,{force:true,instrumentIds:ids,reader});
   if(report.busy)return;
   // A blocked publisher must not cause a new fetch every minute or an invented brief.
   store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('insight_fetch_report',?)").run(JSON.stringify({checked_at:now.toISOString(),errors:report.sources.filter(s=>s.status==='error').length,unchecked:report.unchecked||0}));
-  await collectCalendarDates(store,{instrumentIds:ids});
+  await collectCalendarDates(store,{instrumentIds:ids,reader});
   await collectIssuerCalendar(store,{instrumentIds:ids});
   queueInsights(store,{now:new Date(),scope});
  }finally{insightsCollecting=false;}

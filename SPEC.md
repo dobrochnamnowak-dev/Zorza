@@ -281,3 +281,14 @@ node --check public/app.js
 Na bazie z 5 listopada: 117 testów aplikacji i 8 testów kontrolera zakończonych powodzeniem, bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
 
 Otwarte decyzje z PRD: push, synchronizacja Apple, przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
+
+
+## 14. Optymalizacja transportu — zmiana 5 listopada 2026
+
+Pierwszy etap jest opisany w [notatce technicznej](docs/18-optymalizacja-transportu.md), która podaje osobno stan lokalny i wdrożenie. Nie zmienia wymagań funkcjonalnych, godzin z sekcji 9, modeli ani zbierania danych przy wyłączonym komputerze.
+
+- Czat: opcjonalne `GET /api/chat/status?sync=1&cursor=…` zwraca tylko zmienione wiadomości w `sync`, z pełną kolejnością ID i procesowym epoch. `?meta=1` pomija historię. Bez parametrów zachowany jest stary format. Po restarcie lub niepoprawnym cursor następuje reset do kompletu; odpytywanie widocznego czatu pozostaje co 3 s.
+- Treści: `article_page_cache` zawiera `url`, `etag`, `modified`, `content_text`, `checked_at`. Wspólny czytnik łączy odczyt dla publikacji i kalendarza jednego slotu. Nowy slot ponownie weryfikuje źródło, korzystając z walidatorów HTTP, bez traktowania niezweryfikowanego starego tekstu jako aktualnego.
+- Dashboard: dotychczasowy pełny kontrakt zostaje. `view=overview` pomija artykuły, zlecenia, źródła, wydarzenia i pełną treść insight; `view=calendar` dodaje wydarzenia, `view=settings` źródła. Pola `omitted` i `insight_summaries` pozwalają zachować wcześniej pobrane dane w pamięci klienta. Odczyt `/api/insight` w profilu korzysta z przygotowanego na serwerze opisu.
+
+Nowe zasoby: `public/data-sync.js`, `scripts/chat-sync.mjs`, `lib/article-content.mjs`, `lib/article-reader.mjs`. Obraz mostu musi zawierać `chat-sync.mjs`. Nowy frontend należy publikować po backendzie obsługującym nowy zasób i parametry widoków. Nie dodano cache prywatnych odpowiedzi API w service workerze.
