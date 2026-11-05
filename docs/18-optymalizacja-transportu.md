@@ -34,4 +34,21 @@ Na lokalnej atrapie mostu przy 390 × 844: komplet wiadomości po odświeżeniac
 
 ## Stan wdrożenia
 
-Przygotowane i przetestowane lokalnie. Potwierdzenie aktywnej wersji i usunięcia tymczasowego dostępu będzie dopisane po wdrożeniu. Nie zmieniać harmonogramów ani włączać modelu dla testów statusu.
+Wdrożone 5 listopada 2026 o 13:30:49 czasu polskiego (12:30:49 UTC). Kontroler potwierdził przetestowaną wersję `1d1fcc3ecea44e72ac567b54083760f3` jako `succeeded`; kontener aplikacji używa obrazu tej wersji. Most czatu ma nowy transport. Publikację wykonano etapami: najpierw zgodny backend, następnie klient i końcowy obraz całego zestawu. Poprzednia wersja `5b3c1cdce7504cc78f6966a3b398c2f4` pozostaje punktem przywrócenia.
+
+Pomiary na produkcji, dla tego samego stanu danych:
+
+| Odczyt | Pełna odpowiedź | Odpowiedź po optymalizacji |
+| --- | ---: | ---: |
+| Czat: początkowa synchronizacja / kolejne odpytanie bez zmian | 6 356 261 B | 5 182 B |
+| Dashboard: pełny kontrakt / Start (`view=overview`) | 4 021 846 B | 67 345 B |
+
+To rozmiary treści odpowiedzi, nie pomiar łącznego ruchu ani kosztu całego VPS-a. Początkowe wczytanie czatu nadal przesyła pełną historię. Mechanizm współdzielenia artykułów sprawdzono testami kontrolowanymi, w tym warunkowym odczytem 304 i nowym cyklem; nie szacujemy oszczędności produkcyjnych pobrań przed obserwacją zaplanowanego cyklu.
+
+W produkcyjnej przeglądarce przy 390 × 844 sprawdzono Start, profil z pełnym zapisanym opisem, listę publikacji, Kalendarz i Ustawienia. Brak poziomego przewijania i błędów konsoli. Skróty kontrolne obserwowanych, zakupów i komentarzy przed i po wdrożeniu są identyczne. Kontenery aplikacji, mostu i HTTPS działają z `restart: unless-stopped`; Docker i kontroler wdrożeń są aktywne. Most zgłasza gotowość i aktywne logowanie ChatGPT.
+
+Potwierdzono aktywny harmonogram serwera: ceny całej listy 15:40 i 21:45, dodatkowo obserwowane i portfel 18:30, publikacje i kalendarz 15:40; opisy i briefy w poniedziałki i czwartki o 14:30 oraz pierwszy opis po dodaniu podmiotu. Wszystkie godziny dotyczą `Europe/Warsaw`. Procesy działają na VPS niezależnie od komputera właścicielki. Nie uruchamiano rzeczywistych modeli w celu testowania optymalizacji ani nie wykonywano pełnego pobierania danych poza harmonogramem.
+
+Zakres weryfikacji nie obejmuje gwarancji dostępności zewnętrznych wydawców, kompletności wszystkich mapowań notowań ani przyszłego czasu zakończenia badań AI. Dotychczasowe ograniczenia źródeł i brak wdrożonych powiadomień push pozostają zgodne ze SPEC.
+
+Po weryfikacji usunięto tymczasowy klucz SSH użyty do wdrożenia.
