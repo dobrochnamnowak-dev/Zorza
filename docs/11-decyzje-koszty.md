@@ -14,7 +14,7 @@
 | Tylko zagraniczne publikacje | rejestr dozwolonych źródeł i oficjalnych domen |
 | Oryginalne nagłówki | tłumaczenia wyłączone, brak wywołań AI dla tytułów |
 | Brief zamiast osobnych streszczeń | jedna ścieżka opracowania publikacji; starsze zlecenia artykułów wyłączone w API, workerze i moście |
-| Codex może zmieniać backend | kod w workspace; publikacja przez osobny kontroler po kliknięciu właścicielki |
+| Codex może zmieniać backend | kod w workspace; publikacja przez osobny kontroler po kliknięciu użytkownika |
 | Optymalizacja bez zmiany wymagań | przyrostowy czat, lekki Start i wspólny odczyt artykułu w cyklu; harmonogramy i modele zachowane |
 
 ## Co zużywa model

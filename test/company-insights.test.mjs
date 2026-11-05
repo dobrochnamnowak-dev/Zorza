@@ -58,7 +58,7 @@ test('kontrolka jest trwała, nie gaśnie od spóźnionego odczytu i nie wraca p
  await processInsightWork(s,{now:third,scope:'personal',runModel:async task=>({...answer(task),overview:{text:'Podpisano istotny kontrakt.',sources:[task.articles[0].id]}})});
  assert.equal(insightFor(s.db,'AKCJA-001',third).unread,true);assert.equal(markInsightRead(s.db,'AKCJA-001',first.material_hash),0);
 });
-test('błąd modelu nie powoduje automatycznych ponowień; użytkowniczka może ponowić',async t=>{
+test('błąd modelu nie powoduje automatycznych ponowień; użytkownik może ponowić',async t=>{
  const s=fixture(t);s.db.prepare("UPDATE instruments SET watched=1 WHERE id='AKCJA-001'").run();add(s);queueInsights(s,{now,scope:'personal'});let calls=0;
  const runModel=async()=>{calls++;throw Error('Limit');};
  await processInsightWork(s,{now,scope:'personal',runModel});queueInsights(s,{now:new Date('2026-11-05T14:00:00Z'),scope:'personal'});await processInsightWork(s,{now,scope:'personal',runModel});assert.equal(calls,1);

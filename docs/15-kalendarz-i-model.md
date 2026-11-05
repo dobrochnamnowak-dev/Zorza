@@ -4,7 +4,7 @@
 
 ## Uzgodnienie
 
-Po porównaniu na AMD właścicielka wybrała GPT-6.1 Sol low do Sytuacji firmy i briefu prasowego. Oba powstają w dotychczasowym pojedynczym zadaniu `insight`, bez nowego przebiegu dla samego briefu. GPT-6 Luna low pozostaje do tłumaczeń nagłówków i podsumowań pojedynczych artykułów. Nadal tylko obserwowane lub portfel; brak ponawiania i masowego przeliczania dawnych opisów. Harmonogram i limity wejścia pozostają bez zmian.
+Po porównaniu na AMD użytkownik wybrał GPT-6.1 Sol low do Sytuacji firmy i briefu prasowego. Oba powstają w dotychczasowym pojedynczym zadaniu `insight`, bez nowego przebiegu dla samego briefu. GPT-6 Luna low pozostaje do tłumaczeń nagłówków i podsumowań pojedynczych artykułów. Nadal tylko obserwowane lub portfel; brak ponawiania i masowego przeliczania dawnych opisów. Harmonogram i limity wejścia pozostają bez zmian.
 
 Wybór modelu nie włącza jego samodzielnego wyszukiwania: materiały nadal pobiera zwykły kod; generator dostaje zapisany pakiet, a `web_search` pozostaje wyłączone. Docelowy pięcioczęściowy prompt z researchu jest w [osobnym dokumencie](prompty/sytuacja-spolki.md); nie należy utożsamiać zmiany modelu z wdrożeniem całego tego procesu.
 
@@ -21,7 +21,7 @@ Na odczytanej 4 listopada stronie AMD potwierdzono:
 - 1 grudnia 2026: UBS Global Technology and AI Conference;
 - 9 grudnia 2026: Barclays 24th Annual Global Technology Conference.
 
-Zmiana daty przy tym samym identyfikatorze wydarzenia aktualizuje istniejący wpis; usunięcie ze zmienionej listy oznacza stary wpis jako nieaktualny. Zmieniona publikacja nie przywraca terminu odrzuconego przez właścicielkę.
+Zmiana daty przy tym samym identyfikatorze wydarzenia aktualizuje istniejący wpis; usunięcie ze zmienionej listy oznacza stary wpis jako nieaktualny. Zmieniona publikacja nie przywraca terminu odrzuconego przez użytkownika.
 
 To kalendarz wewnątrz Zorzy. Automatycznej synchronizacji z Apple Calendar ani działających powiadomień push ta poprawka nie dodaje.
 

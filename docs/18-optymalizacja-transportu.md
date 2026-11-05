@@ -1,6 +1,6 @@
 # Optymalizacja transportu i pobierania — etap 1
 
-5 listopada 2026. Zakres zaakceptowany przez właścicielkę: czat, współdzielenie odczytów artykułów, lżejszy Start. Harmonogramy, katalog, modele, źródła i retencja pozostają zgodne z PRD.
+5 listopada 2026. Zakres zaakceptowany przez użytkownika: czat, współdzielenie odczytów artykułów, lżejszy Start. Harmonogramy, katalog, modele, źródła i retencja pozostają zgodne z PRD.
 
 ## Czat
 
@@ -47,7 +47,7 @@ To rozmiary treści odpowiedzi, nie pomiar łącznego ruchu ani kosztu całego V
 
 W produkcyjnej przeglądarce przy 390 × 844 sprawdzono Start, profil z pełnym zapisanym opisem, listę publikacji, Kalendarz i Ustawienia. Brak poziomego przewijania i błędów konsoli. Skróty kontrolne obserwowanych, zakupów i komentarzy przed i po wdrożeniu są identyczne. Kontenery aplikacji, mostu i HTTPS działają z `restart: unless-stopped`; Docker i kontroler wdrożeń są aktywne. Most zgłasza gotowość i aktywne logowanie ChatGPT.
 
-Potwierdzono aktywny harmonogram serwera: ceny całej listy 15:40 i 21:45, dodatkowo obserwowane i portfel 18:30, publikacje i kalendarz 15:40; opisy i briefy w poniedziałki i czwartki o 14:30 oraz pierwszy opis po dodaniu podmiotu. Wszystkie godziny dotyczą `Europe/Warsaw`. Procesy działają na VPS niezależnie od komputera właścicielki. Nie uruchamiano rzeczywistych modeli w celu testowania optymalizacji ani nie wykonywano pełnego pobierania danych poza harmonogramem.
+Potwierdzono aktywny harmonogram serwera: ceny całej listy 15:40 i 21:45, dodatkowo obserwowane i portfel 18:30, publikacje i kalendarz 15:40; opisy i briefy w poniedziałki i czwartki o 14:30 oraz pierwszy opis po dodaniu podmiotu. Wszystkie godziny dotyczą `Europe/Warsaw`. Procesy działają na VPS niezależnie od komputera użytkownika. Nie uruchamiano rzeczywistych modeli w celu testowania optymalizacji ani nie wykonywano pełnego pobierania danych poza harmonogramem.
 
 Zakres weryfikacji nie obejmuje gwarancji dostępności zewnętrznych wydawców, kompletności wszystkich mapowań notowań ani przyszłego czasu zakończenia badań AI. Dotychczasowe ograniczenia źródeł pozostają zgodne ze SPEC.
 

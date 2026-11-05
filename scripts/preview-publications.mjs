@@ -1,4 +1,4 @@
-// Publiczny podgląd RSS, bez bazy użytkowniczki i bez uruchamiania AI.
+// Publiczny podgląd RSS, bez bazy użytkownika i bez uruchamiania AI.
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import {parseRss,publicationSince} from '../lib/core.mjs';
 import {boundedFetch} from '../lib/collector.mjs';

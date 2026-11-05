@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {screenshotPrompt} from '../public/portfolio.js';
 test('screeny podmiotu mają jego nazwę i nie udają kompletnego artykułu',()=>{
- const prompt=screenshotPrompt({instrumentName:'Przykładowa spółka'});assert.ok(prompt.includes('Przykładowa spółka'));assert.ok(prompt.includes('zrzutów ekranu dostarczonych przez użytkowniczkę'));assert.ok(prompt.includes('Nie twierdź, że masz dostęp do całego artykułu'));assert.ok(prompt.includes('Nie modyfikuj kodu, portfela, publikacji ani kalendarza'));
+ const prompt=screenshotPrompt({instrumentName:'Przykładowa spółka'});assert.ok(prompt.includes('Przykładowa spółka'));assert.ok(prompt.includes('zrzutów ekranu dostarczonych przez użytkownika'));assert.ok(prompt.includes('Nie twierdź, że masz dostęp do całego artykułu'));assert.ok(prompt.includes('Nie modyfikuj kodu, portfela, publikacji ani kalendarza'));
  const context=JSON.parse(prompt.split('KONTEKST (JSON): ')[1]);assert.equal(context.podmiot,'Przykładowa spółka');assert.equal(context.artykul,undefined);
 });
 test('screeny artykułu są przekazywane z tytułem, linkiem i datą jako dane JSON',()=>{

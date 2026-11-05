@@ -3,9 +3,9 @@
 One-pager · stan wdrożony 5 listopada 2026
 [Dokumentacja](README.md) · [Wymagania produktu](PRD.md) · [Specyfikacja techniczna](SPEC.md)
 
-## Cel i odbiorczyni
+## Cel i użytkownik
 
-Zorza to prywatna aplikacja na iPhone do śledzenia akcji i ETF-ów. Łączy notowania, zagraniczne publikacje i terminy emitentów, aby właścicielka mogła szybko sprawdzić, co zmieniło się w obserwowanych podmiotach i portfelu. Dane zbiera serwer — komputer nie musi być włączony.
+Zorza to prywatna aplikacja na iPhone do śledzenia akcji i ETF-ów. Łączy notowania, zagraniczne publikacje i terminy emitentów, aby użytkownik mógł szybko sprawdzić, co zmieniło się w obserwowanych podmiotach i portfelu. Dane zbiera serwer — komputer nie musi być włączony.
 
 ## Jak z niej korzystać
 

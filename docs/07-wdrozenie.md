@@ -24,9 +24,9 @@ Aplikacja, most i HTTPS działają jako oddzielne usługi Compose. Zorza nie zas
 ## Zmiana backendu
 
 1. Codex kończy edycję kodu na VPS.
-2. Właścicielka wybiera Backend → Sprawdź.
+2. Użytkownik wybiera Backend → Sprawdź.
 3. Kontroler zapisuje oddzielną wersję, wykonuje testy bez sieci i sekretów jako użytkownik 1000, po czym buduje obraz przez zaufany Dockerfile.
-4. Właścicielka przegląda listę plików i wybiera Wdróż. Publikowana jest zapisana wersja, nie późniejsze edycje katalogu roboczego.
+4. Użytkownik przegląda listę plików i wybiera Wdróż. Publikowana jest zapisana wersja, nie późniejsze edycje katalogu roboczego.
 5. Kontroler zachowuje poprzedni obraz i bazę, uruchamia app oraz sprawdza odpowiedź. Przy błędzie próbuje przywrócić backend i bazę sprzed wdrożenia.
 
 Przygotowanie i wdrażanie jest blokowane podczas aktywnej pracy Codexa lub aktualizacji danych. Frontend z public/ nie jest automatycznie cofany razem z backendem. Awaria hosta w środku procesu daje stan wymagający sprawdzenia administracyjnego.

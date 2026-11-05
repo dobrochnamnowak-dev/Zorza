@@ -11,7 +11,7 @@ flowchart TD
     App --> Bridge[Prywatny most Codexa]
     Bridge --> ChatGPT[Własne logowanie ChatGPT]
     Bridge --> Workspace[Kod Zorzy w workspace]
-    App -->|prywatne gniazdo; zatwierdzenie właścicielki| Deploy[Kontroler wdrożeń na hoście]
+    App -->|prywatne gniazdo; zatwierdzenie użytkownika| Deploy[Kontroler wdrożeń na hoście]
     Deploy --> Release[Przetestowany obraz app]
 ```
 

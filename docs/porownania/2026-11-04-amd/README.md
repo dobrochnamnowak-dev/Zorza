@@ -1,6 +1,6 @@
 # AMD: GPT-6.1 Sol low i GPT-6 Luna low
 
-Test na zlecenie właścicielki, 4 listopada 2026. Jeden przebieg na model, ten sam prompt i pakiet danych (SHA-256 w metrykach), brak ponowień. Stan notowań: 11:14 EST / 17:14 Europe/Warsaw. Wyniki to zapis testu, nie aktualne notowania.
+Test na zlecenie użytkownika, 4 listopada 2026. Jeden przebieg na model, ten sam prompt i pakiet danych (SHA-256 w metrykach), brak ponowień. Stan notowań: 11:14 EST / 17:14 Europe/Warsaw. Wyniki to zapis testu, nie aktualne notowania.
 
 - [Sol — oryginalny wynik](sol-low.md)
 - [Luna — oryginalny wynik](luna-low.md)

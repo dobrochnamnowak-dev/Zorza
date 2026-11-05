@@ -2,7 +2,7 @@
 
 ## Jak ma wyglądać opis
 
-Screeny właścicielki są wzorem konstrukcji wypowiedzi. Ich twierdzenia o transakcjach, kursach i cenach docelowych nie są automatycznie zweryfikowanymi faktami i nie wolno kopiować ich do aplikacji.
+Screeny użytkownika są wzorem konstrukcji wypowiedzi. Ich twierdzenia o transakcjach, kursach i cenach docelowych nie są automatycznie zweryfikowanymi faktami i nie wolno kopiować ich do aplikacji.
 
 1. **Krótka teza.** Jedno–dwa zdania: co jest obecnie najważniejsze dla podmiotu. Bez wstępu „najnowszy materiał podaje” i bez opisu pracy generatora.
 2. **Główne czynniki.** Do czterech różnych punktów. Pogrubiona krótka nazwa, a następnie co się wydarzyło, kiedy i co to oznacza dla działalności. Po jednym–dwóch zdaniach. Przy skąpych danych mniej punktów, bez sztucznego wypełniania.

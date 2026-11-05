@@ -9,7 +9,7 @@ Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**: publikacje 
 | Potrzeba | Dokument |
 | --- | --- |
 | Brief zamiast osobnych streszczeń — stan wdrożenia | [Tylko brief](docs/19-brief-zamiast-podsumowan.md) |
-| Cel, odbiorczyni, funkcje i granice produktu na jednej stronie | [Zorza — one-pager](ONE-PAGER.md) |
+| Cel, użytkownik, funkcje i granice produktu na jednej stronie | [Zorza — one-pager](ONE-PAGER.md) |
 | Wymagania produktu, scenariusze i kryteria odbioru | [PRD](PRD.md) |
 | Kontrakty techniczne, dane, API i automatyzacja | [SPEC](SPEC.md) |
 | Optymalizacja czatu, odczytów artykułów i Startu | [Etap 1 — transport](docs/18-optymalizacja-transportu.md) |
@@ -38,7 +38,7 @@ Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**: publikacje 
 - Oryginalne nagłówki i linki do źródeł; ich opracowanie po polsku jest w briefie, bez osobnych streszczeń artykułów w zakresie produktu.
 - Słowna Sytuacja firmy i przyrostowy brief pod wykresem, tylko dla obserwowanych lub portfela.
 - Terminy zapisane w kalendarzu aplikacji z dowodem źródłowym i oznaczeniem niepewności.
-- Czat z Codexem, dołączanie zdjęć i zatwierdzane przez właścicielkę wdrażanie backendu.
+- Czat z Codexem, dołączanie zdjęć i zatwierdzane przez użytkownika wdrażanie backendu.
 
 **Harmonogram, Europe/Warsaw:** kursy całej dostępnej listy o 15:40 i 21:45; dodatkowo obserwowane i portfel o 18:30. Publikacje i terminy tylko wybranych podmiotów codziennie o 15:40. Opisy i briefy: poniedziałek i czwartek 14:30; pierwszy opis po dodaniu obserwowania lub zakupu. Zadania wykonuje VPS, więc komputer nie musi być włączony.
 

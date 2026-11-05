@@ -1,6 +1,6 @@
 # Brief zamiast osobnych streszczeń artykułów
 
-Decyzja właścicielki · 5 listopada 2026
+Decyzja użytkownika · 5 listopada 2026
 [PRD](../PRD.md) · [SPEC](../SPEC.md) · [Karta produktu](../ONE-PAGER.md)
 
 ## Obowiązujący zakres

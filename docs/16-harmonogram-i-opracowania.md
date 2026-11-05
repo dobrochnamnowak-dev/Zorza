@@ -10,7 +10,7 @@
 
 ## Jednorazowe opracowania
 
-Przygotowano 12 nowych raportów na zamówienie właścicielki. Łącznie 199 509 tokenów wejścia i wyjścia generowania; research dodatkowo. Ponownie wykorzystano gotowy raport AMD, bez trzynastego wywołania modelu. Raporty mają zweryfikowane publiczne zagraniczne źródła, rzeczywistą datę i ograniczenia danych. Znaleziono dziewięć przyszłych terminów lub przedziałów; dwa AMD były już w kalendarzu i nie powinny się zdublować.
+Przygotowano 12 nowych raportów na zamówienie użytkownika. Łącznie 199 509 tokenów wejścia i wyjścia generowania; research dodatkowo. Ponownie wykorzystano gotowy raport AMD, bez trzynastego wywołania modelu. Raporty mają zweryfikowane publiczne zagraniczne źródła, rzeczywistą datę i ograniczenia danych. Znaleziono dziewięć przyszłych terminów lub przedziałów; dwa AMD były już w kalendarzu i nie powinny się zdublować.
 
 Źródła tego jednorazowego researchu są oznaczone jako `research`: niewidoczne jako nowe publikacje, wykluczone z briefu i automatycznego ponownego opracowania. Zapis gotowych raportów jest atomowy i idempotentny, tylko dla nadal obserwowanych lub posiadanych podmiotów. Nie zapisujemy zakupów ani komentarzy w artefaktach researchu lub repozytorium.
 

@@ -1,4 +1,4 @@
-# Sytuacja spółki — wzorzec właścicielki
+# Sytuacja spółki — wzorzec użytkownika
 
 Ustalenie z 4 listopada 2026: wyłącznie zagraniczne źródła. Test porównawczy GPT-6.1 Sol i GPT-6 Luna na jednej spółce, przy rozumowaniu `low`, bez zmiany modelu automatyzacji. Poniższy wzorzec opisuje docelowy raport; zapis dokumentu nie włącza researchu w działającym generatorze.
 

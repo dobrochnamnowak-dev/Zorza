@@ -6,7 +6,7 @@ labels: ""
 assignees: ""
 ---
 
-## Potrzeba użytkowniczki
+## Potrzeba użytkownika
 
 ## Proponowane zachowanie
 

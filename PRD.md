@@ -1,14 +1,14 @@
 # Zorza — PRD
 
 Wymagania produktu · wersja 1.2 · 5 listopada 2026
-Właścicielka produktu: właścicielka prywatnej aplikacji Zorza
-Baza: ustalenia właścicielki i wdrożenie `4585972331e64c66aa95c672bab3c14f` sprawdzone 5 listopada 2026. Brief zastępuje osobne streszczenia artykułów; ich wyłączenie w aplikacji potwierdzono w [notatce wdrożenia](docs/19-brief-zamiast-podsumowan.md). Dokument nie potwierdza wykonania późniejszych cykli serwera.
+Docelowy użytkownik: osoba korzystająca z prywatnej aplikacji Zorza
+Baza: ustalenia użytkownika i wdrożenie `4585972331e64c66aa95c672bab3c14f` sprawdzone 5 listopada 2026. Brief zastępuje osobne streszczenia artykułów; ich wyłączenie w aplikacji potwierdzono w [notatce wdrożenia](docs/19-brief-zamiast-podsumowan.md). Dokument nie potwierdza wykonania późniejszych cykli serwera.
 
 [One-pager produktu](ONE-PAGER.md) · [Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
 
 ## 1. Problem i cel
 
-Informacje o spółkach i ETF-ach są rozproszone między notowaniami, portalami branżowymi i stronami emitentów. Użytkowniczka potrzebuje krótkiego przeglądu na telefonie: co zmieniło się w jej podmiotach, dlaczego mogło się zmienić, jakie informacje są istotne i kiedy nastąpi kolejne wydarzenie. Ręczne sprawdzanie wszystkich stron i odświeżanie aplikacji ma zastąpić proces działający na serwerze.
+Informacje o spółkach i ETF-ach są rozproszone między notowaniami, portalami branżowymi i stronami emitentów. Użytkownik potrzebuje krótkiego przeglądu na telefonie: co zmieniło się w obserwowanych podmiotach, dlaczego mogło się zmienić, jakie informacje są istotne i kiedy nastąpi kolejne wydarzenie. Ręczne sprawdzanie wszystkich stron i odświeżanie aplikacji ma zastąpić proces działający na serwerze.
 
 Zorza jest prywatną aplikacją informacyjną. Umożliwia śledzenie zatwierdzonego katalogu, własnych zapisów zakupów i obserwowanych instrumentów. Nie wykonuje transakcji, nie zastępuje rachunku maklerskiego i nie zapewnia pewnych prognoz kursów.
 
@@ -16,9 +16,9 @@ Zorza jest prywatną aplikacją informacyjną. Umożliwia śledzenie zatwierdzon
 
 | Rola | Potrzeba |
 | --- | --- |
-| Właścicielka | Sprawdzić portfel, notowania, sytuację podmiotu, publikacje i terminy na iPhonie |
-| Właścicielka w roli redaktorki listy | Dodać obserwowanie, zapisać zakup, komentarz lub oznaczyć artykuł |
-| Właścicielka w roli zatwierdzającej | Zlecić zmianę Codexowi i zatwierdzić konkretną przetestowaną wersję backendu |
+| Użytkownik | Sprawdzić portfel, notowania, sytuację podmiotu, publikacje i terminy na iPhonie |
+| Użytkownik zarządzający listą | Dodać obserwowanie, zapisać zakup, komentarz lub oznaczyć artykuł |
+| Użytkownik zatwierdzający zmiany | Zlecić zmianę Codexowi i zatwierdzić konkretną przetestowaną wersję backendu |
 | Administrator | Utrzymać VPS, logowanie mostu, kopie danych i publikację usług |
 
 To role operacyjne w prywatnym systemie. Obecna wersja nie ma osobnych kont zespołu ani uprawnień dla wielu inwestorów.
@@ -33,7 +33,7 @@ Najważniejsze scenariusze:
 
 ## 3. Zakres wersji bazowej
 
-Katalog zawiera 108 akcji i 46 ETF-ów według `catalog.json` z dnia opracowania dokumentu. Zakres można zmieniać tylko po zatwierdzeniu właścicielki. Podobny ticker nie oznacza tego samego instrumentu.
+Katalog zawiera 108 akcji i 46 ETF-ów według `catalog.json` z dnia opracowania dokumentu. Zakres można zmieniać tylko po zatwierdzeniu użytkownika. Podobny ticker nie oznacza tego samego instrumentu.
 
 Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspólny podmiot przetwarzamy raz. Pozostała część katalogu może mieć notowania i wykres, lecz nie uruchamia nowego pobierania publikacji, terminów ani opisów AI.
 

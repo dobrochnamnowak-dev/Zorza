@@ -27,4 +27,4 @@ Ten wzorzec nie jest cyklicznym zadaniem i sam nie włącza żadnego modelu.
 
 ## Sytuacja spółki
 
-[Wzorzec właścicielki i warunki weryfikacji](sytuacja-spolki.md): pięć sekcji, do około 300 słów, dane i daty ze źródłami, wyłącznie zagraniczne publikacje. Zapisany 4 listopada 2026; porównanie Sol low i Luna low zachowano jako historyczny test. Właścicielka następnie wybrała Sol low do sytuacji i briefu; aktywny prompt jest w `scripts/insight-ai.mjs`. Harmonogram: poniedziałek i czwartek 14:30 plus pierwszy opis po dodaniu.
+[Wzorzec użytkownika i warunki weryfikacji](sytuacja-spolki.md): pięć sekcji, do około 300 słów, dane i daty ze źródłami, wyłącznie zagraniczne publikacje. Zapisany 4 listopada 2026; porównanie Sol low i Luna low zachowano jako historyczny test. Użytkownik następnie wybrał Sol low do sytuacji i briefu; aktywny prompt jest w `scripts/insight-ai.mjs`. Harmonogram: poniedziałek i czwartek 14:30 plus pierwszy opis po dodaniu.

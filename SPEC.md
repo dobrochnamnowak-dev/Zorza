@@ -20,7 +20,7 @@ flowchart TD
     Controller --> Release[Przetestowany obraz app]
 ```
 
-Aplikacja jest prywatną PWA z jednym właścicielem, bez rozdzielania danych wielu użytkowników. Frontend używa HTML/CSS i modułów JavaScript. Backend `server.mjs` udostępnia API, sesje, proces harmonogramu i worker. Node.js 24 zapewnia SQLite; aplikacja nie wymaga zewnętrznych pakietów npm. Codex CLI jest osobnym składnikiem kontenera chat, a kontroler wdrożeń działa w Pythonie na hoście.
+Aplikacja jest prywatną PWA z jednym użytkownikiem, bez rozdzielania danych wielu użytkowników. Frontend używa HTML/CSS i modułów JavaScript. Backend `server.mjs` udostępnia API, sesje, proces harmonogramu i worker. Node.js 24 zapewnia SQLite; aplikacja nie wymaga zewnętrznych pakietów npm. Codex CLI jest osobnym składnikiem kontenera chat, a kontroler wdrożeń działa w Pythonie na hoście.
 
 | Usługa | Dostęp i odpowiedzialność |
 | --- | --- |
@@ -157,7 +157,7 @@ Brak `material_changed` nie blokuje nowego punktu briefu. Niezmieniony, nadal wa
 
 Daty zbieramy z komunikatów, dostępnych stron IR, JSON-LD i jednoznacznych kart Upcoming Events. Kalendarz emitenta ma pierwszeństwo przed archiwum; parser nie łączy daty jednej karty z tytułem sąsiedniej. Domyślnie do trzech stron emitenta na podmiot i do trzech równoległych przebiegów; osobny moduł komunikatów ma odrębny limit odczytów. Brak znalezionej daty nie potwierdza braku wydarzenia.
 
-Każdy termin ma podmiot przez artykuł, dowód i pewność `confirmed` albo `estimated`. Z opisu wolno zapisać datę tylko wtedy, gdy zgadza się z przekazanym źródłowym wydarzeniem; sama proza modelu nie wystarcza. Wpis odrzucony przez właścicielkę nie powinien zostać samoczynnie zatwierdzony.
+Każdy termin ma podmiot przez artykuł, dowód i pewność `confirmed` albo `estimated`. Z opisu wolno zapisać datę tylko wtedy, gdy zgadza się z przekazanym źródłowym wydarzeniem; sama proza modelu nie wystarcza. Wpis odrzucony przez użytkownika nie powinien zostać samoczynnie zatwierdzony.
 
 | Precyzja | Zapis i prezentacja |
 | --- | --- |
@@ -233,7 +233,7 @@ Repozytorium jest kopią kodu i dokumentacji; GitHub nie wdraża automatycznie n
 
 1. Zapisać kod i sprawdzić różnice wobec wdrożonej wersji, bez nadpisywania cudzych zmian.
 2. `prepare`: zamrozić dozwolone pliki, bez dowiązań i sekretów; testować izolowaną kopię bez sieci jako użytkownik 1000; zbudować obraz z zaufanego Dockerfile.
-3. Pokazać właścicielce wynik testów i konkretny identyfikator wersji.
+3. Pokazać użytkownikowi wynik testów i konkretny identyfikator wersji.
 4. `deploy`: wdrożyć dokładnie tę wersję, zachowując kopię bazy i poprzedni obraz; sprawdzić zdrowie aplikacji.
 5. Przy błędzie kontroler próbuje przywrócić backend i bazę. Frontend z montowanego `public/` wymaga osobnego sprawdzenia/cofnięcia. Przerwany proces kontrolera może wymagać kontroli administratora.
 

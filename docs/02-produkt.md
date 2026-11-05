@@ -2,7 +2,7 @@
 
 [Spis dokumentacji](../README.md)
 
-Stan po wdrożeniu z 5 listopada 2026. Krótki opis dla odbiorczyni: [karta produktu](../ONE-PAGER.md). Wymagania i kryteria odbioru: [PRD 1.2](../PRD.md).
+Stan po wdrożeniu z 5 listopada 2026. Krótki opis dla użytkownika: [karta produktu](../ONE-PAGER.md). Wymagania i kryteria odbioru: [PRD 1.2](../PRD.md).
 
 ## Cel
 

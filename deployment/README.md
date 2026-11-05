@@ -23,7 +23,7 @@ To mechanizm własnej aplikacji, nie dodatkowa usługa OpenAI. Nie uruchamia mod
 ## Jednorazowa instalacja przez administratorkę
 
 1. Skopiuj `controller.py` jako `/opt/zorza/config/deployment-controller.py`, `Deployment.Dockerfile` do `/opt/zorza/config/Deployment.Dockerfile`, oba jako root bez prawa zapisu agenta.
-2. Utwórz `/opt/zorza/deploy-state` z trybem 0700 i `/opt/zorza/deploy-run` z trybem 0755, właściciel root.
+2. Utwórz `/opt/zorza/deploy-state` z trybem 0700 i `/opt/zorza/deploy-run` z trybem 0755, przypisane do konta root.
 3. Skopiuj `deployment-access.json` do `/opt/zorza/config/` jako root. Nakładka Compose dodaje **tylko do app** zmienną `DEPLOY_SOCKET=/run/zorza-deploy/control.sock` i montowanie `/opt/zorza/deploy-run:/run/zorza-deploy:ro`. Do kontenera agenta nie dodaje żadnego montowania ani uprawnień. Pierwsze administracyjne wdrożenie uruchom z `-f compose.yml -f deployment-access.json`; później kontroler sam używa tej nakładki.
 4. Zainstaluj `zorza-deploy.service` w `/etc/systemd/system/`, uruchom `systemctl daemon-reload` i `systemctl enable --now zorza-deploy`.
 5. Przed pierwszą zmianą zapisz root-only `baseline.json` ze skrótami obecnie wdrożonego kodu (funkcja `freeze` kontrolera). Opublikuj backend z `lib/deployment.mjs`, trasami `/api/deployment/*` i panelem w czacie. Zapisz bazową listę skrótów po tym wdrożeniu.

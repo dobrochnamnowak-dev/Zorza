@@ -6,7 +6,7 @@
 
 Odczyt prywatnego statusu wykazał 100/100 wykorzystanych tłumaczeń w dniu polskim oraz 122 oczekujące nagłówki. Samo źródło miało tytuły, ale interfejs zasłaniał je komunikatem „Nagłówek w tłumaczeniu”. Była to kolejka ograniczona budżetem, nie brak pobranych publikacji.
 
-## Zmiana na życzenie właścicielki
+## Zmiana na życzenie użytkownika
 
 - Wszystkie listy, profil i okno artykułu pokazują wyłącznie oryginalny `articles.title`; wyszukiwanie korzysta z tego samego tytułu. Oryginalny nagłówek angielski lub polski nie wymaga opracowania AI.
 - Automatyczne tłumaczenie usunięto z workera. Nie sprawdza cache tłumaczeń, nie zużywa limitu 100/dzień i nie wywołuje modelu dla nagłówków. Historyczne stany ustawiane są na `disabled`; nowe i zmienione artykuły dostają ten sam stan.
