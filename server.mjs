@@ -6,7 +6,7 @@ import {insightFor,markInsightRead,retryInsight,queueInsights,processInsightWork
 import {collectCalendarDates} from './lib/calendar-fetch.mjs';
 import {deploymentRequest} from './lib/deployment.mjs';
 import {createPriceHistoryService} from './lib/price-history.mjs';
-import {processPublicationWork,headlineStatus} from './lib/publication-work.mjs';
+import {headlineStatus,ARTICLE_SUMMARIES_DISABLED} from './lib/publication-work.mjs';
 import {spawn} from 'node:child_process';
 import {collectQuotes} from './lib/quotes.mjs';
 import {collectScheduledPersonalPrices} from './lib/personal-prices.mjs';
@@ -64,7 +64,7 @@ function snapshot(view='full'){
   const insightIds=overview?store.db.prepare('SELECT instrument_id id FROM company_insights').all():instruments;
   const insights=Object.fromEntries(insightIds.map(i=>{const n=insightFor(store.db,i.id);if(!overview)return [i.id,n];const {content,sources,total_articles,selected_articles,retention_months,...summary}=n;return [i.id,summary];}));
   for(const i of instruments)i.insight_unread=insights[i.id]?.unread||false;
-  return {...(overview?{omitted,insight_summaries:true}:{}),settings:getSettings(store.db),instruments,sources,articles,events,jobs,insights,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,insightSchedule:{personal:'Poniedziałek i czwartek 14:30',other:null,timezone:'Europe/Warsaw'},aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,summaryWorkerActive:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
+  return {...(overview?{omitted,insight_summaries:true}:{}),settings:getSettings(store.db),instruments,sources,articles,events,jobs,insights,purchases:store.db.prepare('SELECT * FROM purchases ORDER BY purchased_on DESC,created_at DESC').all(),quotes:store.db.prepare('SELECT * FROM quotes').all(),status:{dev,collectionRunning,insightSchedule:{personal:'Poniedziałek i czwartek 14:30',other:null,timezone:'Europe/Warsaw'},aiAuto:false,aiLimit,aiUsed:used,workerSeen:worker,summaryWorkerConfigured:false,summaryWorkerActive:false,articleSummariesEnabled:false,insightWorkerConfigured:!!process.env.CHAT_BRIDGE_URL,headlines:headlineStatus(store.db),
     publicationSince:since,schedulerEnabled:process.env.SCHEDULER_ENABLED==='1',lastScheduled:store.db.prepare("SELECT value FROM meta WHERE key='publication_slot'").get()?.value||null,pricesConnected:store.db.prepare('SELECT COUNT(*) n FROM quotes').get().n>0,pricesRunning,pricesTimezone:'Europe/Warsaw',usOpenRefresh:false,usOpenTime:null,priceSchedule:['15:40','21:45'],personalPriceSchedule:['18:30'],lastPersonalPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='personal_prices_slot'").get()?.value||null,personalQuotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_focus_report'").get()?.value||'null'),publicationSchedule:['15:40'],calendarSchedule:['15:40'],lastUSOpenSlot:store.db.prepare("SELECT value FROM meta WHERE key='us_open_slot'").get()?.value||null,calendarReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='calendar_report'").get()?.value||'null'),pricesDailyHour:15,pricesDailyMinute:40,lastPricesSlot:store.db.prepare("SELECT value FROM meta WHERE key='prices_slot'").get()?.value||null,quotesReport:JSON.parse(store.db.prepare("SELECT value FROM meta WHERE key='quotes_report'").get()?.value||'null'),pushConnected:false,collectionInterval:Math.max(15,Number(process.env.COLLECT_INTERVAL_MINUTES)||360),serverTime:isoNow()}};
 }
 const assets={'/data-sync.js':'data-sync.js','/card-dismiss.js':'card-dismiss.js','/company-insights.js':'company-insights.js','/price-chart.js':'price-chart.js','/portfolio.js':'portfolio.js','/aurora-photo.jpg':'aurora-photo.jpg','/':'index.html','/app.js':'app.js','/style.css':'style.css','/sw.js':'sw.js','/manifest.webmanifest':'manifest.webmanifest','/icon.svg':'icon.svg','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/apple-touch-icon.png':'apple-touch-icon.png'};
@@ -84,10 +84,7 @@ const server=createServer(async(req,res)=>{
       if(!process.env.WORKER_TOKEN || !equal(req.headers.authorization,`Bearer ${process.env.WORKER_TOKEN}`)) fail('Brak uprawnień procesu',401);
       if(method!=='POST') fail('Niedozwolona metoda',405);
       store.db.prepare("INSERT OR REPLACE INTO meta(key,value) VALUES('worker_seen',?)").run(isoNow());
-      if(path==='/api/worker/claim')return json(res,200,store.claim(aiLimit));
-      if(path==='/api/worker/finish'){
-        const b=await body(req);store.finish(b.id,b.lease,b.result,b.error);return json(res,200,{ok:true});
-      }
+      if(['/api/worker/claim','/api/worker/finish'].includes(path))return json(res,410,{error:ARTICLE_SUMMARIES_DISABLED});
       if(path==='/api/worker/collect'){
         if(collectionRunning)return json(res,202,{busy:true});
         collectionRunning=true;
@@ -198,14 +195,7 @@ const server=createServer(async(req,res)=>{
         const b=await body(req);store.db.prepare('UPDATE articles SET read_at=? WHERE id=?').run(isoNow(),b.id);return json(res,200,{ok:true});
       }
       if(path==='/api/title-retry'&&method==='POST'){return json(res,410,{error:'Tłumaczenie nagłówków jest wyłączone. Dostępny jest oryginalny tytuł.'});}
-      if(path==='/api/summarize'&&method==='POST'){
-        const b=await body(req);if(!store.db.prepare('SELECT id FROM articles WHERE id=? AND eligible=1 AND deleted_at IS NULL').get(b.id))fail('Źródło publikacji wymaga weryfikacji',404);const result=store.enqueue(b.id);publicationWork().catch(()=>{});return json(res,200,result);
-      }
-      if(path==='/api/retry'&&method==='POST'){
-        const b=await body(req);
-        store.db.prepare("UPDATE jobs SET status='queued',error=NULL,lease=NULL,user_requested=1 WHERE id=? AND status='failed' AND content_hash=(SELECT content_hash FROM articles WHERE id=jobs.article_id)").run(b.id);
-        return json(res,200,{ok:true});
-      }
+      if(['/api/summarize','/api/retry'].includes(path)&&method==='POST')return json(res,410,{error:ARTICLE_SUMMARIES_DISABLED});
       if(path==='/api/event-review'&&method==='POST'){
         const b=await body(req);if(!['approved','rejected'].includes(b.status))fail('Nieprawidłowy status');
         store.db.prepare("UPDATE events SET review_status=? WHERE id=? AND review_status='pending'").run(b.status,b.id);return json(res,200,{ok:true});
@@ -283,8 +273,6 @@ async function publicationWork(){
  if(workRunning||workStopping||!process.env.CHAT_BRIDGE_URL||!process.env.CHAT_BRIDGE_TOKEN)return;
  workRunning=true;try{
   const options={available:async()=>{try{const s=await bridgeRequest('/publication/status');return !!s.ready&&!!s.authenticated&&!s.busy;}catch{return false;}},runModel:task=>bridgeRequest('/publication',task)};
-  const result=await processPublicationWork(store,options);
-  if(!['empty','daily_limit'].includes(result.status))return result;
   return await processInsightWork(store,{...options,scope:getSettings(store.db).insightsScope});
  }finally{workRunning=false;}
 }

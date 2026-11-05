@@ -41,12 +41,12 @@ test('data kalendarza wymaga poprawnej daty i cytatu; zapisuje się automatyczni
 });
 test('pusta kolejka nie uruchamia modelu',async()=>{
   let calls=0;const r=await runOnce({base:'https://example.com',token:'test',fetcher:async()=>new Response(JSON.stringify({job:null,reason:'empty'})),runModel:async()=>{calls++;}});
-  assert.equal(r.status,'empty');assert.equal(calls,0);
+  assert.equal(r.status,'disabled');assert.equal(calls,0);
 });
-test('zapis wyniku procesu bez prawdziwego wywołania AI',async()=>{
-  const requests=[];const job={...item,id:'j',lease:'l',instrument_name:'Test'};
-  const result=await runOnce({base:'https://example.com',token:'test',fetcher:async(url,opt)=>{requests.push({url:String(url),body:JSON.parse(opt.body)});return new Response(JSON.stringify(requests.length===1?{job}:{ok:true}));},runModel:async()=>summary});
-  assert.equal(result.status,'done');assert.equal(requests[1].body.result.events[0].date,'2026-11-20');
+test('dawny proces nie pobiera zlecenia ani nie uruchamia modelu nawet przy danych zadania',async()=>{
+ let requests=0,models=0;
+ const result=await runOnce({base:'https://example.com',token:'test',fetcher:async()=>{requests++;throw Error('Nie wolno pobierać');},runModel:async()=>{models++;throw Error('Nie wolno generować');}});
+ assert.equal(result.status,'disabled');assert.equal(requests,0);assert.equal(models,0);
 });
 test('blokada źródła zatrzymuje pobieranie zagranicznych publikacji bez modelu',async t=>{
   const s=storeFor(t);s.db.prepare("UPDATE instruments SET watched=1 WHERE id='AKCJA-002'").run();

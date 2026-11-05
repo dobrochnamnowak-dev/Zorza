@@ -1,7 +1,7 @@
 # Zorza — specyfikacja techniczna
 
 Wersja 1.2 · 5 listopada 2026
-Odpowiada [PRD 1.2](PRD.md). Opisuje kod optymalizacji `74319c5` i potwierdzone wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` z 5 listopada 2026, 13:30:49 czasu polskiego. Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań. Późniejsza decyzja produktowa wycofuje osobne streszczenia artykułów; opis istniejących modułów nie oznacza ich wyłączenia. [Stan i kryteria migracji](docs/19-brief-zamiast-podsumowan.md).
+Odpowiada [PRD 1.2](PRD.md). Opisuje potwierdzone wdrożenie `4585972331e64c66aa95c672bab3c14f` z 5 listopada 2026, 14:14:14 czasu polskiego. Osobne streszczenia artykułów są wyłączone; [stan i dowody](docs/19-brief-zamiast-podsumowan.md). Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań.
 
 [Spis projektu](README.md) · [Szczegóły interfejsów](docs/08-api-dane.md) · [Wdrożenia](docs/07-wdrozenie.md)
 
@@ -39,7 +39,7 @@ Stan aplikacji jest w `/opt/zorza/data`, konta i czatu w `/opt/zorza/chat-state`
 | FR-05–06 | `quotes.mjs`, `price-history.mjs`, `personal-prices.mjs`, `portfolio.js`, `price-chart.js` |
 | FR-07 | `store.mjs`, API zakupu, import i `portfolioPerformance` |
 | FR-09–10 | `publication-policy.mjs`, `issuer-sources.mjs`, `collector.mjs`, oryginalne `articles.title` |
-| FR-11 — wycofane | Starszy mechanizm: `publication-work.mjs`, `publication-ai.mjs`, jobs; do wyłączenia bez naruszania wspólnych odczytów treści i briefu |
+| FR-11 — wycofane | `publication-work.mjs` kończy stare zadania bez AI; API i most odrzucają streszczenia. Brief i wspólne odczyty zachowane |
 | FR-12–14 | `company-insights.mjs`, `brief-monitor.mjs`, `insight-ai.mjs`, `company-insights.js` |
 | FR-15 | `calendar-fetch.mjs`, `issuer-calendar.mjs`, `event-extraction.mjs`, `event-windows.mjs` |
 | FR-16 | `settings.mjs`, funkcje `scheduled*` w `server.mjs`, trwałe sloty |
@@ -116,7 +116,7 @@ Oryginalny tytuł `articles.title` służy do wszystkich nagłówków i wyszukiw
 
 Opracowanie publikacji odbywa się w przyrostowym briefie z sekcji 7. Osobne streszczenia pojedynczych artykułów, także na żądanie, są wycofane z zakresu. Nie należy dodawać drugiego wywołania AI dla tego samego celu.
 
-Stan techniczny: wdrożony kod nadal zawiera przyciski streszczeń, `/api/summarize`, `/api/retry`, worker `publication-work.mjs`, prompt `publication-ai.mjs`, historyczne pola `summary` i kolejkę `jobs`. To pozostałość do wyłączenia, nie zatwierdzona funkcja produktu. Aktualizacja dokumentacji nie zmienia działania tych ścieżek na VPS. Dane historyczne można zachować bez generowania nowych streszczeń. Kryteria bezpiecznego usunięcia: [decyzja o briefie](docs/19-brief-zamiast-podsumowan.md).
+Stan techniczny: usunięto przyciski, sekcje streszczeń, automatyczne odpytywanie wyników i panel analizy screenów pojedynczego artykułu. API `/api/summarize`, `/api/retry` oraz worker `/api/worker/claim` i `/api/worker/finish` zwracają 410. Migracja przy starcie kończy `queued` i `running` w starszej tabeli `jobs` jako `failed`, z przyczyną wyłączenia; nie kasuje treści. Starszy CLI nie pobiera zleceń ani nie wywołuje modelu. Most odrzuca `kind=summary` przed sprawdzeniem konta i naliczeniem operacji; `runPublicationAI` blokuje ten rodzaj również przed utworzeniem plików lub uruchomieniem CLI. Worker serwera obsługuje bezpośrednio osobne `insight_jobs`, zachowując Sol low i harmonogram. [Potwierdzenie](docs/19-brief-zamiast-podsumowan.md).
 
 ## 7. Sytuacja firmy i przyrostowy brief
 
@@ -204,7 +204,7 @@ Wszystkie poniższe ścieżki poza sesją/logowaniem są prywatne. Mutacje wymag
 | Komentarze | GET `/api/instrument-comments?id=…`; POST tej samej ścieżki: `{instrument_id, text}` albo `{instrument_id, delete_id}` |
 | Artykuły podmiotu | GET `/api/instrument-articles?id=…`; oryginalne tytuły, `title_pl: null` |
 | Artykuły — operacje | POST `/api/read`, `/api/article-star`, `/api/article-delete`, `/api/article-research` |
-| Starsze streszczenia — do wyłączenia | POST `/api/summarize`: `{id: article_id}`; POST `/api/retry`: `{id: job_id}`; istnieją w kodzie, poza aktualnym zakresem produktu |
+| Wyłączone streszczenia | POST `/api/summarize`, `/api/retry` → 410; dawny worker claim/finish → 410 |
 | Opis i brief | GET `/api/insight?id=…`; POST `/api/insight-read`: `{id, hash}`; POST `/api/insight-retry`: `{id}` |
 | Dawne tłumaczenia | POST `/api/title-retry` zwraca 410 |
 | Ustawienia | POST `/api/settings`; walidowane pola z `lib/settings.mjs` |
@@ -248,7 +248,7 @@ Repozytorium zawiera komplet modułów mostu, w tym `insight-ai.mjs`. Szablony C
 | Obszar | Minimalny dowód |
 | --- | --- |
 | Ceny | Walidacja symbolu/waluty/typu, zachowanie nowszej daty, brakujące mapowania i 18:30 tylko zakresu osobistego |
-| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń; docelowo brak przycisków i nowych zadań osobnych streszczeń (FR-11 wycofane) |
+| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń; brak przycisków i nowych zadań osobnych streszczeń (FR-11 wycofane) |
 | Opisy / brief | Pierwszy opis, slot poniedziałek/czwartek, brak AI bez nowych danych, walidacja źródeł, przyrostowość, zmiany/odczyt i retencja |
 | Kalendarz | Właściwa data i precyzja, brak daty z sąsiedniej karty, zapis z opisu tylko z dowodem, odrzucenie i aktualizacja |
 | API | Sesje, Origin, dane prywatne poza zasobami publicznymi i brak API w cache |
@@ -266,7 +266,7 @@ node --check public/app.js
 (cd deployment && python3 -m unittest test_controller.py)
 ```
 
-5 listopada po optymalizacji przeszły 124 testy aplikacji. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie. Bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
+5 listopada po wyłączeniu streszczeń przeszło 121 testów aplikacji; wycofane scenariusze generowania zastąpiono testami blokad. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie. Bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
 
 Otwarte decyzje z PRD: przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
 

@@ -16,7 +16,7 @@
 | Historia kursu | GET `/api/price-history?id=…&period=1d\|1w\|1y\|5y` |
 | Ustawienia | POST `/api/settings` |
 | Obserwowanie / zakup / usunięcie zapisu | POST `/api/watch`, `/api/purchase`, `/api/purchase-delete` |
-| Starsze streszczenia — do wyłączenia | POST `/api/summarize`, `/api/retry`; istnieją w kodzie, wycofane z zakresu produktu |
+| Wyłączone streszczenia | POST `/api/summarize`, `/api/retry` oraz worker claim/finish zwracają 410 |
 | Przeczytane / ważne / usunięcie artykułu | POST `/api/read`, `/api/article-star`, `/api/article-delete` |
 | Dodatkowe doniesienia | POST `/api/article-research` |
 | Czat | `/api/chat/status`, `/api/chat/login`, `/api/chat/message`, `/api/chat/stop` |
@@ -28,6 +28,8 @@ Poza sesją i logowaniem API wymaga zalogowania. Mutacje wymagają zgodnego Orig
 Od 5 listopada frontend używa lekkich widoków. `omitted` oznacza pola pominięte w odpowiedzi; klient zachowuje wcześniej pobrane dane zamiast traktować brak jako usunięcie. `insight_summaries` odróżnia metadane od pełnej treści opisu. Profil doczytuje pełny zapis przez `/api/insight` i `/api/instrument-articles`. Bez parametru `view` dashboard nadal zwraca pełny kontrakt.
 
 Wariant `sync=1` zwraca `sync` z `cursor`, `reset`, pełną kolejnością identyfikatorów `order` i nowymi/zmienionymi `messages`. Nieznana lub stara sesja synchronizacji daje pełny reset. Odczyt bez parametrów zachowuje stary pełny format, a `meta=1` pomija historię. Szczegóły: [SPEC, sekcja 14](../SPEC.md#14-optymalizacja-transportu--zmiana-5-listopada-2026).
+
+Status dashboardu: `articleSummariesEnabled=false`, `summaryWorkerConfigured=false`, `summaryWorkerActive=false`. `insightWorkerConfigured` osobno oznacza konfigurację mostu dla sytuacji i briefu, a nie gotowość logowania.
 
 ## SQLite
 

@@ -2,7 +2,7 @@
 
 Prywatna aplikacja PWA na telefon do obserwowania akcji i ETF-ów: notowania, wykresy, zagraniczne publikacje, komunikaty emitentów, terminy oraz czat z Codexem.
 
-Dokumentacja opisuje wdrożenie sprawdzone **5 listopada 2026** i późniejszą korektę zakresu: brief zastępuje osobne streszczenia artykułów. Ich usunięcie z aplikacji nie jest jeszcze wdrożone; [stan decyzji](docs/19-brief-zamiast-podsumowan.md). Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
+Dokumentacja opisuje wdrożenie sprawdzone **5 listopada 2026** i późniejszą korektę zakresu: brief zastępuje osobne streszczenia artykułów. Wyłączenie osobnych streszczeń wdrożono i sprawdzono; [stan wdrożenia](docs/19-brief-zamiast-podsumowan.md). Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
 
 ## Zacznij tutaj
 
@@ -42,7 +42,7 @@ Dokumentacja opisuje wdrożenie sprawdzone **5 listopada 2026** i późniejszą 
 
 **Harmonogram, Europe/Warsaw:** kursy całej dostępnej listy o 15:40 i 21:45; dodatkowo obserwowane i portfel o 18:30. Publikacje i terminy tylko wybranych podmiotów codziennie o 15:40. Opisy i briefy: poniedziałek i czwartek 14:30; pierwszy opis po dodaniu obserwowania lub zakupu. Zadania wykonuje VPS, więc komputer nie musi być włączony.
 
-Ostatnie potwierdzone wdrożenie: `1d1fcc3ecea44e72ac567b54083760f3` — optymalizacja czatu, odczytów artykułów i Startu, 5 listopada 2026, 13:30:49 czasu polskiego. Przeszły 124 testy aplikacji; sprawdzono także produkcyjny widok mobilny, harmonogram i gotowość mostu. Szczegóły i granice pomiarów są w [notatce wdrożenia](docs/18-optymalizacja-transportu.md). Dalsze zmiany kodu w repozytorium wymagają osobnego wdrożenia.
+Ostatnie potwierdzone wdrożenie: `4585972331e64c66aa95c672bab3c14f` — wyłączenie osobnych streszczeń artykułów, 5 listopada 2026, 14:14:14 czasu polskiego. Przeszło 121 testów aplikacji; na produkcji sprawdzono blokady API, worker i most, widok mobilny oraz niezmienione harmonogramy. Szczegóły: [stan wdrożenia](docs/19-brief-zamiast-podsumowan.md). Wcześniejsze optymalizacje pozostają aktywne ([pomiary](docs/18-optymalizacja-transportu.md)). Dalsze zmiany kodu w repozytorium wymagają osobnego wdrożenia.
 
 Start pobiera dane potrzebne do widoku, a profil doczytuje pełny opis i publikacje. Czat przesyła przyrostowo zmienione wiadomości. Publikacje i kalendarz współdzielą odczyt artykułu w jednym cyklu, a kolejny cykl ponownie sprawdza źródło. Oszczędności nie zmieniają godzin, modeli ani zakresu danych.
 

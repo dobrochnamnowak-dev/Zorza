@@ -53,3 +53,7 @@ Poprawka synchronizuje oba widoki i pobiera stan widocznych oczekujących wynik�
 | W lekkim dashboardzie nie ma publikacji | sprawdzić `omitted`; profil pobiera je osobnym API, brak pola nie oznacza usunięcia |
 
 Nie traktuj samego `summaryWorkerConfigured` jako dowodu zalogowania. Bieżący stan konta pokazuje status mostu. Licznik dawnego procesu `workerSeen` może być pusty, mimo że współczesna ścieżka działa.
+
+## Wyłączenie osobnych streszczeń — 5 listopada 2026
+
+Aktualny zestaw: 121 testów aplikacji. Scenariusze generowania wycofanej funkcji zastąpiono testami braku pobrań i wywołań AI, zachowania danych oraz kończenia starych zleceń. Test HTTP potwierdza 410 dla generowania, ponawiania i dawnego workera, zachowując pełny opis, brief i kalendarz. Na VPS potwierdzono także blokadę mostu bez zmiany licznika operacji. [Wdrożenie](19-brief-zamiast-podsumowan.md). Starsze opisy napraw tej funkcji powyżej są historyczne.

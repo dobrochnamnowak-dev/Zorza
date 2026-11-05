@@ -19,7 +19,7 @@ Otwórz adres aplikacji HTTPS w Safari, zaloguj się, wybierz Udostępnij → Do
 
 Opracowanie publikacji czytasz w briefie pod wykresem. Lista Wszystkie publikacje służy do przeglądania oryginalnych nagłówków i otwierania źródeł. Nie planujemy osobnego streszczenia każdego artykułu — brief zbiera istotne wydarzenia, działania i terminy.
 
-Starsze przyciski generowania streszczeń mogą nadal występować w obecnej wersji aplikacji. Ich wyłączenie pozostaje do wdrożenia; nie jest skutkiem samej aktualizacji tej instrukcji. [Stan decyzji](19-brief-zamiast-podsumowan.md). Kartę można płynnie zamknąć gestem w górę od uchwytu lub nagłówka.
+Osobne streszczenia i przyciski ich generowania są wyłączone. Karta artykułu zachowuje nagłówek, podmiot, źródło, datę, fragment oraz link do oryginału. [Stan decyzji](19-brief-zamiast-podsumowan.md). Kartę można płynnie zamknąć gestem w górę od uchwytu lub nagłówka.
 
 ## Codex i wdrażanie
 

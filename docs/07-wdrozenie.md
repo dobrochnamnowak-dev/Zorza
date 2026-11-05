@@ -41,8 +41,10 @@ Są osobne codzienne kopie bazy. Do kopii aktywnego SQLite stosuje się mechaniz
 
 Repozytorium nie zawiera prawdziwego Compose z sekretami, bazy ani konfiguracji logowania. GitHub i VPS nie synchronizują się automatycznie — publikacja kodu i wdrożenie to odrębne czynności.
 
-## Ostatnie potwierdzone wdrożenie
+## Potwierdzone wdrożenia z 5 listopada 2026
 
 5 listopada 2026, 13:30:49 Europe/Warsaw: `1d1fcc3ecea44e72ac567b54083760f3`, status kontrolera `succeeded`. Wdrożono przyrostowy czat, wspólny czytnik artykułów i lekkie widoki. Backend opublikowano przed frontendem, aby nowy moduł nie otrzymywał 404; następnie kontroler utrwalił pełny końcowy zestaw. Most zaktualizowano osobno, bez zmiany CLI i modelu.
 
 Sprawdzono produkcyjny interfejs mobilny, aktywne harmonogramy, logowanie mostu i zgodność zapisów obserwowanych, zakupów i komentarzy. Tymczasowy klucz SSH został usunięty. Pełny zakres dowodów i ograniczenia weryfikacji: [notatka wdrożenia](18-optymalizacja-transportu.md). Późniejsza edycja dokumentacji na GitHubie nie jest kolejnym wdrożeniem aplikacji.
+
+Nowsze wdrożenie: `4585972331e64c66aa95c672bab3c14f`, 5 listopada 2026 o 14:14:14 czasu polskiego — wyłączenie osobnych streszczeń. Most i backend blokują starsze żądania, a interfejs nie pokazuje generowania. [Dowody](19-brief-zamiast-podsumowan.md).

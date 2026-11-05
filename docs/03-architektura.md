@@ -34,14 +34,14 @@ flowchart TD
 | `lib/quotes.mjs`, `lib/price-history.mjs` | notowania i historia |
 | `lib/publication-policy.mjs`, `lib/issuer-sources.mjs` | dobór i weryfikacja źródeł |
 | `lib/collector.mjs`, `lib/calendar-fetch.mjs` | pobieranie RSS i dat |
-| `lib/publication-work.mjs` | starszy worker streszczeń, do wyłączenia po decyzji o samym briefie; tłumaczenia nagłówków wyłączone |
+| `lib/publication-work.mjs` | zakończenie starych zleceń streszczeń bez AI; nagłówki oryginalne |
 | `lib/article-reader.mjs`, `lib/article-content.mjs` | wspólny odczyt artykułu w cyklu, cache tekstu i ponowna weryfikacja HTTP |
 | `scripts/publication-ai.mjs` | ograniczony prompt i wynik zgodny z JSON Schema |
 | `public/app.js`, `public/portfolio.js` | widoki, synchronizacja wyników i obliczenia |
 | `public/price-chart.js` | wykres i odczyt punktów |
 | `scripts/chat-sync.mjs`, `public/data-sync.js` | przyrostowy stan czatu i scalanie lekkich odpowiedzi bez utraty danych |
 
-Przy aktualizacji repozytorium nie kopiuj danych wykonawczych. Historyczne skrypty `codex-worker.mjs` pozostają w kodzie, a starsza ścieżka streszczeń przez most i `publication-work.mjs` nadal istnieje w kodzie. Produkt wycofuje ją na rzecz briefu; samo uaktualnienie dokumentacji jej nie wyłącza.
+Przy aktualizacji repozytorium nie kopiuj danych wykonawczych. Historyczne skrypty `codex-worker.mjs` pozostają w kodzie, ale starszy CLI jest nieaktywny. API i most blokują indywidualne streszczenia, a `publication-work.mjs` jedynie kończy stare oczekujące zadania bez AI. Worker serwera przetwarza bezpośrednio `insight_jobs` dla sytuacji i briefu.
 
 ## Oszczędny transport i odczyt źródeł
 

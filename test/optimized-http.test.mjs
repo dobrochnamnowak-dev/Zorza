@@ -23,6 +23,7 @@ test('API lekkich widoków zachowuje pełne dane profilu i przekazuje cursor cza
  const input={articles:[{id:a.id,revision:article.content_hash,published_at:now,url:article.url,title:article.title,publisher:'Reuters'}]};
  s.db.prepare("INSERT INTO insight_jobs(id,instrument_id,input_hash,input_json,status,created_at) VALUES('done-insight','AKCJA-001','version',?,'done',?)").run(JSON.stringify(input),now);
  s.db.prepare("INSERT INTO company_insights(instrument_id,input_hash,content_json,material_hash,generated_at,status) VALUES('AKCJA-001','version',?,'material',?,'done')").run(JSON.stringify(result),now);
+ s.enqueue(a.id);
  s.db.prepare("INSERT INTO events(id,article_id,title,event_date,certainty,evidence,review_status,created_at) VALUES('event',?,'Wyniki','2027-01-01','confirmed','Source proof','approved',?)").run(a.id,now);s.db.close();
  const probe=createServer();probe.listen(0,'127.0.0.1');await once(probe,'listening');const port=probe.address().port;await new Promise(resolve=>probe.close(resolve));
  const origin='https://zorza.example',salt='test-only-salt',password='test-only-password-long';
@@ -31,8 +32,13 @@ test('API lekkich widoków zachowuje pełne dane profilu i przekazuje cursor cza
  const base='http://127.0.0.1:'+port;
  assert.equal((await fetch(base+'/api/dashboard?view=overview')).status,401);
  const login=await fetch(base+'/api/login',{method:'POST',headers:{Origin:origin},body:JSON.stringify({password})}),cookie=login.headers.get('set-cookie').split(';')[0],headers={Cookie:cookie};
+ for(const path of ['summarize','retry']){
+  const response=await fetch(base+'/api/'+path,{method:'POST',headers:{...headers,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({id:a.id})});assert.equal(response.status,410);assert.match((await response.json()).error,/brief/);
+ }
+ for(const path of ['claim','finish'])assert.equal((await fetch(base+'/api/worker/'+path,{method:'POST',headers:{Authorization:'Bearer test-only-worker-token-longer-than-32-chars'},body:'{}'})).status,410);
  const full=await (await fetch(base+'/api/dashboard',{headers})).json();
  const overview=await (await fetch(base+'/api/dashboard?view=overview',{headers})).json();
+ assert.equal(full.status.articleSummariesEnabled,false);assert.equal(full.status.summaryWorkerConfigured,false);assert.equal(full.status.insightWorkerConfigured,true);assert.equal(full.jobs.length,1);assert.equal(full.jobs[0].status,'failed');assert.match(full.jobs[0].error,/wyłączone/);assert.equal(calls.filter(c=>c.path==='/publication').length,0);
  assert.equal(full.articles[0].title,article.title);assert.equal(overview.articles.length,0);assert.equal(overview.sources.length,0);assert.ok(overview.omitted.includes('events'));assert.equal(overview.insights['AKCJA-001'].content,undefined);assert.equal(overview.insights['AKCJA-001'].unread,true);assert.ok(full.insights['AKCJA-001'].content);assert.equal(overview.instruments.length,full.instruments.length);assert.ok(JSON.stringify(overview).length<JSON.stringify(full).length/2);
  const profile=await (await fetch(base+'/api/insight?id=AKCJA-001',{headers})).json();assert.equal(profile.insight.content.overview.text,result.overview.text);
  const pubs=await (await fetch(base+'/api/instrument-articles?id=AKCJA-001',{headers})).json();assert.equal(pubs.articles[0].id,a.id);

@@ -6,7 +6,6 @@
 
 | Priorytet | Zadanie | Kryterium ukończenia |
 | --- | --- | --- |
-| Wysoki | Wyłączenie osobnych streszczeń na rzecz briefu | brak przycisków, nowych zleceń i wywołań AI dla pojedynczych artykułów; zachowane źródła, brief i wspólne odczyty ([decyzja](19-brief-zamiast-podsumowan.md)) |
 | Wysoki | Dalsza weryfikacja brakujących mapowań cen | zgodność instrumentu, giełdy, waluty i daty; jawny raport pokrycia |
 | Wysoki | Więcej oficjalnych kalendarzy emitentów | daty wyników i raportów z dowodami; deduplikacja i aktualizacja zmian |
 | Średni | Pełniejszy odczyt legalnie dostępnych artykułów | wiarygodne oznaczenie tekst/fragment/nagłówek, bez omijania paywalla |
@@ -14,6 +13,8 @@
 | Średni | Powtarzalne CI | testy bez modeli i produkcyjnych sekretów, uzgodniony budżet wykonania |
 
 ## Utrzymywać jako działające
+
+Wyłączenie osobnych streszczeń wdrożono 5 listopada: brak przycisków i nowych wywołań AI; opracowanie publikacji jest w briefie. [Potwierdzenie](19-brief-zamiast-podsumowan.md).
 
 Codzienne pobieranie na VPS, źródła zagraniczne, oryginalne nagłówki bez tłumaczenia, opisy i przyrostowy brief tylko dla portfela i obserwowanych, jawna niepewność dat i przedziały miesiąca/kwartału/półrocza/roku, wykresy, obsługa telefonu i zatwierdzanie wdrożeń backendu.
 

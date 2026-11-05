@@ -43,6 +43,7 @@ const server=createServer(async(req,res)=>{res.setHeader('Content-Type','applica
  if(req.url==='/stop'){if(running&&turnId)await rpc('turn/interrupt',{threadId:state.threadId,turnId});return reply(200,{ok:true});}
  if(req.url==='/publication/status'){const auth=await rpc('account/read',{refreshToken:false});return reply(200,{ready,authenticated:auth.account?.type==='chatgpt',busy:running||publicationBusy});}
  if(req.url==='/publication'){
+  if(b.kind==='summary')return reply(410,{error:'Osobne podsumowania artykułów są wyłączone. Dostępny jest brief.'});
   if(running||publicationBusy)return reply(409,{error:'Codex zajęty'});
   const auth=await rpc('account/read',{refreshToken:false});if(auth.account?.type!=='chatgpt')return reply(401,{error:'Połącz konto ChatGPT'});
   const day=new Date().toISOString().slice(0,10);if(state.day!==day){state.day=day;state.used=0;}if(state.used>=300)return reply(429,{error:'Wykorzystano dzisiejszy limit Codexa'});

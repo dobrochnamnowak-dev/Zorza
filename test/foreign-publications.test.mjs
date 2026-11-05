@@ -29,7 +29,7 @@ test('oryginalne nagłówki nie uruchamiają AI nawet przy starej kolejce i zapi
  store.db.prepare("UPDATE instruments SET watched=1 WHERE id='AKCJA-001'").run();
  const ids=['queued','running','failed'].map((state,n)=>{const id=add(store,'AKCJA-001','Nvidia original headline '+n,'legacy-'+n);store.db.prepare('UPDATE articles SET translation_state=? WHERE id=?').run(state,id);return id;});
  store.db.prepare("UPDATE articles SET title_pl='Stare tłumaczenie' WHERE id=?").run(ids[0]);
- let calls=0,checks=0;assert.equal((await processPublicationWork(store,{runModel:async()=>{calls++;},available:async()=>{checks++;return true;}})).status,'empty');
+ let calls=0,checks=0;assert.equal((await processPublicationWork(store,{runModel:async()=>{calls++;},available:async()=>{checks++;return true;}})).status,'disabled');
  assert.equal(calls,0);assert.equal(checks,0);assert.deepEqual(headlineStatus(store.db),{enabled:false,mode:'original',used:0,limit:0,pending:0});
  const a=store.db.prepare('SELECT * FROM articles WHERE id=?').get(ids[0]);assert.equal(a.title,'Nvidia original headline 0');
  assert.equal(selectPublications([{...a,instrument_name:'NVIDIA'}],{query:'original headline'}).length,1);
@@ -37,11 +37,19 @@ test('oryginalne nagłówki nie uruchamiają AI nawet przy starej kolejce i zapi
  assert.equal(store.db.prepare('SELECT COUNT(*) n FROM jobs').get().n,0);
  }finally{store.db.close();}
 });
-test('podsumowanie jest wykonywane dopiero po zamówieniu, a powtórne kliknięcie nie tworzy drugiego zadania',async()=>{
- const store=createStore(':memory:',catalog);try{const id=add(store,'AKCJA-001');let calls=0;const runModel=async task=>{calls++;assert.equal(task.kind,'summary');return {title_pl:'Nvidia ogłasza nowy procesor',summary:'Spółka zapowiedziała nowy produkt. Dostępny jest tylko nagłówek i krótki fragment.',significance:'Brak dalszych szczegółów.',category:'działania',events:[]};};
- assert.equal((await processPublicationWork(store,{runModel})).status,'empty');assert.equal(calls,0);store.enqueue(id);store.enqueue(id);await processPublicationWork(store,{runModel,fetcher:async()=>new Response('<article>'+('Publiczna treść artykułu o nowym produkcie. '.repeat(12))+'</article>')});assert.equal(calls,1);assert.equal(store.db.prepare('SELECT status FROM jobs').get().status,'done');assert.ok(store.db.prepare('SELECT summary FROM articles WHERE id=?').get(id).summary);await processPublicationWork(store,{runModel});assert.equal(calls,1);
+test('wyłączenie kończy stare oczekujące zadania bez modelu i zachowuje zapisany wynik oraz źródła',async()=>{
+ const store=createStore(':memory:',catalog);try{
+ const queued=add(store,'AKCJA-001','Nvidia queued','q'),running=add(store,'AKCJA-001','Nvidia running','r'),done=add(store,'AKCJA-001','Nvidia done','d');
+ for(const id of [queued,running,done])store.enqueue(id);
+ store.db.prepare("UPDATE jobs SET status='running',lease='lease' WHERE article_id=?").run(running);
+ store.db.prepare("UPDATE jobs SET status='done' WHERE article_id=?").run(done);store.db.prepare("UPDATE articles SET summary='Historyczny tekst' WHERE id=?").run(done);
+ let calls=0;const result=await processPublicationWork(store,{runModel:async()=>{calls++;},available:async()=>{calls++;return true;},fetcher:async()=>{calls++;}});
+ assert.equal(result.status,'disabled');assert.equal(calls,0);
+ for(const id of [queued,running]){const j=store.db.prepare('SELECT * FROM jobs WHERE article_id=?').get(id);assert.equal(j.status,'failed');assert.equal(j.lease,null);assert.match(j.error,/wyłączone/);}
+ assert.equal(store.db.prepare('SELECT summary FROM articles WHERE id=?').get(done).summary,'Historyczny tekst');assert.equal(store.db.prepare('SELECT status FROM jobs WHERE article_id=?').get(done).status,'done');assert.equal(store.articlesForInstrument('AKCJA-001').length,3);
  }finally{store.db.close();}
 });
+
 test('dni prasówki są rozłączne w polskiej strefie czasu, a archiwum zachowuje starsze materiały',()=>{
  const articles=['2026-11-03','2026-11-02','2026-11-01','2026-10-31'].map((d,i)=>({id:String(i),published_at:d+'T12:00:00Z'}));const now='2026-11-03T22:30:00Z';
  for(const [view,id] of [['today','0'],['yesterday','1'],['before_yesterday','2'],['archive','3']])assert.deepEqual(selectPublications(articles,{view,now}).map(a=>a.id),[id]);
@@ -50,22 +58,14 @@ test('ekstrakcja treści nie obchodzi paywalla i nie wykonuje HTML',()=>{
  assert.equal(extractArticleText('<script type="application/ld+json">{"articleBody":"Sample body"}</script>'),'Sample body');
  assert.equal(extractArticleText('<script type="application/ld+json">{"articleBody":"Hidden","isAccessibleForFree":false}</script>'),'');
 });
-test('wyczerpany dawny limit nagłówków nie blokuje podsumowania na żądanie',async()=>{
- const store=createStore(':memory:',catalog);try{
- store.db.prepare("INSERT INTO meta(key,value) VALUES('headline-budget/2026-11-04','100')").run();
- const id=add(store,'AKCJA-001');store.enqueue(id);let calls=0;
- const result=await processPublicationWork(store,{now:new Date('2026-11-04T20:00:00Z'),fetcher:async()=>new Response('<article>'+('Nvidia reported revenue growth. '.repeat(25))+'</article>'),runModel:async task=>{calls++;assert.equal(task.kind,'summary');return {title_pl:task.article.title,summary:'Spółka podała wzrost przychodów.',significance:'Nowe dane finansowe.',category:'wyniki',events:[]};}});
- assert.equal(result.status,'summary');assert.equal(calls,1);
- const a=store.db.prepare('SELECT * FROM articles WHERE id=?').get(id);assert.ok(a.summary);assert.equal(a.title_pl,null);assert.equal(a.title,'Nvidia announces new GPU');
- assert.equal(store.db.prepare('SELECT COUNT(*) n FROM headline_cache').get().n,0);
- }finally{store.db.close();}
-});
 
-test('most odrzuca tłumaczenia przed wywołaniem CLI; podsumowanie zachowuje oryginalny tytuł',async()=>{
+
+test('most odrzuca tłumaczenia i osobne streszczenia przed wywołaniem CLI',async()=>{
  assert.ok(titlesSchema.properties.items);assert.ok(noteSchema.properties.events);
  assert.throws(()=>publicationPrompt({kind:'titles',items:[{id:'1',title:'Nvidia news'}]}),/wyłączone/);
  await assert.rejects(runPublicationAI({kind:'titles',items:[{id:'1',title:'Nvidia news'}]},{bin:'/nie-wolno-uruchomić'}),/wyłączone/);
- assert.match(publicationPrompt({kind:'summary',article:{title:'Original title'}}),/NIE tłumacz tytułu/);
+ assert.throws(()=>publicationPrompt({kind:'summary',article:{title:'Original title'}}),/wyłączone/);
+ await assert.rejects(runPublicationAI({kind:'summary',article:{title:'Original',text:'Treść',basis:'article'}},{bin:'/nie-wolno-uruchomić'}),/wyłączone/);
 });
 test('komunikaty własnego emitenta są oddzielone od artykułów portali i wymagają jego domeny',()=>{
  const sources=generatedSources(catalog.items[0]),source=sources.find(s=>s.policy.kind==='press_search');assert.ok(source);assert.ok(source.policy.domains.includes('nvidia.com'));
@@ -76,14 +76,10 @@ test('komunikaty własnego emitenta są oddzielone od artykułów portali i wyma
 test('przerwany proces nie zostawia podsumowania na zawsze w stanie pracy i nie ponawia modelu',async()=>{
  const store=createStore(':memory:',catalog);try{const id=add(store,'AKCJA-001');store.enqueue(id);store.claim(300);store.db.prepare("UPDATE jobs SET lease_until='2020-01-01'").run();let calls=0;await processPublicationWork(store,{runModel:async()=>{calls++;}});assert.equal(store.db.prepare('SELECT status FROM jobs').get().status,'failed');assert.equal(calls,0);}finally{store.db.close();}
 });
-test('brak treści artykułu blokuje wywołanie AI i zapisuje przyczynę',async()=>{
- const store=createStore(':memory:',catalog);try{const id=add(store,'AKCJA-001');store.enqueue(id);let calls=0;const result=await processPublicationWork(store,{runModel:async()=>{calls++;},fetcher:async()=>new Response('',{status:403})});assert.equal(result.status,'failed');assert.equal(calls,0);const a=store.db.prepare('SELECT summary,summary_basis FROM articles WHERE id=?').get(id);assert.equal(a.summary,null);assert.ok(['headline','excerpt'].includes(a.summary_basis));assert.match(store.db.prepare('SELECT error FROM jobs WHERE article_id=?').get(id).error,/Nie mam dostępu do treści/);
- }finally{store.db.close();}
-});
-test('potwierdzony dostęp zapisuje się także gdy model zawiedzie, a zmiana artykułu go zeruje',async()=>{
- const store=createStore(':memory:',catalog);try{const id=add(store,'AKCJA-001');store.enqueue(id);await processPublicationWork(store,{fetcher:async()=>new Response('<article>'+('Dostępny tekst wiadomości branżowej. '.repeat(15))+'</article>'),runModel:async()=>{throw Error('AI chwilowo niedostępne');}});assert.equal(store.db.prepare('SELECT summary_basis FROM articles WHERE id=?').get(id).summary_basis,'article');const a=store.db.prepare('SELECT * FROM articles WHERE id=?').get(id);store.ingest({id:a.source_id,instrument_id:a.instrument_id},{...a,title:a.title+' update'});assert.equal(store.db.prepare('SELECT summary_basis FROM articles WHERE id=?').get(id).summary_basis,null);
- }finally{store.db.close();}
-});
+
+
+
+
 test('sprawdzenie treści obejmuje obserwowane i portfel, bez AI i bez pozostałych podmiotów',async()=>{
  const {checkPublicationAccess}=await import('../lib/article-access.mjs');const store=createStore(':memory:',catalog);
  try{const watched=add(store,'AKCJA-001'),bought=add(store,'AKCJA-002'),other=add(store,'AKCJA-005');store.db.prepare("UPDATE instruments SET watched=1 WHERE id='AKCJA-001'").run();store.db.prepare("INSERT INTO purchases VALUES('buy','AKCJA-002',1,100,'USD','2026-11-01','2026-11-01')").run();let calls=0;

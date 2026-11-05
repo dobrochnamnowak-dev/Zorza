@@ -29,7 +29,7 @@ Czarne tło i nawigacja, kolorowa zorza i gwiazdy, wyraźna nazwa i logo, logoty
 | Zagraniczne publikacje i komunikaty | Działa; pokrycie nie jest kompletne |
 | Oryginalne nagłówki | Działa bez tłumaczenia i kolejki AI |
 | Sytuacja firmy i przyrostowy brief | Sol low, obserwowane i portfel; poniedziałek/czwartek 14:30 i pierwszy opis po dodaniu |
-| Osobne streszczenia artykułów | Wycofane z zakresu na rzecz briefu; starszy mechanizm w kodzie wymaga wyłączenia |
+| Osobne streszczenia artykułów | Wyłączone w interfejsie, API i AI 5 listopada; zapisane treści zachowane |
 | Daty i kalendarz aplikacji | Działa; parser zachowawczy, oznacza niepewność |
 | Czat, zdjęcia, publikacja backendu | Działa |
 | Lżejszy Start i przyrostowy czat | Wdrożone 5 listopada; pełne dane profilu i historia zachowane |

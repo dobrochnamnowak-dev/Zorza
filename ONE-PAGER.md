@@ -42,6 +42,6 @@ Instalacja jako PWA z Safari przez „Dodaj do ekranu początkowego”. Czarne t
 
 Publiczne dane, bez płatnych notowań i bez obchodzenia paywalli. Sytuację i brief przygotowuje Sol low. Osobne streszczenia artykułów zostały wycofane z zakresu, aby nie dublować opracowań i zużycia AI. Gotowe wyniki są zapisywane; pusta kolejka nie wywołuje modelu. Oszczędzanie transferu zachowuje historię, godziny aktualizacji i pełne dane profilu.
 
-Wycofanie streszczeń jest decyzją produktową; usunięcie starszego mechanizmu z aplikacji pozostaje do wdrożenia ([stan](docs/19-brief-zamiast-podsumowan.md)).
+Osobne streszczenia są wyłączone w interfejsie, API i procesach AI; zapisane wcześniej treści zachowano ([potwierdzenie](docs/19-brief-zamiast-podsumowan.md)).
 
 Pokrycie cen i terminów zależy od źródeł; data sprawdzenia nie zastępuje daty danych. Zorza nie wykonuje transakcji ani nie gwarantuje przyszłych kursów. GitHub przechowuje kod i dokumentację; publikacja repozytorium nie wdraża automatycznie aplikacji.

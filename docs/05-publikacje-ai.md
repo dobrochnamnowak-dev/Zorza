@@ -24,7 +24,7 @@ Brief jest jedynym opracowaniem zbioru publikacji. Dopisuje nowe istotne wydarze
 
 Osobne streszczenia artykułów, także na żądanie, są wycofane z zakresu, aby nie dublować treści i zużycia AI. Sytuacja firmy pozostaje osobnym opisem kondycji, czynników kursu i ryzyk. Paywalle i blokady nadal nie są obchodzone.
 
-W kodzie pozostaje starszy worker streszczeń i jego interfejs. Ich wyłączenie wymaga zmiany aplikacji i wdrożenia; nie zostało potwierdzone w tej aktualizacji dokumentacji. [Decyzja i kryteria wyłączenia](19-brief-zamiast-podsumowan.md).
+Wyłączenie wdrożono: brak przycisków, generowania i ponawiania; API oraz most odrzucają stare żądania. Gotowe treści pozostają w bazie, a oczekujące zadania są kończone bez AI. [Decyzja i potwierdzenie](19-brief-zamiast-podsumowan.md).
 
 ## Wspólny odczyt treści
 

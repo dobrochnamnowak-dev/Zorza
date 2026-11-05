@@ -2,7 +2,7 @@
 
 Wymagania produktu · wersja 1.2 · 5 listopada 2026
 Właścicielka produktu: właścicielka prywatnej aplikacji Zorza
-Baza: [kod optymalizacji 74319c5](https://github.com/dobrochnamnowak-dev/Zorza/commit/74319c55be700f3a532225386e0e61d1daeda4c3), ustalenia właścicielki i wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` sprawdzone 5 listopada 2026. Dokument nie potwierdza wykonania późniejszych cykli serwera. Korekta zakresu po tym wdrożeniu: osobne streszczenia artykułów wycofano na rzecz briefu. Usunięcie starszego mechanizmu nie zostało wdrożone; szczegóły w [decyzji produktowej](docs/19-brief-zamiast-podsumowan.md).
+Baza: ustalenia właścicielki i wdrożenie `4585972331e64c66aa95c672bab3c14f` sprawdzone 5 listopada 2026. Brief zastępuje osobne streszczenia artykułów; ich wyłączenie w aplikacji potwierdzono w [notatce wdrożenia](docs/19-brief-zamiast-podsumowan.md). Dokument nie potwierdza wykonania późniejszych cykli serwera.
 
 [One-pager produktu](ONE-PAGER.md) · [Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
 
@@ -49,7 +49,7 @@ Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspóln
 | FR-08 | W profilu są komentarze i przyciski Zakup / Komentarz / Sytuacja: jeden równy rząd, bez ramek. Na kartach Startu komentarzy i Sytuacji nie ma | Działa |
 | FR-09 | Nowe publikacje dotyczą wyłącznie zbioru osobistego. Każda ma przypisany podmiot, wydawcę, datę i link; komunikaty emitenta stanowią osobną kategorię | Działa, pokrycie niepełne |
 | FR-10 | Wszystkie widoki pokazują oryginalny nagłówek. Tytuł angielski lub polski nie czeka na tłumaczenie; brak automatycznych zadań tłumaczeń | Działa |
-| FR-11 | Wymaganie osobnego streszczenia artykułu wycofane. Zastępuje je brief FR-13; publikacja zachowuje oryginalny nagłówek, podmiot, datę i link. Bez przycisku generowania, osobnej kolejki AI i ponawiania streszczeń | Decyzja potwierdzona; starszy mechanizm w kodzie pozostaje do wyłączenia |
+| FR-11 | Wymaganie osobnego streszczenia artykułu wycofane. Zastępuje je brief FR-13; publikacja zachowuje oryginalny nagłówek, podmiot, datę i link. Bez przycisku generowania, osobnej kolejki AI i ponawiania streszczeń | Wyłączone i sprawdzone na VPS 5 listopada 2026 |
 | FR-12 | Sytuacja firmy zawiera krótką tezę, konkretne czynniki, uzasadnione ryzyka, przyszłe terminy i ostrożny wniosek. Każde ustalenie ma źródło; data opisu oznacza rzeczywiste wygenerowanie | Działa dla zbioru osobistego |
 | FR-13 | Brief pod wykresem dopisuje tylko nowe istotne wydarzenia, działania i terminy. Nie odczytuje ponownie całego archiwum; przy braku nowych informacji nie uruchamia AI | Działa w uzgodnionym cyklu |
 | FR-14 | Zmiana merytoryczna opisu lub nowy punkt briefu włącza czerwone oznaczenie przy podmiocie; samo sprawdzenie lub zmiana stylu go nie włącza. Odczyt dotyczy konkretnej wersji | Działa |
@@ -119,7 +119,7 @@ Nie ustalono liczbowego SLA, docelowej dostępności ani miesięcznego budżetu 
 | Odbiór mobilny | Czytelny profil, publikacje i kalendarz przy 390 × 844, bez wymuszonego poziomego przewijania |
 | Oszczędne pobieranie | Bez zmian nie przesyłamy ponownie pełnej historii czatu; Start nie pobiera archiwum publikacji, a profil nadal udostępnia pełne dane |
 
-Przy wydaniu należy przejść scenariusze FR-01–FR-19 odpowiednie do zmiany i kontrolę na VPS. Ostatni pełny zestaw aplikacji: 124 testy, 5 listopada 2026. Osiem testów kontrolera sprawdzono przy wcześniejszej weryfikacji; etap optymalizacji nie zmieniał kontrolera. Testy nie wywołują rzeczywistego modelu. Sama ich liczba nie dowodzi wykonania późniejszego zaplanowanego cyklu.
+Przy wydaniu należy przejść scenariusze FR-01–FR-19 odpowiednie do zmiany i kontrolę na VPS. Ostatni pełny zestaw aplikacji: 121 testów, 5 listopada 2026; wycofane scenariusze generowania zastąpiono testami blokad. Osiem testów kontrolera sprawdzono przy wcześniejszej weryfikacji; etap optymalizacji nie zmieniał kontrolera. Testy nie wywołują rzeczywistego modelu. Sama ich liczba nie dowodzi wykonania późniejszego zaplanowanego cyklu.
 
 W pomiarze produkcyjnym Start zwrócił 67 345 B zamiast 4 021 846 B pełnego dashboardu; kolejne odpytanie niezmienionego czatu 5 182 B wobec 6 356 261 B początkowej synchronizacji. To obserwacje rozmiaru odpowiedzi dla jednego stanu danych, nie SLA ani obietnica obniżenia kosztów hostingu lub tokenów. Szczegóły: [wdrożenie optymalizacji](docs/18-optymalizacja-transportu.md).
 
