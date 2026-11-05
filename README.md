@@ -2,12 +2,13 @@
 
 Prywatna aplikacja PWA na telefon do obserwowania akcji i ETF-ów: notowania, wykresy, zagraniczne publikacje, komunikaty emitentów, terminy oraz czat z Codexem.
 
-Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**. Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
+Dokumentacja opisuje wdrożenie sprawdzone **5 listopada 2026** i późniejszą korektę zakresu: brief zastępuje osobne streszczenia artykułów. Ich usunięcie z aplikacji nie jest jeszcze wdrożone; [stan decyzji](docs/19-brief-zamiast-podsumowan.md). Kod pochodzi z działającej aplikacji. Dane portfela, hasła i konfiguracja produkcyjna nie należą do repozytorium.
 
 ## Zacznij tutaj
 
 | Potrzeba | Dokument |
 | --- | --- |
+| Wycofanie osobnych streszczeń na rzecz briefu — decyzja i stan kodu | [Tylko brief](docs/19-brief-zamiast-podsumowan.md) |
 | Cel, odbiorczyni, funkcje i granice produktu na jednej stronie | [Zorza — one-pager](ONE-PAGER.md) |
 | Wymagania produktu, scenariusze i kryteria odbioru | [PRD](PRD.md) |
 | Kontrakty techniczne, dane, API i automatyzacja | [SPEC](SPEC.md) |
@@ -16,7 +17,7 @@ Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**. Kod pochodz
 | Co działa, a co pozostaje do zrobienia | [Funkcje i zakres](docs/02-produkt.md), [Plan rozwoju](docs/10-plan-rozwoju.md) |
 | Jak zbudowany jest system | [Architektura](docs/03-architektura.md) |
 | Skąd pochodzą ceny i wykresy | [Notowania i historia](docs/04-notowania.md) |
-| Publikacje, źródła i podsumowania | [Publikacje i AI](docs/05-publikacje-ai.md) |
+| Publikacje, źródła i brief | [Publikacje i AI](docs/05-publikacje-ai.md) |
 | Nowy układ, sytuacja podmiotu i brief | [Sytuacja i brief — zmiana 4 listopada](docs/13-sytuacja-i-brief.md) |
 | Warunki jakości opisu i diagnoza pustego briefu / kursów | [Standard i diagnoza](docs/14-standard-opisu-i-diagnoza.md) |
 | Model, kalendarze emitentów i terminy częściowe | [Kalendarz i model](docs/15-kalendarz-i-model.md), [Harmonogram i opisy](docs/16-harmonogram-i-opracowania.md) |
@@ -34,7 +35,7 @@ Dokumentacja odpowiada wdrożeniu sprawdzonemu **5 listopada 2026**. Kod pochodz
 - Akcje i ETF-y, osobno kupione i obserwowane; zakupy zapisują ilość, cenę, walutę i datę.
 - Notowania oraz wykresy **1D / 1T / 1R / 5L** z odczytem ceny i daty.
 - Publikacje w profilach: zagraniczne źródła branżowe i osobna kategoria komunikatów emitentów.
-- Oryginalne nagłówki bez tłumaczenia i oczekiwania; podsumowania po polsku wyłącznie na żądanie.
+- Oryginalne nagłówki i linki do źródeł; ich opracowanie po polsku jest w briefie, bez osobnych streszczeń artykułów w zakresie produktu.
 - Słowna Sytuacja firmy i przyrostowy brief pod wykresem, tylko dla obserwowanych lub portfela.
 - Terminy zapisane w kalendarzu aplikacji z dowodem źródłowym i oznaczeniem niepewności.
 - Czat z Codexem, dołączanie zdjęć i zatwierdzane przez właścicielkę wdrażanie backendu.
@@ -75,4 +76,4 @@ docs/         uporządkowana wiedza o projekcie
 
 ## Granice obecnej wersji
 
-Powiadomienia push i automatyczna synchronizacja z Kalendarzem Apple nie są uruchomione. Dostępny jest eksport ICS. Pokrycie notowań i terminów zależy od potwierdzonych mapowań oraz dostępności źródeł; braków nie uzupełnia się przykładowymi danymi. GitHub przechowuje kod i dokumentację; sam push nie wdraża aplikacji na VPS.
+Kalendarz działa w Zorzy; pojedyncze wydarzenie można wyeksportować do pliku ICS. Pokrycie notowań i terminów zależy od potwierdzonych mapowań oraz dostępności źródeł; braków nie uzupełnia się przykładowymi danymi. GitHub przechowuje kod i dokumentację; sam push nie wdraża aplikacji na VPS.

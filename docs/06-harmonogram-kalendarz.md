@@ -33,4 +33,4 @@ Pełniejsze zbieranie kalendarza ma limit stron — obecnie do 12 stron komunika
 
 ## Telefon
 
-ICS eksportuje pojedyncze wydarzenie. Automatyczna synchronizacja z Kalendarzem Apple i wysyłka push pozostają w planie; zapisane ustawienia wyprzedzenia i godziny przypomnienia nie oznaczają, że telefon otrzyma powiadomienie.
+Kalendarz aplikacji przechowuje znalezione terminy. Eksport ICS pozwala ręcznie dodać pojedyncze wydarzenie do kalendarza telefonu.

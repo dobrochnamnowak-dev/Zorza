@@ -15,16 +15,14 @@ Otwórz adres aplikacji HTTPS w Safari, zaloguj się, wybierz Udostępnij → Do
 - **Sytuacja i brief:** opis otwierasz w profilu. Przyrostowy brief jest pod wykresem; Wszystkie publikacje otwiera nagłówki i artykuły. Osobne zakładki Obserwowane i Prasówka zostały usunięte. Komunikaty emitentów mają osobną kategorię; nagłówki pozostają w oryginale.
 - **Kalendarz:** daty z dowodem źródłowym; termin szacowany pozostaje oznaczony. ICS dodaje pojedyncze wydarzenie do kalendarza telefonu.
 
-## Podsumowanie artykułu
+## Publikacje i brief
 
-Wybierz Generuj podsumowanie. Zlecenie jest zapisywane na serwerze, a po zakończeniu wynik pojawia się automatycznie w otwartym artykule. Nie trzeba ponownie generować tekstu ani trzymać komputera włączonego. Gotowy tekst otwiera przycisk Czytaj podsumowanie. Błąd można ponowić ręcznie.
+Opracowanie publikacji czytasz w briefie pod wykresem. Lista Wszystkie publikacje służy do przeglądania oryginalnych nagłówków i otwierania źródeł. Nie planujemy osobnego streszczenia każdego artykułu — brief zbiera istotne wydarzenia, działania i terminy.
 
-Nowe podsumowanie wymaga dostępnej treści artykułu; jeśli dostępny jest tylko nagłówek lub fragment, model nie jest uruchamiany. Link do oryginału pozostaje dostępny. Kartę można też płynnie zamknąć gestem w górę od uchwytu lub nagłówka.
+Starsze przyciski generowania streszczeń mogą nadal występować w obecnej wersji aplikacji. Ich wyłączenie pozostaje do wdrożenia; nie jest skutkiem samej aktualizacji tej instrukcji. [Stan decyzji](19-brief-zamiast-podsumowan.md). Kartę można płynnie zamknąć gestem w górę od uchwytu lub nagłówka.
 
 ## Codex i wdrażanie
 
 W zakładce Codex połącz konto ChatGPT. Kod urządzenia pokazuje aplikacja po wybraniu logowania; wpisuje się go na stronie OpenAI. Nie jest to kod SMS ani kod blokady telefonu.
 
 Po zleceniu zmiany backendu poczekaj na zakończenie pracy, wybierz Backend → Sprawdź, przejrzyj szczegóły i wybierz Wdróż. Przy błędzie startu kontroler próbuje przywrócić poprzednią wersję.
-
-Ustawienia przypomnień są zapisane, ale powiadomienia push nie są jeszcze wysyłane.

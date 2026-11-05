@@ -49,6 +49,6 @@ W produkcyjnej przeglądarce przy 390 × 844 sprawdzono Start, profil z pełnym 
 
 Potwierdzono aktywny harmonogram serwera: ceny całej listy 15:40 i 21:45, dodatkowo obserwowane i portfel 18:30, publikacje i kalendarz 15:40; opisy i briefy w poniedziałki i czwartki o 14:30 oraz pierwszy opis po dodaniu podmiotu. Wszystkie godziny dotyczą `Europe/Warsaw`. Procesy działają na VPS niezależnie od komputera właścicielki. Nie uruchamiano rzeczywistych modeli w celu testowania optymalizacji ani nie wykonywano pełnego pobierania danych poza harmonogramem.
 
-Zakres weryfikacji nie obejmuje gwarancji dostępności zewnętrznych wydawców, kompletności wszystkich mapowań notowań ani przyszłego czasu zakończenia badań AI. Dotychczasowe ograniczenia źródeł i brak wdrożonych powiadomień push pozostają zgodne ze SPEC.
+Zakres weryfikacji nie obejmuje gwarancji dostępności zewnętrznych wydawców, kompletności wszystkich mapowań notowań ani przyszłego czasu zakończenia badań AI. Dotychczasowe ograniczenia źródeł pozostają zgodne ze SPEC.
 
 Po weryfikacji usunięto tymczasowy klucz SSH użyty do wdrożenia.

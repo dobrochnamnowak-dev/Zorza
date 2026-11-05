@@ -16,7 +16,7 @@
 | Historia kursu | GET `/api/price-history?id=…&period=1d\|1w\|1y\|5y` |
 | Ustawienia | POST `/api/settings` |
 | Obserwowanie / zakup / usunięcie zapisu | POST `/api/watch`, `/api/purchase`, `/api/purchase-delete` |
-| Żądanie podsumowania / ręczne ponowienie | POST `/api/summarize`, `/api/retry` |
+| Starsze streszczenia — do wyłączenia | POST `/api/summarize`, `/api/retry`; istnieją w kodzie, wycofane z zakresu produktu |
 | Przeczytane / ważne / usunięcie artykułu | POST `/api/read`, `/api/article-star`, `/api/article-delete` |
 | Dodatkowe doniesienia | POST `/api/article-research` |
 | Czat | `/api/chat/status`, `/api/chat/login`, `/api/chat/message`, `/api/chat/stop` |

@@ -1,6 +1,6 @@
 # Zorza — karta produktu
 
-One-pager · stan po wdrożeniu z 5 listopada 2026
+One-pager · 5 listopada 2026 · zakres po korekcie dotyczącej briefu
 [Dokumentacja](README.md) · [Wymagania produktu](PRD.md) · [Specyfikacja techniczna](SPEC.md)
 
 ## Cel i odbiorczyni
@@ -17,7 +17,7 @@ Obserwowanie i zapis zakupu to niezależne funkcje. Zakup zapisuje ilość, cen�
 
 ## Najważniejsze funkcje
 
-- **Informacje z dowodami:** zagraniczne portale, komunikaty emitentów, źródła i daty. Nagłówki w oryginale; podsumowanie po polsku tylko na żądanie.
+- **Informacje z dowodami:** zagraniczne portale, komunikaty emitentów, źródła i daty. Nagłówki w oryginale i linki do źródeł. Opracowanie po polsku jest w briefie; bez osobnego streszczenia każdego artykułu.
 - **Sytuacja i brief:** zwięzły opis faktów, czynników i ryzyk; brief dopisuje nowe istotne wydarzenia, działania i terminy. Zmiany sygnalizuje czerwone oznaczenie.
 - **Kalendarz:** automatyczny zapis znalezionych terminów z dowodem i oznaczeniem niepewności; eksport wydarzenia do telefonu przez ICS.
 - **Rozwój przez czat:** rozmowa z Codexem, zdjęcia i zlecanie zmian. Backend publikuje osobny kontroler po zatwierdzeniu przetestowanej wersji.
@@ -40,6 +40,8 @@ Brief jest przyrostowy, bez uzupełniania historii; wpis pozostaje ważny sześ�
 
 Instalacja jako PWA z Safari przez „Dodaj do ekranu początkowego”. Czarne tło, zorza, czytelne logotypy i krótka nawigacja służą obsłudze telefonu.
 
-Publiczne dane, bez płatnych notowań i bez obchodzenia paywalli. Sytuację i brief przygotowuje Sol low, podsumowania artykułów Luna low. Gotowe wyniki są zapisywane; pusta kolejka nie wywołuje modelu. Oszczędzanie transferu zachowuje historię, godziny aktualizacji i pełne dane profilu.
+Publiczne dane, bez płatnych notowań i bez obchodzenia paywalli. Sytuację i brief przygotowuje Sol low. Osobne streszczenia artykułów zostały wycofane z zakresu, aby nie dublować opracowań i zużycia AI. Gotowe wyniki są zapisywane; pusta kolejka nie wywołuje modelu. Oszczędzanie transferu zachowuje historię, godziny aktualizacji i pełne dane profilu.
 
-Pokrycie cen i terminów zależy od źródeł; data sprawdzenia nie zastępuje daty danych. Push i automatyczna synchronizacja z Kalendarzem Apple nie są wdrożone. Zorza nie wykonuje transakcji ani nie gwarantuje przyszłych kursów. GitHub przechowuje kod i dokumentację; publikacja repozytorium nie wdraża automatycznie aplikacji.
+Wycofanie streszczeń jest decyzją produktową; usunięcie starszego mechanizmu z aplikacji pozostaje do wdrożenia ([stan](docs/19-brief-zamiast-podsumowan.md)).
+
+Pokrycie cen i terminów zależy od źródeł; data sprawdzenia nie zastępuje daty danych. Zorza nie wykonuje transakcji ani nie gwarantuje przyszłych kursów. GitHub przechowuje kod i dokumentację; publikacja repozytorium nie wdraża automatycznie aplikacji.

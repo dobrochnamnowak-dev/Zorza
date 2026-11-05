@@ -34,14 +34,14 @@ flowchart TD
 | `lib/quotes.mjs`, `lib/price-history.mjs` | notowania i historia |
 | `lib/publication-policy.mjs`, `lib/issuer-sources.mjs` | dobór i weryfikacja źródeł |
 | `lib/collector.mjs`, `lib/calendar-fetch.mjs` | pobieranie RSS i dat |
-| `lib/publication-work.mjs` | zlecenia podsumowań na żądanie; tłumaczenia nagłówków wyłączone |
+| `lib/publication-work.mjs` | starszy worker streszczeń, do wyłączenia po decyzji o samym briefie; tłumaczenia nagłówków wyłączone |
 | `lib/article-reader.mjs`, `lib/article-content.mjs` | wspólny odczyt artykułu w cyklu, cache tekstu i ponowna weryfikacja HTTP |
 | `scripts/publication-ai.mjs` | ograniczony prompt i wynik zgodny z JSON Schema |
 | `public/app.js`, `public/portfolio.js` | widoki, synchronizacja wyników i obliczenia |
 | `public/price-chart.js` | wykres i odczyt punktów |
 | `scripts/chat-sync.mjs`, `public/data-sync.js` | przyrostowy stan czatu i scalanie lekkich odpowiedzi bez utraty danych |
 
-Przy aktualizacji repozytorium nie kopiuj danych wykonawczych. Historyczne skrypty `codex-worker.mjs` pozostają w kodzie, ale obecna produkcyjna ścieżka podsumowań korzysta z mostu i `publication-work.mjs`.
+Przy aktualizacji repozytorium nie kopiuj danych wykonawczych. Historyczne skrypty `codex-worker.mjs` pozostają w kodzie, a starsza ścieżka streszczeń przez most i `publication-work.mjs` nadal istnieje w kodzie. Produkt wycofuje ją na rzecz briefu; samo uaktualnienie dokumentacji jej nie wyłącza.
 
 ## Oszczędny transport i odczyt źródeł
 

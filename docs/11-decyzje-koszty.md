@@ -13,7 +13,7 @@
 | Opisy i briefy poniedziałek/czwartek 14:30 | tylko nowe materiały obserwowanych i portfela, pierwszy opis po dodaniu |
 | Tylko zagraniczne publikacje | rejestr dozwolonych źródeł i oficjalnych domen |
 | Oryginalne nagłówki | tłumaczenia wyłączone, brak wywołań AI dla tytułów |
-| Podsumowania na żądanie | trwała kolejka, brak automatycznych opracowań całej prasówki |
+| Brief zamiast osobnych streszczeń | jedna ścieżka opracowania publikacji; wyłączenie starszych zleceń artykułów pozostaje do wdrożenia |
 | Codex może zmieniać backend | kod w workspace; publikacja przez osobny kontroler po kliknięciu właścicielki |
 | Optymalizacja bez zmiany wymagań | przyrostowy czat, lekki Start i wspólny odczyt artykułu w cyklu; harmonogramy i modele zachowane |
 
@@ -21,7 +21,7 @@
 
 Pobieranie kursów, historii, RSS, dat, sprawdzanie harmonogramu i odświeżanie wyniku w interfejsie to zwykły kod. Samo wykonanie tych czynności nie zużywa tokenów AI.
 
-Model jest uruchamiany dla rzeczywistej wiadomości w czacie, ręcznie zleconego podsumowania albo uzgodnionego opracowania sytuacji i briefu na podstawie nowych materiałów. Sytuacja i brief używają Sol low, podsumowanie artykułu Luna low. Nagłówki nie wywołują modelu. Gotowe teksty są odczytywane z bazy. Pusta kolejka nigdy nie uruchamia modelu.
+W aktualnym zakresie model służy rzeczywistym wiadomościom w czacie oraz uzgodnionej sytuacji i briefowi na podstawie nowych materiałów. Sytuacja i brief używają Sol low. Osobne streszczenia artykułów wycofano; starszy mechanizm Luna low nadal istnieje w kodzie i wymaga wyłączenia przed potwierdzeniem braku tych wywołań na VPS. Nagłówki nie wywołują modelu. Gotowe teksty są odczytywane z bazy. Pusta kolejka nigdy nie uruchamia modelu.
 
 Most zlicza wspólny limit 300 operacji dziennie UTC dla czatu i opracowań. Dawny limit 100 tłumaczeń nagłówków i partie po 20 nie są już aktywne. Pozostałe ograniczenia źródeł i kolejki mogą zatrzymać pracę wcześniej.
 

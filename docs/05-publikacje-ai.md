@@ -16,30 +16,18 @@ Pobieranie publikacji i komunikatów obejmuje tylko obserwowane LUB zakupione po
 
 Na listach są oryginalny nagłówek, podmiot, wydawca i data. Tłumaczenie nagłówków jest wyłączone; angielski lub polski tytuł jest widoczny od razu. Stare tłumaczenia i cache pozostają wyłącznie jako historia. Worker nie zleca tłumaczeń, a most odrzuca `titles` przed uruchomieniem CLI. Szczegóły: [oryginalne nagłówki](17-oryginalne-naglowki.md).
 
-Prasówka dzieli materiały na Dzisiaj, Wczoraj, Przedwczoraj i Archiwum. Nieprzeczytane i oznaczenie ważności są trwałe; usunięty wpis nie wraca po następnym pobraniu.
+Lista publikacji dzieli materiały na Dzisiaj, Wczoraj, Przedwczoraj i Archiwum. Nieprzeczytane i oznaczenie ważności są trwałe; usunięty wpis nie wraca po następnym pobraniu.
 
-## Podsumowania na żądanie
+## Opracowanie publikacji w briefie
 
-```mermaid
-stateDiagram-v2
-    [*] --> queued: kliknięcie użytkowniczki
-    queued --> running: wolny i zalogowany Codex
-    running --> done: poprawny wynik i wersja źródła
-    running --> failed: błąd lub wygaśnięcie
-    failed --> queued: ręczne ponowienie
-    queued --> superseded: nowa wersja artykułu
-```
+Brief jest jedynym opracowaniem zbioru publikacji. Dopisuje nowe istotne wydarzenia, działania i terminy, z przypisaniem źródeł; zachowuje ustaloną przyrostowość, ważność i harmonogram. Lista artykułów pokazuje oryginalny tytuł, podmiot, wydawcę, datę i link do oryginału.
 
-Zlecenie ma powiązanie z hashem treści i dzierżawę. Wynik jest walidowany przed zapisem. Model dostaje ograniczony tekst i ścisły schemat, a treści źródłowe nie mogą sterować narzędziami.
+Osobne streszczenia artykułów, także na żądanie, są wycofane z zakresu, aby nie dublować treści i zużycia AI. Sytuacja firmy pozostaje osobnym opisem kondycji, czynników kursu i ryzyk. Paywalle i blokady nadal nie są obchodzone.
 
-Tekst ma zwykle 3–4 krótkie polskie zdania. Gdy danych jest mało, może być krótszy. Nowe automatyczne podsumowanie na żądanie wymaga odczytu treści artykułu; jeśli dostępny jest tylko nagłówek lub fragment RSS, aplikacja zapisuje przyczynę braku dostępu i nie uruchamia AI. Istniejące starsze opracowania zachowują oznaczenie swojej podstawy. Screeny mogą być osobną podstawą dopiero na jawne żądanie w czacie. Paywalle i blokady nie są obchodzone. Samo otwarcie gotowego tekstu nie wywołuje modelu.
-
-Interfejs pobiera stan tylko widocznych oczekujących podsumowań. Gotowy wynik zastępuje stary status również w otwartym oknie, a opóźniona odpowiedź nie usuwa już zapisanego wyniku tej samej wersji.
-
-Przycisk Więcej źródeł uruchamia osobne wyszukiwanie doniesień. Daty tych wyników oznaczają daty publikacji, nie daty wydarzeń.
+W kodzie pozostaje starszy worker streszczeń i jego interfejs. Ich wyłączenie wymaga zmiany aplikacji i wdrożenia; nie zostało potwierdzone w tej aktualizacji dokumentacji. [Decyzja i kryteria wyłączenia](19-brief-zamiast-podsumowan.md).
 
 ## Wspólny odczyt treści
 
 Od wdrożenia z 5 listopada publikacje i kalendarz tego samego cyklu współdzielą odczyt artykułu przez `article-reader.mjs`. Trwały cache zawiera tekst i walidatory HTTP, bez pełnego HTML. Następny cykl ponownie weryfikuje źródło; błąd lub blokada nie udostępnia starego tekstu jako aktualnego, a `no-store` wyłącza zapis trwały. Kontrola domen pozostaje osobna dla każdego podmiotu.
 
-Nie zmienia to harmonogramu, zakresu ani zlecania podsumowań. Szczegóły: [optymalizacja transportu](18-optymalizacja-transportu.md).
+Optymalizacja nie zmienia harmonogramu ani zakresu pobrań. Wycofanie osobnych streszczeń jest późniejszą, odrębną decyzją. Szczegóły: [optymalizacja transportu](18-optymalizacja-transportu.md).

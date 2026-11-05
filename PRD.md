@@ -1,8 +1,8 @@
 # Zorza — PRD
 
-Wymagania produktu · wersja 1.1 · 5 listopada 2026
+Wymagania produktu · wersja 1.2 · 5 listopada 2026
 Właścicielka produktu: właścicielka prywatnej aplikacji Zorza
-Baza: [kod optymalizacji 74319c5](https://github.com/dobrochnamnowak-dev/Zorza/commit/74319c55be700f3a532225386e0e61d1daeda4c3), ustalenia właścicielki i wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` sprawdzone 5 listopada 2026. Dokument nie potwierdza wykonania późniejszych cykli serwera.
+Baza: [kod optymalizacji 74319c5](https://github.com/dobrochnamnowak-dev/Zorza/commit/74319c55be700f3a532225386e0e61d1daeda4c3), ustalenia właścicielki i wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` sprawdzone 5 listopada 2026. Dokument nie potwierdza wykonania późniejszych cykli serwera. Korekta zakresu po tym wdrożeniu: osobne streszczenia artykułów wycofano na rzecz briefu. Usunięcie starszego mechanizmu nie zostało wdrożone; szczegóły w [decyzji produktowej](docs/19-brief-zamiast-podsumowan.md).
 
 [One-pager produktu](ONE-PAGER.md) · [Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
 
@@ -27,7 +27,7 @@ Najważniejsze scenariusze:
 
 1. Otwieram Start i widzę portfel, obserwowane oraz największe wzrosty i spadki całej dostępnej listy.
 2. Otwieram profil podmiotu: sprawdzam cenę, wykres, słowny opis sytuacji, ryzyka i brief pod wykresem.
-3. Pod briefem wybieram Wszystkie publikacje; widzę oryginalne nagłówki i źródła, a podsumowanie po polsku zamawiam dopiero po kliknięciu.
+3. Pod briefem wybieram Wszystkie publikacje; widzę oryginalne nagłówki, podmioty, daty i linki do źródeł. Merytoryczne opracowanie publikacji czytam w briefie, bez osobnego generowania streszczeń artykułów.
 4. Dodaję podmiot do obserwowanych albo zapisuję pierwszy zakup. Serwer włącza jego źródła i przygotowuje pierwszy opis, jeśli znajdzie wystarczające materiały.
 5. Z telefonu zlecam Codexowi poprawkę aplikacji. Przed wdrożeniem backendu oglądam zapisany wynik testów i wybieram Wdróż.
 
@@ -49,14 +49,14 @@ Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspóln
 | FR-08 | W profilu są komentarze i przyciski Zakup / Komentarz / Sytuacja: jeden równy rząd, bez ramek. Na kartach Startu komentarzy i Sytuacji nie ma | Działa |
 | FR-09 | Nowe publikacje dotyczą wyłącznie zbioru osobistego. Każda ma przypisany podmiot, wydawcę, datę i link; komunikaty emitenta stanowią osobną kategorię | Działa, pokrycie niepełne |
 | FR-10 | Wszystkie widoki pokazują oryginalny nagłówek. Tytuł angielski lub polski nie czeka na tłumaczenie; brak automatycznych zadań tłumaczeń | Działa |
-| FR-11 | Podsumowanie artykułu po polsku, zwykle 3–4 zdania, powstaje tylko na żądanie i przy dostępie do treści. Gotowy wynik otwiera się bez ponownego generowania; przy braku dostępu widać powód i link | Działa na VPS, zależne od treści i konta |
+| FR-11 | Wymaganie osobnego streszczenia artykułu wycofane. Zastępuje je brief FR-13; publikacja zachowuje oryginalny nagłówek, podmiot, datę i link. Bez przycisku generowania, osobnej kolejki AI i ponawiania streszczeń | Decyzja potwierdzona; starszy mechanizm w kodzie pozostaje do wyłączenia |
 | FR-12 | Sytuacja firmy zawiera krótką tezę, konkretne czynniki, uzasadnione ryzyka, przyszłe terminy i ostrożny wniosek. Każde ustalenie ma źródło; data opisu oznacza rzeczywiste wygenerowanie | Działa dla zbioru osobistego |
 | FR-13 | Brief pod wykresem dopisuje tylko nowe istotne wydarzenia, działania i terminy. Nie odczytuje ponownie całego archiwum; przy braku nowych informacji nie uruchamia AI | Działa w uzgodnionym cyklu |
 | FR-14 | Zmiana merytoryczna opisu lub nowy punkt briefu włącza czerwone oznaczenie przy podmiocie; samo sprawdzenie lub zmiana stylu go nie włącza. Odczyt dotyczy konkretnej wersji | Działa |
 | FR-15 | Znalezione przyszłe terminy trafiają automatycznie do kalendarza aplikacji, z podmiotem i dowodem. Miesiąc, kwartał, półrocze lub rok nie są prezentowane jako pewny dzień | Działa, pokrycie niepełne |
 | FR-16 | Harmonogram wykonuje serwer, bez otwierania aplikacji. Częstotliwości cen i publikacji można zmieniać osobno; harmonogram opisów jest odrębny | Działa |
 | FR-17 | Czat z Codexem działa z telefonu, przyjmuje tekst i do trzech zgodnych zdjęć. Backend publikuje dopiero osobny kontroler po zatwierdzeniu konkretnej wersji | Działa; wymaga ważnego logowania |
-| FR-18 | Błąd nie udaje sukcesu: pozostaje ostatni poprawny kurs z datą, a opis i podsumowanie pokazują właściwy stan. Nie ma automatycznych ponowień błędów przez model | Działa; wymaga dalszego monitorowania |
+| FR-18 | Błąd nie udaje sukcesu: pozostaje ostatni poprawny kurs z datą, a sytuacja i brief pokazują właściwy stan. Nie ma automatycznych ponowień błędów przez model | Działa; wymaga dalszego monitorowania |
 | FR-19 | Oszczędzanie transferu zachowuje pełną historię czatu, komplet danych profilu, nowsze kursy i kalendarz. Każdy nowy cykl nadal weryfikuje źródła; godziny, modele i zakres pracy na VPS pozostają bez zmian | Wdrożone i sprawdzone 5 listopada 2026 |
 
 „Działa” oznacza kod i wcześniejszą weryfikację opisaną w notatkach wdrożeń. Nie oznacza kompletności źródeł ani gwarancji nieprzerwanej pracy zewnętrznych usług.
@@ -75,6 +75,8 @@ Aktualna automatyzacja korzysta z materiałów pobranych przez kod. Samodzielny 
 
 ### Publikacje i brief
 
+Brief jest jedynym opracowaniem zbioru publikacji. Osobne streszczenia artykułów, także na żądanie, są wycofane z zakresu. Sytuacja firmy pozostaje odrębnym opisem bieżącej kondycji, czynników kursu i ryzyk.
+
 Źródła: wyłącznie zatwierdzone zagraniczne portale i publiczne strony emitentów. Nie obchodzimy paywalli ani blokad. Nagłówek pozostaje w oryginale; polski język interfejsu nie zmienia kraju wydawcy.
 
 Brief jest odrębny od opisu. Istotne wyniki lub kontrakt mogą dostać punkt, nawet jeśli nie potwierdzono wpływu na cenę. Każdy punkt wygasa po sześciu miesiącach kalendarzowych od publikacji najstarszego cytowanego materiału. Pierwszy opis może wykorzystać materiały sprzed obserwowania, lecz nie uzupełnia nimi historycznego briefu.
@@ -90,7 +92,6 @@ Wszystkie godziny oznaczają `Europe/Warsaw`, ze zmianą czasu.
 | Codziennie 18:30 | Dodatkowe kursy zbioru osobistego |
 | Codziennie 21:45 | Ponownie dostępne kursy katalogu |
 | Dodanie obserwowania lub pierwszego zakupu | Aktywacja źródeł i pierwszy opis po pobraniu wystarczających materiałów |
-| Kliknięcie podsumowania | Osobne zadanie artykułu; nie trzeba uruchamiać komputera |
 
 Częstotliwości cen i publikacji mają opcje: codziennie, dwa razy dziennie, dwa razy w tygodniu. Wariant tygodniowy tych ustawień oznacza wtorek/piątek 15:40, a nie poniedziałek/czwartek opisów. Dodatkowe 18:30 jest niezależne.
 
@@ -126,8 +127,6 @@ W pomiarze produkcyjnym Start zwrócił 67 345 B zamiast 4 021 846 B pełnego da
 
 | Temat | Stan / warunek kolejnego etapu |
 | --- | --- |
-| Push na iPhone | Niewdrożone. Potrzebne zgody urządzenia, subskrypcja, wysyłka z VPS i test przypomnienia przy zamkniętej aplikacji |
-| Automatyczny Kalendarz Apple | Niewdrożone. Jest eksport pojedynczego wydarzenia ICS; potrzebna decyzja o synchronizacji i jej autoryzacji |
 | Pełne pokrycie katalogu | Do dalszej weryfikacji mapowań i źródeł; braków nie uzupełnia się fikcyjnymi danymi |
 | Pełny research AI | Wymaga zakresu, limitu źródeł i zgody na dodatkowe zużycie; wybór modelu sam tego nie uruchamia |
 | Cykl po 4 maja 2027 | Wymaga decyzji o przedłużeniu i osobnej zmianie konfiguracji/kodu |

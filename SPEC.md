@@ -1,7 +1,7 @@
 # Zorza — specyfikacja techniczna
 
-Wersja 1.1 · 5 listopada 2026
-Odpowiada [PRD 1.1](PRD.md). Opisuje kod optymalizacji `74319c5` i potwierdzone wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` z 5 listopada 2026, 13:30:49 czasu polskiego. Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań.
+Wersja 1.2 · 5 listopada 2026
+Odpowiada [PRD 1.2](PRD.md). Opisuje kod optymalizacji `74319c5` i potwierdzone wdrożenie `1d1fcc3ecea44e72ac567b54083760f3` z 5 listopada 2026, 13:30:49 czasu polskiego. Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań. Późniejsza decyzja produktowa wycofuje osobne streszczenia artykułów; opis istniejących modułów nie oznacza ich wyłączenia. [Stan i kryteria migracji](docs/19-brief-zamiast-podsumowan.md).
 
 [Spis projektu](README.md) · [Szczegóły interfejsów](docs/08-api-dane.md) · [Wdrożenia](docs/07-wdrozenie.md)
 
@@ -39,7 +39,7 @@ Stan aplikacji jest w `/opt/zorza/data`, konta i czatu w `/opt/zorza/chat-state`
 | FR-05–06 | `quotes.mjs`, `price-history.mjs`, `personal-prices.mjs`, `portfolio.js`, `price-chart.js` |
 | FR-07 | `store.mjs`, API zakupu, import i `portfolioPerformance` |
 | FR-09–10 | `publication-policy.mjs`, `issuer-sources.mjs`, `collector.mjs`, oryginalne `articles.title` |
-| FR-11 | `publication-work.mjs`, `article-text.mjs`, `publication-ai.mjs`, jobs |
+| FR-11 — wycofane | Starszy mechanizm: `publication-work.mjs`, `publication-ai.mjs`, jobs; do wyłączenia bez naruszania wspólnych odczytów treści i briefu |
 | FR-12–14 | `company-insights.mjs`, `brief-monitor.mjs`, `insight-ai.mjs`, `company-insights.js` |
 | FR-15 | `calendar-fetch.mjs`, `issuer-calendar.mjs`, `event-extraction.mjs`, `event-windows.mjs` |
 | FR-16 | `settings.mjs`, funkcje `scheduled*` w `server.mjs`, trwałe sloty |
@@ -74,7 +74,7 @@ Migracje SQLite wykonuje `createStore`. Używane są WAL, klucze obce i oczekiwa
 | `articles` | Podmiot i źródło, oryginalne `title`, URL, publikacja/odkrycie, `content_hash`, status treści, podsumowanie, odczyt, ważność i miękkie usunięcie; unikalne `(instrument_id, url)` |
 | `article_page_cache` | URL, walidatory HTTP, wyodrębniony tekst i `checked_at`; wspólny odczyt w cyklu, ponowna weryfikacja w następnym. Tabelę tworzy czytnik artykułów przy pierwszym użyciu |
 | `revisions` | Historia poprzednich wersji treści |
-| `jobs` | Podsumowanie żądane przez użytkowniczkę; unikalne `(article_id, content_hash)`, dzierżawa i stan |
+| `jobs` | Starsze zadania indywidualnych streszczeń, wycofane z zakresu produktu; unikalne `(article_id, content_hash)`, dzierżawa i stan |
 | `company_insights` | Opis, hash wejścia/zmiany/odczytu, status, `checked_at`, `generated_at`, `changed_at`, ostatni slot |
 | `insight_jobs` | Wersjonowane wejście, hash i stan; unikalne `(instrument_id, input_hash)` |
 | `brief_monitors` | Aktywność, moment włączenia, potrzeba sprawdzenia i domeny podmiotu |
@@ -106,7 +106,7 @@ Ranking korzysta z dostępnych, porównywalnych notowań. Punkt wskazany na wykr
 
 Historia jest pobierana na żądanie zakresu. Równoległe żądania tej samej serii łączą się w jedno; maksymalnie dwa pobrania historii naraz. HTTP 401/403/429 wstrzymuje następne pobrania historii na 30 min. Braki przerywają linię; historia nie jest wydłużana przed debiut. Seria nie uwzględnia reinwestowania dywidend. Szczegóły: [notowania](docs/04-notowania.md).
 
-## 6. Publikacje i podsumowania
+## 6. Publikacje i wycofany mechanizm streszczeń
 
 Źródła wynikają ze zweryfikowanej branży i domen emitenta. Zapytania wyszukiwania RSS używają okna ostatnich 30 dni; zapisane archiwum i kanały emitentów mogą zawierać starsze materiały. Nie jest to obietnica odczytania wszystkich publikacji. Wydawca i powiązanie podmiotu są sprawdzane przed przyjęciem materiału. Nieznana branża korzysta ze zweryfikowanych źródeł ogólnych, bez zgadywania portali.
 
@@ -114,26 +114,9 @@ Historia jest pobierana na żądanie zakresu. Równoległe żądania tej samej s
 
 Oryginalny tytuł `articles.title` służy do wszystkich nagłówków i wyszukiwania. Stare `title_pl` nie jest eksponowane jako nagłówek. Stan tłumaczeń: `disabled`; `/api/title-retry` zwraca 410. Nie wykonujemy modelowej identyfikacji języka każdego tytułu. Reguły źródeł wybierają przede wszystkim materiały angielskie; polski tytuł zatwierdzonego zagranicznego wydawcy jest dopuszczalny.
 
-Podsumowanie:
+Opracowanie publikacji odbywa się w przyrostowym briefie z sekcji 7. Osobne streszczenia pojedynczych artykułów, także na żądanie, są wycofane z zakresu. Nie należy dodawać drugiego wywołania AI dla tego samego celu.
 
-- Wyłącznie po `POST /api/summarize` lub jawnym ponowieniu. Jedna wersja artykułu ma jedno zadanie.
-- Worker sprawdza kolejkę zwykłym kodem co 20 s; przy pustej kolejce nie pyta modelu.
-- Wymaga legalnie dostępnej treści artykułu. Brak treści zapisuje błąd bez generowania streszczenia nagłówka. Zapisany odczyt treści można wykorzystać, jeśli nadal jest aktualny.
-- Model `gpt-6-luna`, reasoning `low`; 3–4 polskie zdania, zwykle do 120 słów, plus znaczenie, kategoria i źródłowo potwierdzone daty.
-- Historyczne pole JSON `title_pl` zawiera skopiowany oryginał; nie nadpisuje tytułu ani nie zasila cache tłumaczeń.
-- Wynik sprawdzamy wobec wersji i dzierżawy. Zmienione materiały nie otrzymują poprzedniego podsumowania. Błąd modelu nie powoduje samoczynnego ponowienia.
-
-```mermaid
-stateDiagram-v2
-    [*] --> queued: jawne żądanie
-    queued --> running: dostępny most i ważne źródło
-    running --> done: walidacja wyniku
-    running --> failed: błąd lub wygaśnięcie
-    queued --> superseded: nowa wersja źródła
-    failed --> queued: ręczne ponowienie
-```
-
-Frontend sprawdza widoczne oczekujące podsumowania co 5 s. Późna odpowiedź dashboardu nie usuwa gotowego wyniku tej samej wersji.
+Stan techniczny: wdrożony kod nadal zawiera przyciski streszczeń, `/api/summarize`, `/api/retry`, worker `publication-work.mjs`, prompt `publication-ai.mjs`, historyczne pola `summary` i kolejkę `jobs`. To pozostałość do wyłączenia, nie zatwierdzona funkcja produktu. Aktualizacja dokumentacji nie zmienia działania tych ścieżek na VPS. Dane historyczne można zachować bez generowania nowych streszczeń. Kryteria bezpiecznego usunięcia: [decyzja o briefie](docs/19-brief-zamiast-podsumowan.md).
 
 ## 7. Sytuacja firmy i przyrostowy brief
 
@@ -184,7 +167,7 @@ Każdy termin ma podmiot przez artykuł, dowód i pewność `confirmed` albo `es
 | `half` | Pełne półrocze; etykieta np. „I półrocze 2028” |
 | `year` | Pełny rok; etykieta roku |
 
-Daty graniczne przedziału są techniczną reprezentacją okresu, nie potwierdzoną datą działania. UI grupuje terminy do 30 dni, do sześciu miesięcy, do roku i późniejsze; trwający przedział nadal jest aktywny. ICS eksportuje pojedyncze zdarzenie całodniowe lub przedział, z końcem wyłącznym i informacją o niepewności. Nie jest to synchronizacja Apple Calendar ani obietnica przypomnienia push.
+Daty graniczne przedziału są techniczną reprezentacją okresu, nie potwierdzoną datą działania. UI grupuje terminy do 30 dni, do sześciu miesięcy, do roku i późniejsze; trwający przedział nadal jest aktywny. ICS eksportuje pojedyncze zdarzenie całodniowe lub przedział, z końcem wyłącznym i informacją o niepewności.
 
 ## 9. Harmonogram, blokady i awarie
 
@@ -221,7 +204,7 @@ Wszystkie poniższe ścieżki poza sesją/logowaniem są prywatne. Mutacje wymag
 | Komentarze | GET `/api/instrument-comments?id=…`; POST tej samej ścieżki: `{instrument_id, text}` albo `{instrument_id, delete_id}` |
 | Artykuły podmiotu | GET `/api/instrument-articles?id=…`; oryginalne tytuły, `title_pl: null` |
 | Artykuły — operacje | POST `/api/read`, `/api/article-star`, `/api/article-delete`, `/api/article-research` |
-| Podsumowanie | POST `/api/summarize`: `{id: article_id}`; POST `/api/retry`: `{id: job_id}` |
+| Starsze streszczenia — do wyłączenia | POST `/api/summarize`: `{id: article_id}`; POST `/api/retry`: `{id: job_id}`; istnieją w kodzie, poza aktualnym zakresem produktu |
 | Opis i brief | GET `/api/insight?id=…`; POST `/api/insight-read`: `{id, hash}`; POST `/api/insight-retry`: `{id}` |
 | Dawne tłumaczenia | POST `/api/title-retry` zwraca 410 |
 | Ustawienia | POST `/api/settings`; walidowane pola z `lib/settings.mjs` |
@@ -265,7 +248,7 @@ Repozytorium zawiera komplet modułów mostu, w tym `insight-ai.mjs`. Szablony C
 | Obszar | Minimalny dowód |
 | --- | --- |
 | Ceny | Walidacja symbolu/waluty/typu, zachowanie nowszej daty, brakujące mapowania i 18:30 tylko zakresu osobistego |
-| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń i brak automatycznych podsumowań |
+| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń; docelowo brak przycisków i nowych zadań osobnych streszczeń (FR-11 wycofane) |
 | Opisy / brief | Pierwszy opis, slot poniedziałek/czwartek, brak AI bez nowych danych, walidacja źródeł, przyrostowość, zmiany/odczyt i retencja |
 | Kalendarz | Właściwa data i precyzja, brak daty z sąsiedniej karty, zapis z opisu tylko z dowodem, odrzucenie i aktualizacja |
 | API | Sesje, Origin, dane prywatne poza zasobami publicznymi i brak API w cache |
@@ -285,7 +268,7 @@ node --check public/app.js
 
 5 listopada po optymalizacji przeszły 124 testy aplikacji. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie. Bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
 
-Otwarte decyzje z PRD: push, synchronizacja Apple, przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
+Otwarte decyzje z PRD: przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
 
 
 ## 14. Optymalizacja transportu — zmiana 5 listopada 2026
