@@ -1,9 +1,9 @@
 # Zorza — specyfikacja techniczna
 
-Wersja 1.2 · 5 listopada 2026
-Odpowiada [PRD 1.2](PRD.md). Opisuje potwierdzone wdrożenie `4585972331e64c66aa95c672bab3c14f` z 5 listopada 2026, 14:14:14 czasu polskiego. Osobne streszczenia artykułów są wyłączone; [stan i dowody](docs/19-brief-zamiast-podsumowan.md). Dokument nie uruchamia automatyzacji ani nie potwierdza późniejszych pobrań.
+Wersja 1.3 · 6 listopada 2026
+Odpowiada [PRD 1.3](PRD.md). Opisuje aktualny kod i ostatnią udokumentowaną weryfikację wdrożenia z 5 listopada 2026. Nie potwierdza późniejszych pobrań ani nowego wdrożenia.
 
-[Spis projektu](README.md) · [Szczegóły interfejsów](docs/08-api-dane.md) · [Wdrożenia](docs/07-wdrozenie.md)
+[README](README.md) · [One-pager](ONE-PAGER.md)
 
 ## 1. Architektura i granice
 
@@ -39,7 +39,7 @@ Stan aplikacji jest w `/opt/zorza/data`, konta i czatu w `/opt/zorza/chat-state`
 | FR-05–06 | `quotes.mjs`, `price-history.mjs`, `personal-prices.mjs`, `portfolio.js`, `price-chart.js` |
 | FR-07 | `store.mjs`, API zakupu, import i `portfolioPerformance` |
 | FR-09–10 | `publication-policy.mjs`, `issuer-sources.mjs`, `collector.mjs`, oryginalne `articles.title` |
-| FR-11 — wycofane | `publication-work.mjs` kończy stare zadania bez AI; API i most odrzucają streszczenia. Brief i wspólne odczyty zachowane |
+| FR-11 | `publication-work.mjs` kończy stare zadania bez AI; API i most odrzucają streszczenia. Brief i wspólne odczyty zachowane |
 | FR-12–14 | `company-insights.mjs`, `brief-monitor.mjs`, `insight-ai.mjs`, `company-insights.js` |
 | FR-15 | `calendar-fetch.mjs`, `issuer-calendar.mjs`, `event-extraction.mjs`, `event-windows.mjs` |
 | FR-16 | `settings.mjs`, funkcje `scheduled*` w `server.mjs`, trwałe sloty |
@@ -104,9 +104,9 @@ Ranking korzysta z dostępnych, porównywalnych notowań. Punkt wskazany na wykr
 | `1y` | Dzienne / 6 h |
 | `5y` | Tygodniowe / 24 h |
 
-Historia jest pobierana na żądanie zakresu. Równoległe żądania tej samej serii łączą się w jedno; maksymalnie dwa pobrania historii naraz. HTTP 401/403/429 wstrzymuje następne pobrania historii na 30 min. Braki przerywają linię; historia nie jest wydłużana przed debiut. Seria nie uwzględnia reinwestowania dywidend. Szczegóły: [notowania](docs/04-notowania.md).
+Historia jest pobierana na żądanie zakresu. Równoległe żądania tej samej serii łączą się w jedno; maksymalnie dwa pobrania historii naraz. HTTP 401/403/429 wstrzymuje następne pobrania historii na 30 min. Braki przerywają linię; historia nie jest wydłużana przed debiut. Seria nie uwzględnia reinwestowania dywidend. Dla 1D procent odnosi się do poprzedniego zamknięcia, a dla dłuższych zakresów do pierwszej dostępnej ceny. Punkt tygodniowy ma datę początku tygodnia; aplikacja nie wykonuje własnych korekt splitów.
 
-## 6. Publikacje i wycofany mechanizm streszczeń
+## 6. Publikacje
 
 Źródła wynikają ze zweryfikowanej branży i domen emitenta. Zapytania wyszukiwania RSS używają okna ostatnich 30 dni; zapisane archiwum i kanały emitentów mogą zawierać starsze materiały. Nie jest to obietnica odczytania wszystkich publikacji. Wydawca i powiązanie podmiotu są sprawdzane przed przyjęciem materiału. Nieznana branża korzysta ze zweryfikowanych źródeł ogólnych, bez zgadywania portali.
 
@@ -116,7 +116,7 @@ Oryginalny tytuł `articles.title` służy do wszystkich nagłówków i wyszukiw
 
 Opracowanie publikacji odbywa się w przyrostowym briefie z sekcji 7. Osobne streszczenia pojedynczych artykułów, także na żądanie, są wycofane z zakresu. Nie należy dodawać drugiego wywołania AI dla tego samego celu.
 
-Stan techniczny: usunięto przyciski, sekcje streszczeń, automatyczne odpytywanie wyników i panel analizy screenów pojedynczego artykułu. API `/api/summarize`, `/api/retry` oraz worker `/api/worker/claim` i `/api/worker/finish` zwracają 410. Migracja przy starcie kończy `queued` i `running` w starszej tabeli `jobs` jako `failed`, z przyczyną wyłączenia; nie kasuje treści. Starszy CLI nie pobiera zleceń ani nie wywołuje modelu. Most odrzuca `kind=summary` przed sprawdzeniem konta i naliczeniem operacji; `runPublicationAI` blokuje ten rodzaj również przed utworzeniem plików lub uruchomieniem CLI. Worker serwera obsługuje bezpośrednio osobne `insight_jobs`, zachowując Sol low i harmonogram. [Potwierdzenie](docs/19-brief-zamiast-podsumowan.md).
+Stan techniczny: usunięto przyciski, sekcje streszczeń, automatyczne odpytywanie wyników i panel analizy screenów pojedynczego artykułu. API `/api/summarize`, `/api/retry` oraz worker `/api/worker/claim` i `/api/worker/finish` zwracają 410. Migracja przy starcie kończy `queued` i `running` w starszej tabeli `jobs` jako `failed`, z przyczyną wyłączenia; nie kasuje treści. Starszy CLI nie pobiera zleceń ani nie wywołuje modelu. Most odrzuca `kind=summary` przed sprawdzeniem konta i naliczeniem operacji; `runPublicationAI` blokuje ten rodzaj również przed utworzeniem plików lub uruchomieniem CLI. Worker serwera obsługuje bezpośrednio osobne `insight_jobs`, zachowując Sol low i harmonogram.
 
 ## 7. Sytuacja firmy i przyrostowy brief
 
@@ -130,7 +130,7 @@ Budżet automatycznego wejścia: do 8 000 znaków fragmentów łącznie, do 1 60
 
 ### Wynik i walidacja
 
-Jedno zadanie `insight` przygotowuje opis i osobny brief przez `gpt-6.1-sol`, reasoning `low`. Schemat zawiera:
+Jedno zadanie `insight` przygotowuje opis i osobny brief przez `gpt-6.1-sol`, reasoning `low`. Aktywny prompt jest w `scripts/insight-ai.mjs`, wywołanie i walidacja rodzaju zadania w `scripts/publication-ai.mjs`, a instrukcje czatu w `scripts/chat-bridge.mjs`. Schemat zawiera:
 
 ```text
 Opis: overview, drivers[], risks[], conclusion,
@@ -213,7 +213,7 @@ Wszystkie poniższe ścieżki poza sesją/logowaniem są prywatne. Mutacje wymag
 | Przyrostowy stan czatu | GET `/api/chat/status?sync=1&cursor=…`; GET `/api/chat/status?meta=1` bez historii; bez parametrów pełny dotychczasowy kontrakt |
 | Backend | GET `/api/deployment/status`; POST `/api/deployment/prepare`, `/api/deployment/deploy` |
 
-Rozróżniamy brak danych, kolejkę, pracę, ukończenie, błąd i nieświeży wynik. Samo `summaryWorkerConfigured` potwierdza konfigurację adresu mostu, nie zalogowanie. Rzeczywisty status pochodzi z mostu. Wyszukiwanie lub odświeżanie UI nie zleca samodzielnie AI.
+Rozróżniamy brak danych, kolejkę, pracę, ukończenie, błąd i nieświeży wynik. `articleSummariesEnabled`, `summaryWorkerConfigured` i `summaryWorkerActive` są stale `false`. `insightWorkerConfigured` oznacza konfigurację mostu dla Sytuacji i briefu, nie potwierdza zalogowania. Rzeczywisty status konta pochodzi z mostu. Wyszukiwanie lub odświeżanie UI nie zleca samodzielnie AI.
 
 ## 11. Prywatność, dostęp i ograniczenie kosztów
 
@@ -248,7 +248,7 @@ Repozytorium zawiera komplet modułów mostu, w tym `insight-ai.mjs`. Szablony C
 | Obszar | Minimalny dowód |
 | --- | --- |
 | Ceny | Walidacja symbolu/waluty/typu, zachowanie nowszej daty, brakujące mapowania i 18:30 tylko zakresu osobistego |
-| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń; brak przycisków i nowych zadań osobnych streszczeń (FR-11 wycofane) |
+| Publikacje | Źródło zagraniczne i właściwy podmiot, oryginalny tytuł, brak pracy tłumaczeń; brak przycisków i nowych zadań osobnych streszczeń (FR-11) |
 | Opisy / brief | Pierwszy opis, slot poniedziałek/czwartek, brak AI bez nowych danych, walidacja źródeł, przyrostowość, zmiany/odczyt i retencja |
 | Kalendarz | Właściwa data i precyzja, brak daty z sąsiedniej karty, zapis z opisu tylko z dowodem, odrzucenie i aktualizacja |
 | API | Sesje, Origin, dane prywatne poza zasobami publicznymi i brak API w cache |
@@ -266,21 +266,52 @@ node --check public/app.js
 (cd deployment && python3 -m unittest test_controller.py)
 ```
 
-5 listopada po wyłączeniu streszczeń przeszło 121 testów aplikacji; wycofane scenariusze generowania zastąpiono testami blokad. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie. Bez rzeczywistych wywołań AI. Zmiana samych dokumentów nie wymaga ponownego uruchamiania modeli ani pobierania danych na produkcji.
+Ostatnia udokumentowana weryfikacja wdrożenia: **5 listopada 2026, 14:14:14 Europe/Warsaw**, wersja kontrolera `4585972331e64c66aa95c672bab3c14f`, status `succeeded`. Przeszło 121 testów aplikacji bez rzeczywistych wywołań AI oraz dodatkowe sprawdzenie migracji starej kolejki przy starcie. Osiem testów kontrolera przeszło wcześniej; kontroler nie był zmieniany w tym etapie.
+
+Na VPS potwierdzono odpowiedzi 410 dla streszczeń i dawnego workera oraz odrzucenie `kind=summary` przez most bez zwiększenia licznika operacji. Sprawdzono widok mobilny 390 × 844, profil, brief, zgodność zapisanych danych, aktywny scheduler i zalogowany most. Harmonogramy i modele zachowano. Nie generowano nowych opisów ani briefów na potrzeby testu; weryfikacja nie dowodzi wykonania późniejszych cykli.
+
+Zmiana samych dokumentów wymaga kontroli spójności i odnośników, bez uruchamiania modeli lub pobierania danych na produkcji.
 
 Otwarte decyzje z PRD: przedłużenie cyklu po 4 maja 2027, nadrabianie długich awarii, pełniejsze kalendarze i mapowania. Nie są kontraktami wdrożonego API. Dla SLA, RPO/RTO i docelowego budżetu tokenów nie ustalono wartości; ich określenie i pomiar są osobnym etapem.
 
 
-## 14. Optymalizacja transportu — zmiana 5 listopada 2026
+## 14. Transport i odczyt źródeł
 
-Pierwszy etap wdrożono i sprawdzono 5 listopada 2026. [Notatka techniczna](docs/18-optymalizacja-transportu.md) dokumentuje wersję, testy, pomiary produkcyjne i ich granice. Optymalizacja realizuje FR-19: zachowuje dotychczasowe funkcje, godziny z sekcji 9, modele oraz zbieranie danych przy wyłączonym komputerze.
+Transport realizuje FR-19: ogranicza rozmiar odpowiedzi i powtórne odczyty w jednym cyklu, zachowując pełne dane, godziny z sekcji 9, modele oraz zbieranie danych przy wyłączonym komputerze.
 
 - Czat: opcjonalne `GET /api/chat/status?sync=1&cursor=…` zwraca tylko zmienione wiadomości w `sync`, z pełną kolejnością ID i procesowym epoch. `?meta=1` pomija historię. Bez parametrów zachowany jest stary format. Po restarcie lub niepoprawnym cursor następuje reset do kompletu; odpytywanie widocznego czatu pozostaje co 3 s.
 - Treści: `article_page_cache` zawiera `url`, `etag`, `modified`, `content_text`, `checked_at`. Wspólny czytnik łączy odczyt dla publikacji i kalendarza jednego slotu. Nowy slot ponownie weryfikuje źródło, korzystając z walidatorów HTTP, bez traktowania niezweryfikowanego starego tekstu jako aktualnego.
 - Dashboard: dotychczasowy pełny kontrakt zostaje. `view=overview` pomija artykuły, zlecenia, źródła, wydarzenia i pełną treść insight; `view=calendar` dodaje wydarzenia, `view=settings` źródła. Pola `omitted` i `insight_summaries` pozwalają zachować wcześniej pobrane dane w pamięci klienta. Odczyt `/api/insight` w profilu korzysta z przygotowanego na serwerze opisu.
 
-Nowe zasoby: `public/data-sync.js`, `scripts/chat-sync.mjs`, `lib/article-content.mjs`, `lib/article-reader.mjs`. Obraz mostu musi zawierać `chat-sync.mjs`. Nowy frontend należy publikować po backendzie obsługującym nowy zasób i parametry widoków. Nie dodano cache prywatnych odpowiedzi API w service workerze.
+Moduły: `public/data-sync.js`, `scripts/chat-sync.mjs`, `lib/article-content.mjs`, `lib/article-reader.mjs`. Obraz mostu musi zawierać `chat-sync.mjs`. Nowy frontend należy publikować po backendzie obsługującym nowy zasób i parametry widoków. Nie dodano cache prywatnych odpowiedzi API w service workerze.
 
 Odczyt strony zachowuje do 14 000 znaków wyodrębnionego tekstu, bez pełnego HTML; pula przechowuje najwyżej cztery konteksty slotów. Nowy cykl wykonuje warunkowy GET przy dostępnych walidatorach albo pełny GET bez nich. HTTP 304 potwierdza cache, HTTP 200 zastępuje treść; błąd lub odmowa nie pozwala wykorzystać poprzedniego tekstu jako aktualnego. `no-store` usuwa zapis trwały. Kontrola domen pozostaje odrębna dla każdego podmiotu.
 
-W produkcji sprawdzono Start, pełny profil, publikacje, Kalendarz i Ustawienia przy 390 × 844. Potwierdzono aktywny scheduler, gotowość zalogowanego mostu i kontenery z `restart=unless-stopped`. Kontrolne skróty obserwowanych, zakupów i komentarzy pozostały zgodne. Weryfikacja nie uruchamiała opracowań AI ani pełnego zbierania danych poza harmonogramem; nie dowodzi wykonania przyszłych cykli.
+## 15. Instalacja kontrolera i diagnostyka
+
+### Instalacja administracyjna
+
+Pliki źródłowe kontrolera i szablony są w `deployment/`. Poniższe kroki dotyczą instalacji lub zmian administracyjnych, nie zwykłej publikacji kodu na GitHubie.
+
+1. Skopiuj `controller.py` jako `/opt/zorza/config/deployment-controller.py`, `Deployment.Dockerfile` do `/opt/zorza/config/Deployment.Dockerfile`, oba jako root bez prawa zapisu agenta.
+2. Utwórz `/opt/zorza/deploy-state` z trybem 0700 i `/opt/zorza/deploy-run` z trybem 0755, przypisane do konta root.
+3. Skopiuj `deployment-access.json` do `/opt/zorza/config/` jako root. Nakładka Compose dodaje **tylko do app** zmienną `DEPLOY_SOCKET=/run/zorza-deploy/control.sock` i montowanie `/opt/zorza/deploy-run:/run/zorza-deploy:ro`. Do kontenera agenta nie dodaje żadnego montowania ani uprawnień. Pierwsze administracyjne wdrożenie uruchom z `-f compose.yml -f deployment-access.json`; później kontroler sam używa tej nakładki.
+4. Zainstaluj `zorza-deploy.service` w `/etc/systemd/system/`, uruchom `systemctl daemon-reload` i `systemctl enable --now zorza-deploy`.
+5. Przed pierwszą zmianą zapisz root-only `baseline.json` ze skrótami obecnie wdrożonego kodu (funkcja `freeze` kontrolera). Opublikuj backend z `lib/deployment.mjs`, trasami `/api/deployment/*` i panelem w czacie. Zapisz bazową listę skrótów po tym wdrożeniu.
+6. Zweryfikuj uprawnienia gniazda, blokadę bez logowania/Origin, przygotowanie wersji, wdrożenie, brak powtórnego wdrożenia, test odrzucenia błędnego kodu i powrót przy nieudanym starcie na środowisku testowym. Nie uruchamiaj celowo błędnej wersji na produkcji.
+7. Kolejne administracyjne restarty Compose muszą uwzględniać `-f /opt/zorza/config/deployment-access.json -f /opt/zorza/config/deployment-override.json --no-build`, aby zachować dostęp do kontrolera i nie zastąpić ostatniego obrazu wersją sprzed wdrożenia. Sam restart kontenera zachowuje obraz.
+
+### Diagnostyka
+
+| Objaw | Co sprawdzić |
+| --- | --- |
+| Sytuacja lub brief pozostają w kolejce | Stan konta i zajętość mostu, `insight_jobs`, materiały oraz limity; bez tworzenia duplikatów |
+| Zadanie AI ma stan `failed` | Zapisany błąd, dostęp do źródła i wersję danych; bez automatycznego ponawiania |
+| Stary przycisk streszczenia lub odpowiedź 410 | Odświeżyć aplikację; streszczenia są wyłączone |
+| Stara cena lub brak wykresu | Datę źródła, raport kursów, mapowanie i ograniczenia HTTP |
+| Brak terminu | Źródło, dowód i rozpoznawalną datę lub przedział; brak wpisu nie dowodzi braku wydarzenia |
+| Niedostępne lub przerwane wdrożenie | Gniazdo, usługę i stan kontrolera; bez zwiększania uprawnień agenta i ponawiania w ciemno |
+| Pełna historia czatu po restarcie | Oczekiwany reset synchronizacji; następne odczyty powinny przesyłać zmiany |
+| Brak publikacji w lekkim dashboardzie | Pole `omitted`; profil pobiera pełne dane osobnym API |
+
+Testy HTTP i gniazda Unix wymagają możliwości otwarcia lokalnych gniazd. Ograniczenie środowiska testowego może je blokować niezależnie od poprawności kodu.
