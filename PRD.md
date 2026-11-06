@@ -1,8 +1,8 @@
 # Zorza — PRD
 
-Wymagania produktu · wersja 1.2 · 5 listopada 2026
+Wymagania produktu · wersja 1.3 · 6 listopada 2026
 Docelowy użytkownik: osoba korzystająca z prywatnej aplikacji Zorza
-Baza: ustalenia użytkownika i wdrożenie `4585972331e64c66aa95c672bab3c14f` sprawdzone 5 listopada 2026. Brief zastępuje osobne streszczenia artykułów; ich wyłączenie w aplikacji potwierdzono w [notatce wdrożenia](docs/19-brief-zamiast-podsumowan.md). Dokument nie potwierdza wykonania późniejszych cykli serwera.
+Aktualny zakres produktu. Ostatnia udokumentowana weryfikacja aplikacji pochodzi z 5 listopada 2026; jej zakres i ograniczenia opisuje [SPEC](SPEC.md#13-weryfikacja-i-bramki-kolejnego-wydania). Aktualizacja dokumentacji nie oznacza nowego wdrożenia.
 
 [One-pager produktu](ONE-PAGER.md) · [Specyfikacja techniczna](SPEC.md) · [Dokumentacja projektu](README.md)
 
@@ -49,7 +49,7 @@ Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspóln
 | FR-08 | W profilu są komentarze i przyciski Zakup / Komentarz / Sytuacja: jeden równy rząd, bez ramek. Na kartach Startu komentarzy i Sytuacji nie ma | Działa |
 | FR-09 | Nowe publikacje dotyczą wyłącznie zbioru osobistego. Każda ma przypisany podmiot, wydawcę, datę i link; komunikaty emitenta stanowią osobną kategorię | Działa, pokrycie niepełne |
 | FR-10 | Wszystkie widoki pokazują oryginalny nagłówek. Tytuł angielski lub polski nie czeka na tłumaczenie; brak automatycznych zadań tłumaczeń | Działa |
-| FR-11 | Wymaganie osobnego streszczenia artykułu wycofane. Zastępuje je brief FR-13; publikacja zachowuje oryginalny nagłówek, podmiot, datę i link. Bez przycisku generowania, osobnej kolejki AI i ponawiania streszczeń | Wyłączone i sprawdzone na VPS 5 listopada 2026 |
+| FR-11 | Publikacja zachowuje oryginalny nagłówek, podmiot, datę, fragment i link. Opracowanie jest w briefie FR-13; brak osobnego generowania i ponawiania streszczeń | Działa |
 | FR-12 | Sytuacja firmy zawiera krótką tezę, konkretne czynniki, uzasadnione ryzyka, przyszłe terminy i ostrożny wniosek. Każde ustalenie ma źródło; data opisu oznacza rzeczywiste wygenerowanie | Działa dla zbioru osobistego |
 | FR-13 | Brief pod wykresem dopisuje tylko nowe istotne wydarzenia, działania i terminy. Nie odczytuje ponownie całego archiwum; przy braku nowych informacji nie uruchamia AI | Działa w uzgodnionym cyklu |
 | FR-14 | Zmiana merytoryczna opisu lub nowy punkt briefu włącza czerwone oznaczenie przy podmiocie; samo sprawdzenie lub zmiana stylu go nie włącza. Odczyt dotyczy konkretnej wersji | Działa |
@@ -59,7 +59,7 @@ Obserwowane i kupione są niezależne. Zbiór osobisty to suma obu grup; wspóln
 | FR-18 | Błąd nie udaje sukcesu: pozostaje ostatni poprawny kurs z datą, a sytuacja i brief pokazują właściwy stan. Nie ma automatycznych ponowień błędów przez model | Działa; wymaga dalszego monitorowania |
 | FR-19 | Oszczędzanie transferu zachowuje pełną historię czatu, komplet danych profilu, nowsze kursy i kalendarz. Każdy nowy cykl nadal weryfikuje źródła; godziny, modele i zakres pracy na VPS pozostają bez zmian | Wdrożone i sprawdzone 5 listopada 2026 |
 
-„Działa” oznacza kod i wcześniejszą weryfikację opisaną w notatkach wdrożeń. Nie oznacza kompletności źródeł ani gwarancji nieprzerwanej pracy zewnętrznych usług.
+„Działa” oznacza kod i wcześniejszą weryfikację opisaną w SPEC. Nie oznacza kompletności źródeł ani gwarancji nieprzerwanej pracy zewnętrznych usług.
 
 ## 4. Standard treści
 
@@ -119,9 +119,7 @@ Nie ustalono liczbowego SLA, docelowej dostępności ani miesięcznego budżetu 
 | Odbiór mobilny | Czytelny profil, publikacje i kalendarz przy 390 × 844, bez wymuszonego poziomego przewijania |
 | Oszczędne pobieranie | Bez zmian nie przesyłamy ponownie pełnej historii czatu; Start nie pobiera archiwum publikacji, a profil nadal udostępnia pełne dane |
 
-Przy wydaniu należy przejść scenariusze FR-01–FR-19 odpowiednie do zmiany i kontrolę na VPS. Ostatni pełny zestaw aplikacji: 121 testów, 5 listopada 2026; wycofane scenariusze generowania zastąpiono testami blokad. Osiem testów kontrolera sprawdzono przy wcześniejszej weryfikacji; etap optymalizacji nie zmieniał kontrolera. Testy nie wywołują rzeczywistego modelu. Sama ich liczba nie dowodzi wykonania późniejszego zaplanowanego cyklu.
-
-W pomiarze produkcyjnym Start zwrócił 67 345 B zamiast 4 021 846 B pełnego dashboardu; kolejne odpytanie niezmienionego czatu 5 182 B wobec 6 356 261 B początkowej synchronizacji. To obserwacje rozmiaru odpowiedzi dla jednego stanu danych, nie SLA ani obietnica obniżenia kosztów hostingu lub tokenów. Szczegóły: [wdrożenie optymalizacji](docs/18-optymalizacja-transportu.md).
+Przy wydaniu należy przejść scenariusze FR-01–FR-19 odpowiednie do zmiany i kontrolę na VPS. Polecenia testów oraz zakres ostatniej udokumentowanej weryfikacji są w [SPEC](SPEC.md#13-weryfikacja-i-bramki-kolejnego-wydania).
 
 ## 8. Poza obecną wersją i dalsze decyzje
 
@@ -134,4 +132,4 @@ W pomiarze produkcyjnym Start zwrócił 67 345 B zamiast 4 021 846 B pełnego da
 | App Store, handel, płatne notowania, wielu użytkowników | Poza zakresem; wymagają osobnej decyzji produktowej |
 | Automatyczna synchronizacja GitHub–VPS | Niewdrożona. Aktualizacja repozytorium i publikacja aplikacji pozostają osobnymi czynnościami |
 
-Zmiana tych decyzji wymaga aktualizacji PRD, odpowiadającego mu punktu SPEC i kryterium odbioru. Materiały historyczne zachowujemy jako uzasadnienie decyzji, bez przywracania wycofanych wymagań, np. tłumaczenia nagłówków lub codziennych opisów.
+Zmiana zakresu wymaga aktualizacji właściwego punktu PRD, SPEC i kryterium odbioru. One-pager powinien zachować zgodność z wymaganiami. W dokumentach pozostaje aktualny stan; wcześniejsze wersje są dostępne w historii Git.
