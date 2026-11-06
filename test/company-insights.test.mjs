@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {createStore} from '../lib/store.mjs';
 import {insightSlot,insightInput,queueInsights,processInsightWork,insightFor,markInsightRead,validateInsight,retryInsight} from '../lib/company-insights.mjs';
 import {insightBody,briefBody} from '../public/company-insights.js';
-import {publicationModel,publicationModelFor,publicationPrompt} from '../scripts/publication-ai.mjs';
+import {publicationModelFor,publicationPrompt} from '../scripts/publication-ai.mjs';
 const now=new Date('2026-11-04T14:00:00Z');
 function fixture(t){const s=createStore(':memory:',{items:[1,2,3].map(n=>({id:'AKCJA-00'+n,name_on_screenshot:['NVIDIA','Microsoft','Broadcom'][n-1],type:'stock',working_group:'technologia'}))});t.after(()=>s.db.close());return s;}
 function add(s,id='AKCJA-001',suffix='a',title='NVIDIA announced results',published='2026-11-04T12:00:00Z'){
@@ -84,7 +84,7 @@ test('renderowanie jest bezpieczne i pokazuje pełne publikacje tylko jako przyc
  n.content.overview.text='<script>alert(1)</script>';
  const html=insightBody({id:'x',personal:true},n);assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('href="javascript:'));assert.ok(!html.includes('Brief prasowy'));assert.ok(!html.includes('<ul>'));const brief=briefBody({id:'x',personal:true},n);assert.ok(brief.indexOf('Wszystkie publikacje')>brief.indexOf('Brief prasowy'));assert.ok(!brief.includes('href="javascript:'));
  assert.ok(insightBody({id:'x',personal:false},n).includes('Dodaj do obserwowanych'));
- assert.equal(publicationModel,'gpt-6-luna');assert.equal(publicationModelFor('insight'),'gpt-6.1-sol');assert.equal(publicationModelFor('titles'),'gpt-6-luna');assert.equal(publicationModelFor('summary'),'gpt-6-luna');assert.ok(publicationPrompt({kind:'insight',instrument:{name:'Nvidia'},articles:[{id:'a',title:'Results',excerpt:'',url:'https://example.com',published_at:now.toISOString()}],events:[]}).includes('nie jest źródłem'));
+ assert.equal(publicationModelFor('insight'),'gpt-6.1-sol');assert.throws(()=>publicationModelFor('titles'),/Niepoprawny rodzaj zadania/);assert.throws(()=>publicationModelFor('summary'),/Niepoprawny rodzaj zadania/);assert.ok(publicationPrompt({kind:'insight',instrument:{name:'Nvidia'},articles:[{id:'a',title:'Results',excerpt:'',url:'https://example.com',published_at:now.toISOString()}],events:[]}).includes('nie jest źródłem'));
 });
 
 test('nowy punkt briefu jest zapisywany także bez zmiany ogólnego opisu',async t=>{

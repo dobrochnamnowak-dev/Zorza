@@ -1,4 +1,4 @@
-import {titlesSchema,noteSchema,publicationPrompt,runPublicationAI} from '../scripts/publication-ai.mjs';
+import {publicationPrompt,runPublicationAI} from '../scripts/publication-ai.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createStore} from '../lib/store.mjs';
@@ -61,7 +61,6 @@ test('ekstrakcja treści nie obchodzi paywalla i nie wykonuje HTML',()=>{
 
 
 test('most odrzuca tłumaczenia i osobne streszczenia przed wywołaniem CLI',async()=>{
- assert.ok(titlesSchema.properties.items);assert.ok(noteSchema.properties.events);
  assert.throws(()=>publicationPrompt({kind:'titles',items:[{id:'1',title:'Nvidia news'}]}),/wyłączone/);
  await assert.rejects(runPublicationAI({kind:'titles',items:[{id:'1',title:'Nvidia news'}]},{bin:'/nie-wolno-uruchomić'}),/wyłączone/);
  assert.throws(()=>publicationPrompt({kind:'summary',article:{title:'Original title'}}),/wyłączone/);

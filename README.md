@@ -93,7 +93,6 @@ Poniższe opisy dotyczą plików śledzonych przez Git. Makiety i zrzuty ekranó
 | `scripts/collect.mjs` | Ręczne uruchomienie pobierania publikacji. |
 | `scripts/preview-publications.mjs`, `scripts/preview-quotes.mjs` | Podgląd publicznych danych bez korzystania z prywatnej bazy i AI. |
 | `scripts/setup.mjs` | Przygotowanie lokalnej konfiguracji aplikacji. |
-| `scripts/summary.schema.json` | Schemat historycznego formatu odpowiedzi; nie oznacza aktywnej funkcji streszczeń. |
 | `deployment/controller.py` | Kontroler testowania, publikowania i cofania wersji backendu na hoście. |
 | `deployment/Deployment.Dockerfile`, `deployment/compose.app-chat.example.yml`, `deployment/deployment-access.json`, `deployment/zorza-deploy.service` | Szablony administracyjne obrazu testowego, usług i dostępu do kontrolera; nie są aktywną konfiguracją VPS. |
 | `deployment/test_controller.py` | Testy kontrolera wdrożeń. |
